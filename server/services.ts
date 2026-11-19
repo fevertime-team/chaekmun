@@ -4,18 +4,18 @@ import { callJSON, hasLLM } from './llm';
 import { guarded, llmVerify, rewriteCheck, ruleCheck, type GuardStep, type Violation } from './guardrail';
 import {
   ASK_SYSTEM, askUser, BANDS, BYPASS_SYSTEM, PLACE_SYSTEM, placeUser, PREWRITE_SYSTEM, prewriteUser,
-  RUBRIC_LEVELS, scoreSystem, scoreUser, SIGWAN_SYSTEM, sigwanUser,
+  RUBRIC_LEVELS, scoreSystem, scoreUser, SIGWAN_SYSTEM, sigwanUser, type TaskIn,
 } from './prompts';
 import { evidenceLines, getArticle, LEVELS, PERSONAS, RUBRIC, type Level } from './content';
 import { includesLoose, ngramSim, quoteRefs, sentences, textKey } from './text';
 import { detectStance, ruleAnalyze } from './fallback';
 import cache from './cache.json';
- 
+
 type Meta = { log: GuardStep[]; attempts: number; fallback: false | 'cache' | 'rule' | 'safe'; latencyMs: number; violations?: Violation[][] };
 const CACHE = cache as Record<string, any>;
 export const cacheKey = (kind: string, articleId: string, level: string, text: string, extra = '') => `${kind}:${articleId}:${level}:${textKey(text)}${extra ? ':' + extra : ''}`;
 function fromCache(key: string) { const c = CACHE[key]; return c ? JSON.parse(JSON.stringify(c)) : null; }
- 
+
 /* ======================================================================
    [API 2] 논증 분석 + 페르소나 반론 (+ [API 3] 검수까지 서버에서)
    출력: {stance, structure:{claim, reasons[], premise}, weaknesses:[{type,detail,question}],
@@ -35,7 +35,7 @@ const SigwanSchema = z.object({
   weaknesses: z.array(z.object({ type: z.string(), detail: z.string().min(1), question: z.string().min(1) })).min(1),
   rebuttal: z.object({ persona: z.string(), text: z.string().min(1), question: z.string().min(1), source_idx: z.coerce.number().int().nullable().catch(null) }),
 });
- 
+
 export async function analyze(args: { articleId: string; level: string; text: string; personaIndex?: number }) {
   const a = getArticle(args.articleId);
   const level = getLevel2(args.level);
@@ -50,7 +50,7 @@ export async function analyze(args: { articleId: string; level: string; text: st
   const cand = [0, 1, 2].map((k) => pool[(pi * 3 + k) % pool.length]).filter((v, i, s) => s.indexOf(v) === i);
   const stances = level === 'choshi' ? null : a.stances.map((s) => ({ id: s.id, label: s.label }));
   const key = cacheKey('analyze', a.id, level, text, String(pi));
- 
+
   const toV3 = (r: z.infer<typeof SigwanSchema>) => {
     const ok = (i: number) => Number.isInteger(i) && i >= 0 && i < sents.length;
     const claimIdx = ok(r.structure.claim) ? r.structure.claim : 0;
@@ -71,9 +71,9 @@ export async function analyze(args: { articleId: string; level: string; text: st
   };
   type Out = ReturnType<typeof toV3>;
   const freeTexts = (f: Out) => [f.structure.premise, ...f.weaknesses.flatMap((w) => [w.detail, w.question]), f.rebuttal.text, f.rebuttal.question];
- 
+
   if (!hasLLM()) return withFallback(key, () => ruleAnalyze(a, level, text, pi), '키가 없어 규칙 기반 예비 응답을 씁니다');
- 
+
   const res = await guarded<Out>({
     label: `글의 구조를 나누고 ${cand.map((c) => PERSONAS[c].name).join(', ')} 중 한 관점의 반론을 씁니다`,
     generate: async (retryNote) => toV3(await callJSON({
@@ -101,7 +101,7 @@ export async function analyze(args: { articleId: string; level: string; text: st
   }
   return { ...res.output, _meta: meta(res, res.fallback ? 'safe' : false) };
 }
- 
+
 function readable(f: { structure: { premise: string }; weaknesses: { type: string; detail: string; question: string }[]; rebuttal: { text: string; question: string; source: { text: string } | null } }) {
   return [
     `[숨은 전제] ${f.structure.premise}`,
@@ -118,7 +118,7 @@ function safeFeedback<T extends { structure: any; weaknesses: any[]; rebuttal: a
     rebuttal: { ...f.rebuttal, text: `${PERSONAS[f.rebuttal.persona]?.name || '다른 사람'}의 자리에서 이 주장을 다시 보면 어떻습니까?`, source: null },
   };
 }
- 
+
 /* ======================================================================
    [API 4] 5기준 채점 (AAC&U, 기준당 1~10점, 처음 글과 고친 글을 따로 채점)
    출력: {before:{기준:점수}, after:{기준:점수}, why:{기준:{before:[string], after:[string]}}, total:{before,after,max}, _meta}
@@ -126,14 +126,23 @@ function safeFeedback<T extends { structure: any; weaknesses: any[]; rebuttal: a
 const CRIT = Object.keys(RUBRIC_LEVELS);
 const OneCrit = z.object({ level: z.coerce.number().int().min(1).max(4), score: z.coerce.number(), why: z.array(z.string()).min(1).max(3), quote: z.string().default('') });
 const ScoreSchema = z.object(Object.fromEntries(CRIT.map((k) => [k, OneCrit])) as Record<string, typeof OneCrit>);
+// (v4.2) 오늘의 과제 판정: 형식이 틀리면 undefined → 화면이 규칙(checkTask)으로 대신 판정
+const TaskSchema = z.object({ done: z.boolean(), quote: z.string().nullable().catch(null) }).optional().catch(undefined);
+type TaskOut = { done: boolean; quote: string | null } | undefined;
 type Graded = Record<string, { score: number; why: string[] }>;
- 
-async function gradeOne(question: string, text: string, defs: Record<string, string>): Promise<{ g: Graded; log: GuardStep[]; fallback: boolean }> {
+
+async function gradeOne(question: string, text: string, defs: Record<string, string>, task?: TaskIn): Promise<{ g: Graded; task: TaskOut; log: GuardStep[]; fallback: boolean }> {
+  let taskOut: TaskOut;
   const res = await guarded<Graded>({
     label: '다섯 기준으로 채점합니다',
     maxAttempts: 2,
     generate: async (retryNote) => {
-      const r = await callJSON({ system: scoreSystem(defs), user: scoreUser({ question, text }) + (retryNote ? `\n<이전 출력 거절 사유>\n${retryNote}\n</이전 출력 거절 사유>` : ''), schema: ScoreSchema, temperature: 0, maxTokens: 1400 });
+      const r = await callJSON({ system: scoreSystem(defs, task), user: scoreUser({ question, text }) + (retryNote ? `\n<이전 출력 거절 사유>\n${retryNote}\n</이전 출력 거절 사유>` : ''), schema: task ? ScoreSchema.extend({ task: TaskSchema }) : ScoreSchema, temperature: 0, maxTokens: 1600 });
+      if (task) {
+        const t = (r as any).task as TaskOut;
+        // 인용이 실제 글에 없으면 해냄으로 보지 않음 (지어낸 인용 막기)
+        taskOut = t ? (t.done && t.quote && includesLoose(text, t.quote) ? { done: true, quote: t.quote.trim() } : { done: false, quote: null }) : undefined;
+      }
       const g: Graded = {};
       for (const k of CRIT) {
         const c = r[k];
@@ -156,21 +165,23 @@ async function gradeOne(question: string, text: string, defs: Record<string, str
       return Object.fromEntries(CRIT.map((k) => [k, { score: last[k].score, why: ['이 기준의 근거 설명은 검사를 통과하지 못해 숨겼습니다.'] }]));
     },
   });
-  return { g: res.output, log: res.log, fallback: res.fallback };
+  return { g: res.output, task: taskOut, log: res.log, fallback: res.fallback };
 }
- 
-export async function score(args: { articleId: string; level: string; draft: string; revised: string; rubric?: Record<string, { def?: string; weight?: number }> }) {
+
+export async function score(args: { articleId: string; level: string; draft: string; revised: string; rubric?: Record<string, { def?: string; weight?: number }>; task?: TaskIn }) {
   const a = getArticle(args.articleId);
   const level = getLevel2(args.level);
   const draft = String(args.draft || '').slice(0, 4000), revised = String(args.revised || '').slice(0, 4000);
   const defs = Object.fromEntries(CRIT.map((k) => [k, args.rubric?.[k]?.def || RUBRIC[k]?.def || '']));
   const weights = Object.fromEntries(CRIT.map((k) => [k, Math.max(0, Number(args.rubric?.[k]?.weight ?? 1)) || 0]));
-  const key = cacheKey('score', a.id, level, draft + '\u0000' + revised, args.rubric ? textKey(JSON.stringify(args.rubric)) : '');
+  const task: TaskIn = args.task && typeof args.task.id === 'string' && typeof args.task.how === 'string'
+    ? { id: args.task.id.slice(0, 20), title: String(args.task.title || '').slice(0, 80), how: args.task.how.slice(0, 300) } : null;
+  const key = cacheKey('score', a.id, level, draft + '\u0000' + revised, (args.rubric ? textKey(JSON.stringify(args.rubric)) : '') + (task ? 'task:' + task.id : ''));
   const t0 = Date.now();
   if (!hasLLM()) { const c = fromCache(key); if (c) { c._meta = { ...c._meta, fallback: 'cache' }; return c; } throw new Error('LLM 키가 없고 저장된 채점도 없습니다'); }
   try {
     const same = draft.trim() === revised.trim();
-    const [b, af] = await Promise.all([gradeOne(a.q[level], draft, defs), same ? null : gradeOne(a.q[level], revised, defs)]);
+    const [b, af] = await Promise.all([gradeOne(a.q[level], draft, defs, task), same ? null : gradeOne(a.q[level], revised, defs, task)]);
     const after = af || b;
     const total = (g: Graded) => {
       const wsum = CRIT.reduce((s, k) => s + weights[k], 0) || 1;
@@ -181,6 +192,7 @@ export async function score(args: { articleId: string; level: string; draft: str
       after: Object.fromEntries(CRIT.map((k) => [k, after.g[k].score])),
       why: Object.fromEntries(CRIT.map((k) => [k, { before: b.g[k].why, after: after.g[k].why }])),
       total: { before: total(b.g), after: total(after.g), max: CRIT.length * 10 },
+      ...(task && b.task && after.task ? { task: { draft: b.task, revised: after.task } } : {}),
       _meta: { log: [...b.log, ...(af?.log || [])], attempts: 1, fallback: b.fallback || af?.fallback ? 'safe' : false, latencyMs: Date.now() - t0 } as Meta,
     };
   } catch (e) {
@@ -189,13 +201,13 @@ export async function score(args: { articleId: string; level: string; draft: str
     throw e;
   }
 }
- 
+
 /* ======================================================================
    우회 요청 분류 (요청 메시지만. 답안 본문은 분류하지 않음)
    ====================================================================== */
 const BYPASS_RE = /고쳐\s?줘|고쳐\s?주|써\s?줘|써\s?주세|대신\s?써|대신\s?작성|모범\s?답|예시\s?답|예시\s?문장|정답\s?알려|첫\s?문장만|한\s?문장만|완성해\s?줘|다듬어\s?줘|다듬어\s?주|첨삭해|수정해\s?줘|바꿔\s?써|rewrite|re-write|write\s+(it|this|my|an?\s+essay|for me)|fix\s+(it|this|my)|polish|proofread|edit\s+(it|this|my)|give me (an? )?(example|sample|model answer)|first sentence/i;
 const BypassSchema = z.object({ bypass: z.boolean(), category: z.string().default('없음') });
- 
+
 export async function classifyBypass(message: string): Promise<{ bypass: boolean; category: string; by: 'rule' | 'llm' | 'none' }> {
   const m = String(message || '').slice(0, 600);
   if (BYPASS_RE.test(m)) return { bypass: true, category: '직접 요청', by: 'rule' };
@@ -213,13 +225,13 @@ export function revisedLooksLikeRequest(text: string) {
   if (!t) return false;
   return BYPASS_RE.test(t) && (t.length < 120 || sentences(t).some((s) => BYPASS_RE.test(s) && /(줘|주세요|해 ?줄래|please|\?)\s*[.!?]?$/i.test(s)));
 }
- 
+
 /* ======================================================================
    [API 5] 시관에게 묻기 (재반박 포함)
    출력: {refused:boolean, kind:'refuse'|'rebuttal'|'answer', reply, _meta}
    ====================================================================== */
 const AskSchema = z.object({ kind: z.enum(['rebuttal', 'answer']).catch('answer'), reply: z.string().min(1) });
- 
+
 export async function ask(args: { articleId: string; level: string; draft: string; question: string; feedback: any; chat?: { me?: any; t: string }[] }) {
   const a = getArticle(args.articleId);
   const level = getLevel2(args.level);
@@ -253,7 +265,7 @@ export async function ask(args: { articleId: string; level: string; draft: strin
   });
   return { refused: false, kind: res.output.kind, reply: res.output.reply, _meta: meta(res, res.fallback ? 'safe' : false) };
 }
- 
+
 /* ======================================================================
    [API 1] 쓰기 전 생각할 거리: 출력 {questions:[3]}
    ====================================================================== */
@@ -273,7 +285,7 @@ export async function prewrite(args: { articleId: string; level: string }) {
   });
   return { questions: res.output, _meta: meta(res, res.fallback ? 'safe' : false) };
 }
- 
+
 /* ======================================================================
    [API 7] 관점 지도 배치: 출력 {mine:index, argument}
    (그룹 목록은 화면 데이터에 이미 있으므로 서버는 내 글의 자리만 돌려줌)
@@ -293,7 +305,7 @@ export async function place(args: { articleId: string; level: string; text: stri
   const scored = groups.map((g) => ({ i: g.i, s: ngramSim(g.text, text) })).sort((x, y) => y.s - x.s);
   return { mine: scored[0]?.i ?? 0, argument: '', by: 'similarity' };
 }
- 
+
 /* ---------- 공통 ---------- */
 function getLevel2(l: string): Level {
   if (l === 'choshi' || l === 'boksi') return l;
@@ -308,4 +320,3 @@ function withFallback(key: string, rule: () => any, why: string, log: GuardStep[
   if (c) { c._meta = { ...(c._meta || {}), log: [...log, { state: 'bad', text: `${why}: 미리 저장해 둔 실제 AI 응답을 보여 줍니다` }], fallback: 'cache' }; return c; }
   return { ...rule(), _meta: { log: [...log, { state: 'bad', text: `${why}: 규칙 기반 예비 응답입니다` }], attempts: 0, fallback: 'rule', latencyMs: 0 } as Meta };
 }
- 
