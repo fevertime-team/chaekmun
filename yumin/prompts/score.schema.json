@@ -1,0 +1,132 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "clarity",
+    "evidence",
+    "counter",
+    "coherence"
+  ],
+  "properties": {
+    "clarity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "score",
+        "evidence",
+        "reason"
+      ],
+      "properties": {
+        "score": {
+          "type": "integer",
+          "enum": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "reason": {
+          "type": "string"
+        }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "score",
+        "evidence",
+        "reason"
+      ],
+      "properties": {
+        "score": {
+          "type": "integer",
+          "enum": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "reason": {
+          "type": "string"
+        }
+      }
+    },
+    "counter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "score",
+        "evidence",
+        "reason"
+      ],
+      "properties": {
+        "score": {
+          "type": "integer",
+          "enum": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "reason": {
+          "type": "string"
+        }
+      }
+    },
+    "coherence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "score",
+        "evidence",
+        "reason"
+      ],
+      "properties": {
+        "score": {
+          "type": "integer",
+          "enum": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "reason": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

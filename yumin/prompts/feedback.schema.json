@@ -1,0 +1,125 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "flag",
+    "stance",
+    "structure",
+    "weaknesses",
+    "rebuttal"
+  ],
+  "properties": {
+    "flag": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "too_short",
+        "off_topic",
+        "request_inside",
+        null
+      ]
+    },
+    "stance": {
+      "type": "string"
+    },
+    "structure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "claim_index",
+        "reason_indices",
+        "premise_from",
+        "premise_test",
+        "premise"
+      ],
+      "properties": {
+        "claim_index": {
+          "type": "integer"
+        },
+        "reason_indices": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "premise_from": {
+          "type": "integer"
+        },
+        "premise_test": {
+          "type": "string"
+        },
+        "premise": {
+          "type": "string"
+        }
+      }
+    },
+    "weaknesses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "type",
+          "target_index",
+          "detail",
+          "question"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "논리 비약",
+              "숨은 전제",
+              "근거 부족",
+              "반례 미처리",
+              "성급한 일반화",
+              "추측으로 끝난 근거"
+            ]
+          },
+          "target_index": {
+            "type": "integer"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "question": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "rebuttal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "persona",
+        "why_this_persona",
+        "text",
+        "question",
+        "source_line"
+      ],
+      "properties": {
+        "persona": {
+          "type": "string"
+        },
+        "why_this_persona": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "question": {
+          "type": "string"
+        },
+        "source_line": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "core_reason",
+    "group_label"
+  ],
+  "properties": {
+    "core_reason": {
+      "type": "string"
+    },
+    "group_label": {
+      "type": "string"
+    }
+  }
+}

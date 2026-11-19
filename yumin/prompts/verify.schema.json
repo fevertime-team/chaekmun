@@ -1,0 +1,55 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "violations",
+    "pass"
+  ],
+  "properties": {
+    "violations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "type",
+          "severity",
+          "field",
+          "evidence",
+          "reason"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "A",
+              "B",
+              "C",
+              "D",
+              "E"
+            ]
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "block",
+              "warn"
+            ]
+          },
+          "field": {
+            "type": "string"
+          },
+          "evidence": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "pass": {
+      "type": "boolean"
+    }
+  }
+}

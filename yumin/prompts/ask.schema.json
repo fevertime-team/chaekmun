@@ -1,0 +1,28 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "intent",
+    "refused",
+    "reply"
+  ],
+  "properties": {
+    "intent": {
+      "type": "string",
+      "enum": [
+        "ghostwrite",
+        "verdict",
+        "concept",
+        "clarify",
+        "disagree",
+        "off_topic"
+      ]
+    },
+    "refused": {
+      "type": "boolean"
+    },
+    "reply": {
+      "type": "string"
+    }
+  }
+}

@@ -1,0 +1,1875 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>오늘의 책문</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hahmlet:wght@400;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+/* 오늘의 책문 v4.1 목업 (11/19 밤: v4 인수인계 반영, 색과 장식은 v2 한지 톤). 이전 기록: v3 (11/19 회의 반영: 기사 5개·기사 고르기 페이지 신설, 원문 전문 탭, 묻기 클릭 문구 삭제(재반박은 묻기에서),
+   고쳐 쓰기 단일화 + 안내 문구 + 우회 요청 차단, AAC&U VALUE 5기준 채점과 근거 펼침, 어람작 본문, 교수용 화면)
+   방향: 한 장씩 넘기는 시험지. 화면은 한 줄 기둥(최대 720px)이고, 위의 진행선은 앞 단계를 마쳐야 다음 단계가 열립니다.
+   색: 청자빛 회색 바탕, 먹색 글, 쪽빛 행동색. 인주색은 도장(問, 장원)과 걸러낸 표시에만 씁니다. */
+:root{
+  --bg:#EDF0EC; --sheet:#FBFBF8; --ink:#1E2422; --ink2:#58625E; --rule:#D2D8D3;
+  --jjok:#23476B; --on-jjok:#FFFFFF; --jjok-t:#DCE4ED;
+  --cel:#3F7767; --cel-t:#DAE8E2;
+  --seal:#A8322A; --seal-t:#F2DDD9;
+  --amb:#80590C; --amb-t:#F1E7CF;
+  --serif:"Hahmlet","Noto Serif KR","AppleMyungjo","Batang",serif;
+  --sans:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+p{margin:0}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--jjok);outline-offset:2px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.page{max-width:720px;margin:0 auto;padding:0 max(20px,env(safe-area-inset-left,0px)) 96px}
+
+/* 머리 */
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:22px 0 20px}
+.brand{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.brand b{font-family:var(--serif);font-size:1.45rem;font-weight:700;letter-spacing:-.01em}
+.brand span{color:var(--ink2);font-size:.88rem}
+.toplink{background:none;border:0;padding:6px 0;font-size:.92rem;cursor:pointer;border-bottom:1px solid var(--ink2)}
+.toplinks{display:flex;gap:18px}
+
+/* (v3) 1. 기사 고르기 */
+.pick-h{font-family:var(--serif);font-size:1.35rem;font-weight:700;margin:0 0 4px}
+.picks{list-style:none;margin:16px 0 0;padding:0;border-top:1px solid var(--rule)}
+.pk{display:grid;grid-template-columns:4.6em minmax(0,1fr) auto;gap:14px;align-items:baseline;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--rule);padding:16px 4px;cursor:pointer}
+.pk .field{font-size:.86rem;color:var(--ink2)}
+.pk .one{font-family:var(--serif);font-size:1.02rem}
+.pk .go{font-size:.86rem;color:var(--jjok)}
+.pk:hover .one{text-decoration:underline;text-underline-offset:5px}
+/* (v3) 2. 요약 / 원문 탭 */
+.tabs{display:inline-flex;border:1px solid var(--rule);border-radius:4px;overflow:hidden;margin:0 0 14px}
+.tabs button{background:var(--sheet);border:0;padding:7px 18px;cursor:pointer;color:var(--ink2);font-size:.92rem}
+.tabs button[aria-selected="true"]{background:var(--jjok);color:var(--on-jjok);font-weight:600}
+.body{background:var(--sheet);border:1px solid var(--rule);border-radius:4px;padding:18px 20px;max-height:420px;overflow:auto;font-family:var(--serif);line-height:1.9}
+.body p+p{margin-top:10px}
+.body.empty{border-style:dashed;font-family:var(--sans);color:var(--ink2);font-size:.92rem}
+.srcline{display:flex;flex-wrap:wrap;gap:4px 14px;margin-top:10px;font-size:.88rem;color:var(--ink2)}
+.srcline a{color:var(--jjok)}
+/* (v3) 고쳐 쓰기 안내 */
+.caution{border:1px solid var(--amb);background:var(--amb-t);border-radius:4px;padding:10px 14px;margin:0 0 16px;font-size:.95rem}
+.blocked{border-left:3px solid var(--seal);background:var(--seal-t);padding:10px 14px;margin:12px 0 0;font-size:.92rem}
+/* (v3) 채점: 기준별 펼침 */
+.rub{border-top:1px solid var(--rule)}
+.rub details{border-bottom:1px solid var(--rule)}
+.rub summary{display:grid;grid-template-columns:minmax(0,1fr) 3.4em 3.4em 3.6em 1.2em;gap:6px;align-items:center;padding:12px 4px;cursor:pointer;list-style:none;font-variant-numeric:tabular-nums}
+.rub summary::-webkit-details-marker{display:none}
+.rub summary::after{content:"▾";color:var(--ink2);text-align:right}
+.rub details[open] summary::after{content:"▴"}
+.rub .nm b{font-weight:600}
+.rub .nm small{display:block;font-size:.78rem;color:var(--ink2)}
+.rub .n{text-align:center}
+.rub .head{display:grid;grid-template-columns:minmax(0,1fr) 3.4em 3.4em 3.6em 1.2em;gap:6px;padding:6px 4px;font-size:.82rem;color:var(--ink2)}
+.rub .head span{text-align:center}.rub .head span:first-child{text-align:left}
+.why{padding:2px 8px 14px;font-size:.92rem}
+.why .def{color:var(--ink2);margin-bottom:8px}
+.why ul{margin:4px 0 0;padding-left:1.2em}
+.why li+li{margin-top:3px}
+.why .lab{font-weight:700;font-size:.84rem;color:var(--jjok);margin-top:8px}
+.rubsrc{font-size:.84rem;color:var(--ink2);margin-top:10px}
+.rubsrc a{color:var(--jjok)}
+/* (v3) 어람작 */
+.eoram{background:var(--sheet);border:2px dashed var(--amb);border-radius:4px;padding:20px 22px;margin:0 0 36px}
+.eoram .k{font-size:.9rem;color:var(--amb);font-weight:700}
+.eoram .tx{font-family:var(--serif);margin:8px 0}
+.eoram .by{font-size:.86rem;color:var(--ink2)}
+/* (v3) 교수용 화면 */
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.kpi{background:var(--sheet);border:1px solid var(--rule);border-radius:4px;padding:12px 14px}
+.kpi b{display:block;font-family:var(--serif);font-size:1.5rem;font-variant-numeric:tabular-nums}
+.kpi span{font-size:.84rem;color:var(--ink2)}
+.tbl{width:100%;border-collapse:collapse;font-size:.92rem;font-variant-numeric:tabular-nums}
+.tbl th,.tbl td{padding:9px 6px;border-bottom:1px solid var(--rule);text-align:left}
+.tbl thead th{font-size:.82rem;color:var(--ink2);font-weight:400}
+.tbl .c{text-align:center}
+.flag{color:var(--seal);font-weight:600}
+@media (max-width:600px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.pk{grid-template-columns:minmax(0,1fr)}.pk .go{display:none}}
+
+/* 진행선: 앞 단계를 마쳐야 다음 단계가 열림 */
+.track{list-style:none;margin:0 0 40px;padding:0;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));position:relative}
+.track::before,.track::after{content:"";position:absolute;left:8.33%;top:15px;height:2px}
+.track::before{right:8.33%;background:var(--rule)}
+.track::after{width:calc(83.33% * var(--p,0));background:var(--jjok);transition:width .3s ease}
+.st{position:relative;z-index:1;width:100%;display:flex;flex-direction:column;align-items:center;gap:6px;background:none;border:0;padding:0;cursor:pointer;color:var(--ink2)}
+.st:disabled{cursor:default}
+.ball{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:var(--bg);border:2px solid var(--rule);font-size:.85rem;font-weight:700}
+.st .lb{font-size:.86rem}
+.st:disabled .lb,.st:disabled .ball{opacity:.55}
+.st.open .ball{border-color:var(--jjok);color:var(--jjok)}
+.st.done .ball{border-color:var(--jjok);background:var(--jjok-t);color:var(--jjok)}
+.st.now .ball{border-color:var(--jjok);background:var(--jjok);color:var(--on-jjok)}
+.st.now .lb{color:var(--ink);font-weight:700}
+
+main.in{animation:in .28s ease both}
+@keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){main.in{animation:none}.track::after{transition:none}}
+
+/* 공통 */
+.block{margin:0 0 36px}
+.h{font-family:var(--serif);font-size:1.15rem;font-weight:600;margin:0 0 12px}
+.note{color:var(--ink2);font-size:.9rem;margin-top:8px}
+.actions{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;margin-top:28px}
+.btn{font-weight:600;background:var(--jjok);color:var(--on-jjok);border:1px solid var(--jjok);border-radius:4px;padding:11px 22px;cursor:pointer}
+.btn:hover{filter:brightness(1.1)}
+.btn.ghost{background:transparent;color:var(--jjok)}
+.btn:disabled{opacity:.4;cursor:not-allowed;filter:none}
+.link{background:none;border:0;padding:2px 0;color:var(--jjok);text-decoration:underline;text-underline-offset:4px;cursor:pointer}
+.link:disabled{opacity:.6;cursor:default}
+
+/* 오늘의 과제 */
+.task{background:var(--cel-t);border-left:3px solid var(--cel);padding:12px 16px;margin:0 0 32px}
+.task b{color:var(--cel);margin-right:8px}
+.task small{display:block;color:var(--ink2);font-size:.86rem;margin-top:2px}
+
+/* 1. 기사와 난이도 */
+.arts{list-style:none;margin:0;padding:0;border-top:1px solid var(--rule)}
+.art{position:relative;display:flex;gap:14px;align-items:baseline;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--rule);padding:14px 4px 14px 16px;cursor:pointer}
+.art .field{flex:none;width:4.6em;font-size:.86rem;color:var(--ink2)}
+.art .t{font-family:var(--serif);font-size:1.05rem}
+.art[aria-pressed="true"]::before{content:"";position:absolute;left:0;top:12px;bottom:12px;width:3px;background:var(--jjok)}
+.art[aria-pressed="true"] .t{font-weight:700}
+.art-title{font-family:var(--serif);font-size:1.3rem;font-weight:700;margin:0 0 10px;text-wrap:balance}
+.sum{margin:0;padding-left:1.3em}
+.sum li+li{margin-top:4px}
+.levels{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.lv{text-align:left;background:var(--sheet);border:1px solid var(--rule);border-radius:4px;padding:12px 14px;cursor:pointer;display:flex;flex-direction:column;gap:2px}
+.lv b{font-family:var(--serif);font-size:1.05rem}
+.lv span{font-size:.86rem;color:var(--ink2)}
+.lv[aria-checked="true"]{border-color:var(--jjok);box-shadow:inset 0 0 0 1px var(--jjok)}
+.lv:disabled{cursor:not-allowed;opacity:.55}
+
+/* 시제(問): 이 화면의 주인공 */
+.qw{display:grid;grid-template-columns:auto minmax(0,1fr);gap:20px;align-items:start;background:var(--sheet);border-top:3px solid var(--ink);padding:26px 26px 28px;margin:0 0 8px}
+.qmark{width:50px;height:50px;display:grid;place-items:center;border:2px solid var(--seal);border-radius:4px;color:var(--seal);font-family:var(--serif);font-weight:700;font-size:1.55rem;transform:rotate(-4deg)}
+.q{font-family:var(--serif);font-size:1.55rem;line-height:1.55;font-weight:600;text-wrap:pretty}
+.qw.sm{padding:18px 20px;margin-bottom:20px;gap:14px}
+.qw.sm .q{font-size:1.12rem}
+.qw.sm .qmark{width:36px;height:36px;font-size:1.1rem}
+
+/* 2. 답안지 */
+.prewrite{margin:0 0 16px}
+.pw{background:var(--sheet);border:1px solid var(--rule);border-radius:4px;padding:14px 18px}
+.pw p{font-size:.9rem;color:var(--ink2)}
+.pw ol{margin:8px 0 0;padding-left:1.3em;font-family:var(--serif)}
+.pw li+li{margin-top:4px}
+.sheet{display:block;width:100%;min-height:270px;resize:vertical;font-family:var(--serif);font-size:1.06rem;line-height:2.1rem;color:var(--ink);
+  padding:6px 18px 6px 22px;border:1px solid var(--rule);border-left:4px double var(--ink);border-radius:2px;
+  background-color:var(--sheet);background-image:repeating-linear-gradient(to bottom,transparent 0 calc(2.1rem - 1px),var(--rule) calc(2.1rem - 1px) 2.1rem);background-attachment:local;background-position:0 6px}
+.sheet::placeholder{color:var(--ink2)}
+.meter{display:flex;flex-wrap:wrap;gap:4px 22px;margin-top:10px;font-size:.88rem;color:var(--ink2);font-variant-numeric:tabular-nums}
+.meter b{color:var(--ink);font-weight:600}
+.meter .met b{color:var(--cel)}
+
+/* 3. 반론 */
+.reading{padding:48px 0 24px;text-align:center}
+.reading .h{margin-bottom:4px}
+.pipe{list-style:none;padding:0;margin:16px auto 0;display:inline-flex;flex-direction:column;gap:7px;text-align:left;font-size:.92rem}
+.pipe li{display:flex;gap:10px;align-items:baseline}
+.pipe i{flex:none;width:8px;height:8px;border-radius:50%;background:var(--rule);transform:translateY(-1px)}
+.pipe i.ok{background:var(--cel)}.pipe i.run{background:var(--amb)}.pipe i.bad{background:var(--seal)}
+.check{background:var(--sheet);border:1px solid var(--rule);border-radius:4px;padding:10px 16px;margin:0 0 32px;font-size:.92rem}
+.check summary{cursor:pointer}
+.check summary b{color:var(--cel)}
+.check .pipe{display:flex;margin:12px 0 0}
+.check pre{overflow:auto;max-height:280px;margin:12px 0 4px;padding:10px;font-size:.76rem;line-height:1.5;background:var(--bg);border-radius:4px}
+
+/* 내 글에 시관이 표시한 답안: 이 화면의 주인공 */
+.annot{background:var(--sheet);border-left:4px double var(--ink);padding:6px 20px 0}
+.ln{display:grid;grid-template-columns:4.6em minmax(0,1fr);gap:14px;padding:10px 0;border-bottom:1px solid var(--rule)}
+.ln .tag{font-size:.82rem;font-weight:700;color:var(--ink2);text-align:right;padding-top:.2em}
+.ln .tx{font-family:var(--serif)}
+.ln.c .tag{color:var(--jjok)}
+.ln.c .tx{text-decoration:underline 2px var(--jjok);text-underline-offset:6px}
+.ln.r .tag{color:var(--cel)}
+.ln.r .tx{text-decoration:underline dotted 2px var(--cel);text-underline-offset:6px}
+.ln.p{margin:0 -20px;padding:12px 20px;background:var(--amb-t);border-bottom:0}
+.ln.p .tag{color:var(--amb)}
+.weak{border-left:3px solid var(--amb);padding:2px 0 2px 16px;margin:0 0 20px}
+.weak .wt{font-size:.9rem;font-weight:700;color:var(--amb)}
+.weak p+p{margin-top:4px}
+.ask{font-family:var(--serif);font-weight:600}
+.rebut{background:var(--sheet);border:1px solid var(--rule);border-radius:4px;padding:22px 24px}
+.who{display:flex;gap:12px;align-items:center;margin-bottom:14px}
+.pmark{flex:none;width:44px;height:44px;border-radius:4px;display:grid;place-items:center;background:var(--jjok-t);color:var(--jjok);font-family:var(--serif);font-weight:700;font-size:1.25rem}
+.who .nm{font-weight:700}
+.who .ds{font-size:.86rem;color:var(--ink2)}
+.rb{font-family:var(--serif)}
+.rebut .ask{margin-top:10px}
+.src{margin-top:14px;padding-top:10px;border-top:1px dashed var(--rule);font-size:.86rem;color:var(--ink2)}
+.rebut .link{margin-top:14px;font-size:.92rem}
+.chat{display:flex;flex-direction:column;gap:8px;margin:0 0 12px}
+.bub{max-width:86%;padding:9px 14px;border-radius:4px;font-size:.95rem}
+.bub.me{align-self:flex-end;background:var(--jjok);color:var(--on-jjok)}
+.bub.ai{align-self:flex-start;background:var(--sheet);border:1px solid var(--rule)}
+.bub.ai.refuse{border-left:3px solid var(--seal)}
+.quick{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px}
+.qk,.vote{font-size:.88rem;background:var(--sheet);border:1px solid var(--rule);border-radius:4px;padding:5px 12px;cursor:pointer}
+.qk:hover,.vote:hover{border-color:var(--jjok)}
+.askf{display:flex;gap:8px}
+.askf input{flex:1;min-width:0;font:inherit;padding:9px 12px;border:1px solid var(--rule);border-radius:4px;background:var(--sheet);color:var(--ink)}
+
+/* 4. 고쳐 쓰기 */
+.recap{background:var(--sheet);border-left:3px solid var(--jjok);padding:12px 16px;margin:0 0 24px;font-size:.95rem}
+.recap b{display:block;font-size:.86rem;color:var(--jjok)}
+.seg{display:inline-flex;border:1px solid var(--rule);border-radius:4px;overflow:hidden;margin:0 0 12px}
+.seg button{background:var(--sheet);border:0;padding:7px 18px;cursor:pointer;color:var(--ink2);font-size:.92rem}
+.seg button[aria-selected="true"]{background:var(--jjok);color:var(--on-jjok);font-weight:600}
+.diff{font-family:var(--serif);line-height:2.05;background:var(--sheet);border:1px solid var(--rule);border-radius:4px;padding:14px 18px}
+.diff ins{text-decoration:none;background:var(--cel-t);border-radius:2px;padding:0 2px}
+.diff del{color:var(--ink2);background:var(--seal-t);border-radius:2px;padding:0 2px}
+.axes{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.axes th,.axes td{padding:11px 6px;border-bottom:1px solid var(--rule);text-align:left;font-weight:400;vertical-align:middle}
+.axes thead th{font-size:.84rem;color:var(--ink2)}
+.axes tbody th{font-weight:600}
+.axes .n{text-align:center;width:3.6em}
+.up{color:var(--cel);font-weight:700}.down{color:var(--seal);font-weight:700}
+.bars{width:32%}
+.bar{display:block;height:6px;border-radius:3px;width:var(--w);background:var(--rule)}
+.bar+.bar{margin-top:4px;background:var(--jjok)}
+
+/* 5. 광장 */
+.map{position:relative;height:330px;background:var(--sheet);border:1px solid var(--rule);border-radius:4px;overflow:hidden}
+.blob{position:absolute;transform:translate(-50%,-50%);border-radius:50%;display:grid;place-items:center;text-align:center;padding:6px;font-size:.8rem;font-weight:600;line-height:1.3;background:var(--jjok-t);border:1px solid var(--jjok);color:var(--jjok)}
+.blob.tam{background:transparent;border:2px dashed var(--amb);color:var(--amb)}
+.medot{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:2px;font-size:.78rem;font-weight:700;color:var(--seal);pointer-events:none}
+.medot i{width:12px;height:12px;border-radius:50%;background:var(--seal);box-shadow:0 0 0 4px var(--seal-t)}
+.jang{display:grid;grid-template-columns:auto minmax(0,1fr);gap:20px;align-items:center;background:var(--sheet);border-top:3px solid var(--ink);padding:22px 24px;margin:0 0 36px}
+.seal{width:72px;height:72px;display:grid;place-items:center;text-align:center;border:3px solid var(--seal);border-radius:4px;color:var(--seal);font-family:var(--serif);font-weight:700;font-size:1.3rem;line-height:1.1;transform:rotate(-6deg)}
+.seal small{font-size:.7rem}
+.jang .k{font-size:.9rem;color:var(--ink2)}
+.jang .tx{font-family:var(--serif);margin:6px 0}
+.cls{list-style:none;margin:0;padding:0;border-top:1px solid var(--rule)}
+.cls li{padding:16px 0;border-bottom:1px solid var(--rule)}
+.cls .hd{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.cls .hd b{font-family:var(--serif);font-size:1.05rem}
+.cls .hd span{font-size:.86rem;color:var(--ink2);white-space:nowrap}
+.cls .tam{color:var(--amb);font-weight:600}
+.cls blockquote{margin:6px 0 4px;font-family:var(--serif)}
+.cls .by{font-size:.86rem;color:var(--ink2)}
+.votes{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.vote[aria-pressed="true"]{border-color:var(--jjok);background:var(--jjok-t);color:var(--jjok)}
+
+/* 나의 기록 */
+.ptitle{font-family:var(--serif);font-size:1.6rem;font-weight:700;margin:0 0 4px}
+.sparks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.sp{background:var(--sheet);border:1px solid var(--rule);border-radius:4px;padding:12px 14px}
+.sp .hd{display:flex;justify-content:space-between;gap:8px;font-size:.92rem}
+.sp .hd span{color:var(--ink2);font-variant-numeric:tabular-nums}
+.spark{display:block;width:100%;height:52px;margin-top:6px}
+.spark .ln2{fill:none;stroke:var(--jjok);stroke-width:2}
+.spark .ar{fill:var(--jjok-t)}
+.spark .end{fill:var(--jjok)}
+.hb{display:grid;grid-template-columns:8em minmax(0,1fr) 3em;gap:10px;align-items:center;font-size:.92rem;padding:4px 0}
+.hb .bar{--w:100%}
+.hb .num{text-align:right;color:var(--ink2);font-variant-numeric:tabular-nums}
+.words{display:flex;flex-wrap:wrap;gap:8px}
+.words span{background:var(--sheet);border:1px solid var(--rule);border-radius:4px;padding:3px 10px;font-size:.92rem}
+.words em{font-style:normal;color:var(--ink2);font-size:.82rem;margin-left:4px}
+
+.toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);max-width:calc(100% - 32px);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:4px;font-size:.92rem;z-index:20}
+
+@media (max-width:600px){
+  .q{font-size:1.25rem}
+  .qw{padding:20px 18px;gap:14px}
+  .qmark{width:40px;height:40px;font-size:1.2rem}
+  .levels{grid-template-columns:minmax(0,1fr)}
+  .st .lb{font-size:.74rem}
+  .ln{grid-template-columns:minmax(0,1fr);gap:2px}
+  .ln .tag{text-align:left;padding:0}
+  .bars{display:none}
+  .sparks{grid-template-columns:minmax(0,1fr)}
+  .jang{grid-template-columns:minmax(0,1fr)}
+}
+
+/* =========================================================
+   (v4) 한지 톤: 색과 장식은 v2에서, 글꼴과 글자 크기, 배치는 v3 그대로
+   다크 모드는 끔 (시연 화면이 기기 설정에 따라 바뀌지 않게)
+   ========================================================= */
+:root{
+  --bg:#EDE5D4; --sheet:#FBF7EE; --rule:#D8CBB2; --gold:#8C7651;
+  --ink:#26221E; --ink2:#655C50; --ink3:#8F8473;
+  --jjok:#2C4560; --on-jjok:#FFFFFF; --jjok-t:#E3E8EC;
+  --cel:#3F6A59; --cel-t:#E2EBE4;
+  --seal:#A23A2E; --seal-t:#F4E2DC;
+  --amb:#7A5A0E; --amb-t:#F3E7CC;
+  /* 오방색 (단청 띠에만) */
+  --o-blue:#2F5D8A; --o-red:#B0432F; --o-yellow:#D6A23A; --o-green:#3E7A5C; --o-white:#F6F0E2;
+  color-scheme:light;
+}
+/* 한지 결: 잔 섬유 + 가장자리를 살짝 어둡게 */
+body{background-color:var(--bg);
+  background-image:
+    radial-gradient(ellipse at 50% 0%,rgba(255,250,238,.55),transparent 60%),
+    radial-gradient(ellipse at 50% 120%,rgba(120,95,60,.10),transparent 60%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .38 0 0 0 0 .27 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='turbulence' baseFrequency='.012 .09' numOctaves='2' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 .55 0 0 0 0 .47 0 0 0 0 .33 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23f)'/%3E%3C/svg%3E");
+  background-attachment:fixed,fixed,scroll,scroll}
+/* 맨 위 단청 띠 */
+body::before{content:"";position:fixed;left:0;right:0;top:0;height:6px;z-index:30;
+  background:repeating-linear-gradient(90deg,var(--o-blue) 0 28px,var(--o-white) 28px 31px,var(--o-red) 31px 52px,var(--o-white) 52px 55px,var(--o-yellow) 55px 70px,var(--o-white) 70px 73px,var(--o-green) 73px 101px,var(--o-white) 101px 104px);
+  box-shadow:0 1px 0 rgba(60,40,20,.25)}
+/* 오른쪽 아래 구름무늬 (아주 옅게) */
+body::after{content:"";position:fixed;right:-40px;bottom:-30px;width:340px;height:200px;pointer-events:none;opacity:.10;z-index:0;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 340 200' fill='none' stroke='%238C7651' stroke-width='3'%3E%3Cpath d='M20 150c0-28 34-36 50-18c4-34 58-40 70-8c14-26 60-20 60 12c26-14 56 4 50 30H20z'/%3E%3Cpath d='M70 132c10-12 26-12 34 0M140 124c8-14 28-14 36 0M200 136c8-12 24-10 30 2'/%3E%3Cpath d='M120 70c0-18 22-24 32-12c4-22 38-24 44-4c16-10 38 2 34 20H120z'/%3E%3Cpath d='M152 60c6-8 16-8 22 0'/%3E%3C/svg%3E") no-repeat right bottom/contain}
+.page{position:relative;z-index:1}
+.top{padding-top:28px}
+.brand{align-items:center}
+.brand .mark{width:30px;height:30px;color:var(--gold);flex:none;align-self:center}
+/* 머리 아래 문살 띠 */
+.lattice{height:22px;margin:-8px 0 30px;opacity:.42;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22' fill='none' stroke='%238C7651' stroke-width='1.3'%3E%3Crect x='.65' y='.65' width='20.7' height='20.7'/%3E%3Crect x='7' y='7' width='8' height='8'/%3E%3Cpath d='M11 .65V7M11 15v6.35M.65 11H7M15 11h6.35'/%3E%3C/svg%3E") repeat-x left center/22px 22px}
+.toplink{color:var(--ink)}
+/* 제목 앞 팔각 문양 */
+.h{display:flex;align-items:center;gap:10px}
+.h::before{content:"";flex:none;width:12px;height:12px;border:1.5px solid var(--gold);clip-path:polygon(30% 0,70% 0,100% 30%,100% 70%,70% 100%,30% 100%,0 70%,0 30%);background:linear-gradient(var(--gold),var(--gold)) center/4px 4px no-repeat}
+.reading .h{display:block}.reading .h::before{display:none}
+/* 진행선: 팔각 */
+.ball{border:0;border-radius:0;clip-path:polygon(30% 0,70% 0,100% 30%,100% 70%,70% 100%,30% 100%,0 70%,0 30%);background:var(--rule);color:var(--ink2)}
+.st.open .ball,.st.done .ball{background:var(--jjok-t);color:var(--jjok)}
+.st.now .ball{background:var(--jjok);color:var(--on-jjok)}
+/* 시제: 두루마리 (크기는 v3 그대로) */
+.qw{position:relative;border-top:0;margin:22px 10px 30px;box-shadow:inset 0 0 0 1px var(--rule),inset 0 0 40px rgba(140,118,81,.10)}
+.qw::before,.qw::after{content:"";position:absolute;left:-16px;right:-16px;height:14px;border-radius:7px;
+  background:linear-gradient(to bottom,#5E4128,#9C7448 45%,#6E4C2E);box-shadow:0 2px 3px rgba(60,40,20,.25)}
+.qw::before{top:-11px}.qw::after{bottom:-11px}
+.qw.sm{margin:16px 10px 30px}.qw.sm::before,.qw.sm::after{height:10px;left:-12px;right:-12px}.qw.sm::before{top:-8px}.qw.sm::after{bottom:-8px}
+/* 답안지와 카드: 금빛 겹선 */
+.annot,.sheet{border-left:4px double var(--gold)}
+.rebut{box-shadow:inset 0 3px 0 var(--jjok)}
+.rebut .who{padding-bottom:14px;border-bottom:1px dashed var(--rule)}
+.pmark{clip-path:polygon(30% 0,70% 0,100% 30%,100% 70%,70% 100%,30% 100%,0 70%,0 30%);border-radius:0}
+.jang{border-top:0;padding-top:30px;box-shadow:inset 0 0 0 1px var(--rule),inset 0 3px 0 var(--seal)}
+.jang .seal{position:relative;overflow:visible}.jang .ah{position:absolute;left:-22px;top:-30px;width:92px;height:47px;transform:rotate(8deg);pointer-events:none}
+.btn{box-shadow:inset 0 0 0 3px var(--jjok),inset 0 0 0 4px rgba(255,255,255,.28)}
+.btn.ghost{box-shadow:none}
+.blob{font-family:var(--serif)}
+/* 카드 귀퉁이 장식 (ㄱ자 금선) */
+.corner{position:relative}
+.corner::before,.corner::after{content:"";position:absolute;width:14px;height:14px;border:1.5px solid var(--gold);opacity:.7;pointer-events:none}
+.corner::before{left:6px;top:6px;border-right:0;border-bottom:0}
+.corner::after{right:6px;bottom:6px;border-left:0;border-top:0}
+
+/* ---------- (v4) 첫 화면, 로그인 ---------- */
+.hero{text-align:center;padding:26px 0 8px}
+.hero .stamp{display:inline-grid;place-items:center;width:84px;height:84px;border:3px solid var(--seal);border-radius:6px;color:var(--seal);font-family:var(--serif);font-weight:700;font-size:1.6rem;line-height:1.05;transform:rotate(-5deg);margin-bottom:18px;background:rgba(162,58,46,.04)}
+.hero h1{font-family:var(--serif);font-size:1.6rem;font-weight:700;margin:0 0 8px}
+.hero p{color:var(--ink2)}
+.paths{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:26px 0 14px}
+.path{text-align:left;background:var(--sheet);border:1px solid var(--rule);border-radius:4px;padding:18px 20px;cursor:pointer;display:flex;flex-direction:column;gap:4px}
+.path:hover{border-color:var(--jjok)}
+.path b{font-family:var(--serif);font-size:1.12rem}
+.path span{font-size:.88rem;color:var(--ink2)}
+.form{background:var(--sheet);border:1px solid var(--rule);border-radius:4px;padding:22px 24px;max-width:460px;margin:0 auto}
+.form label{display:block;font-size:.88rem;color:var(--ink2);margin:12px 0 4px}
+.form input,.form select,.form textarea{width:100%;font:inherit;padding:9px 12px;border:1px solid var(--rule);border-radius:4px;background:#fff;color:var(--ink)}
+.form .err{color:var(--seal);font-size:.9rem;margin-top:10px}
+.form .hint{font-size:.82rem;color:var(--ink3);margin-top:3px}
+.ctr{text-align:center}
+.who-chip{font-size:.86rem;color:var(--ink2)}
+.badge{display:inline-block;font-size:.74rem;font-weight:700;line-height:1;padding:3px 6px;border-radius:3px;vertical-align:1px;margin-right:4px}
+.badge.ex{background:var(--amb-t);color:var(--amb);border:1px solid rgba(122,90,14,.35)}
+.badge.me{background:var(--seal-t);color:var(--seal);border:1px solid rgba(162,58,46,.35)}
+.badge.org{background:var(--cel-t);color:var(--cel);border:1px solid rgba(63,106,89,.35)}
+.mockmark{font-size:.74rem;color:var(--ink3);border:1px dashed var(--rule);border-radius:3px;padding:1px 6px}
+
+/* ---------- (v4) 난이도 화면 ---------- */
+.lvbig{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.lvc{position:relative;text-align:left;background:var(--sheet);border:1px solid var(--rule);border-radius:4px;padding:20px 18px 18px;cursor:pointer;display:flex;flex-direction:column;gap:6px;min-height:150px}
+.lvc:hover{border-color:var(--jjok)}
+.lvc .han{font-family:var(--serif);font-size:1.6rem;color:var(--gold);line-height:1}
+.lvc b{font-family:var(--serif);font-size:1.15rem}
+.lvc span{font-size:.88rem;color:var(--ink2)}
+.lvc .tag{position:absolute;right:12px;top:12px;font-size:.74rem;font-weight:700;padding:2px 7px;border-radius:3px}
+.lvc .tag.lock{background:var(--ink);color:var(--bg)}
+.lvc .tag.soon{background:var(--cel-t);color:var(--cel)}
+.lvc.dim{opacity:.72}
+.lvchip{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin:0 0 14px;font-size:.92rem}
+.lvchip b{font-family:var(--serif)}
+
+/* ---------- (v4) 광장 펼치기 ---------- */
+.grp{border-bottom:1px solid var(--rule)}
+.grp>summary{list-style:none;cursor:pointer;padding:16px 4px}
+.grp>summary::-webkit-details-marker{display:none}
+.grp>summary .hd::after{content:"펼치기 ▾";font-size:.82rem;color:var(--jjok);margin-left:10px;white-space:nowrap}
+.grp[open]>summary .hd::after{content:"접기 ▴"}
+.grp.locked>summary .hd::after{content:"제출 후 열림"}
+.posts{list-style:none;margin:0 0 14px;padding:0 0 0 14px;border-left:2px solid var(--rule)}
+.posts li{padding:12px 0;border-bottom:1px dashed var(--rule)}
+.posts li:last-child{border-bottom:0}
+.posts .tx{font-family:var(--serif)}
+.posts .by{font-size:.86rem;color:var(--ink2);margin-top:4px}
+.posts li.mine{background:linear-gradient(90deg,var(--seal-t),transparent 70%);margin-left:-14px;padding-left:14px}
+.cls .rep{font-family:var(--serif);margin:6px 0 4px;color:var(--ink)}
+.grp[open]>summary .rep,.grp[open]>summary .by{display:none}
+
+/* ---------- (v4) 교수용 ---------- */
+.tbl tr.clk{cursor:pointer}.tbl tr.clk:hover td{background:var(--sheet)}
+.rubed{display:grid;grid-template-columns:7em minmax(0,1fr) 6em;gap:8px 12px;align-items:start}
+.rubed textarea{font:inherit;font-size:.9rem;padding:7px 10px;border:1px solid var(--rule);border-radius:4px;background:#fff;min-height:3.2em;resize:vertical}
+.rubed select{font:inherit;padding:6px;border:1px solid var(--rule);border-radius:4px;background:#fff}
+.rubed b{padding-top:6px}
+.stud{background:var(--sheet);border:1px solid var(--rule);border-radius:4px;padding:16px 18px;margin-top:12px}
+.stud .tx{font-family:var(--serif);white-space:pre-wrap}
+.proc{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.88rem;color:var(--ink2);margin:6px 0 10px}
+.proc b{color:var(--ink)}
+.total{display:flex;justify-content:space-between;align-items:baseline;padding:12px 4px;border-bottom:1px solid var(--rule);font-variant-numeric:tabular-nums}
+.total b{font-family:var(--serif);font-size:1.2rem}
+.flagnote{border-left:3px solid var(--amb);background:var(--amb-t);padding:8px 14px;margin:0 0 20px;font-size:.92rem}
+.ln.p .from{display:block;font-size:.8rem;color:var(--amb);font-family:var(--sans);margin-top:2px}
+@media (max-width:600px){.paths,.lvbig{grid-template-columns:minmax(0,1fr)}.lvc{min-height:0}.rubed{grid-template-columns:minmax(0,1fr)}}
+
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <div class="brand"><svg class="mark" viewBox="0 0 40 40" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="20" cy="20" r="18.5"/><circle cx="20" cy="20" r="4.5"/><path d="M20 6c3.5 4 3.5 7.5 0 9.5c-3.5-2-3.5-5.5 0-9.5zM20 34c3.5-4 3.5-7.5 0-9.5c-3.5 2-3.5 5.5 0 9.5zM6 20c4-3.5 7.5-3.5 9.5 0c-2 3.5-5.5 3.5-9.5 0zM34 20c-4-3.5-7.5-3.5-9.5 0c2 3.5 5.5 3.5 9.5 0zM10.1 10.1c5.3.4 7.8 2.9 7 6.9c-4 .8-6.5-1.7-7-6.9zM29.9 29.9c-5.3-.4-7.8-2.9-7-6.9c4-.8 6.5 1.7 7 6.9zM29.9 10.1c-.4 5.3-2.9 7.8-6.9 7c-.8-4 1.7-6.5 6.9-7zM10.1 29.9c.4-5.3 2.9-7.8 6.9-7c.8 4-1.7 6.5-6.9 7z"/></svg><b>오늘의 책문</b><span id="today"></span></div>
+    <div class="toplinks" id="toplinks" style="align-items:center;flex-wrap:wrap;justify-content:flex-end;gap:10px 14px"></div>
+  </header>
+  <div class="lattice" aria-hidden="true"></div>
+  <nav aria-label="진행 단계"><ol class="track" id="track"></ol></nav>
+  <main id="main"></main>
+</div>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script>
+/* =========================================================
+   오늘의 책문 v4.1 목업
+   구조: 데이터 / AI 모듈 / 상태(S) / 화면(v*) / 이벤트(bind)
+
+   ※ 개발 안내
+   - AI 모듈(const AI) 안의 함수만 서버 함수 호출로 바꾸면 됩니다.
+     예) async analyzeAndRebut(input){ const r = await fetch('/api/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(input)}); return r.json(); }
+   - 각 함수 위 주석의 출력 JSON 형식만 지키면 화면 코드는 고칠 필요가 없습니다.
+   - API 키는 이 파일에 절대 넣지 말고, 서버 함수(Vercel 환경변수)에서만 쓰세요.
+   ========================================================= */
+
+/* ---------- 데이터 (시연 기사 v2) ---------- */
+/* =========================================================
+   오늘의 책문 시연 기사 v2 (2026-11-18 21시 확정: 질문 재검토 반영)
+   - lib/data.ts의 PERSONAS, ARTICLES를 이 내용으로 바꿔 주세요. (LEVELS, PROFILE은 그대로)
+   - 형식은 기존 목업과 같습니다. 새로 추가된 칸:
+       PERSONAS[*].focus / asks / tone / expert  → 반론 지시문(feedback)에 넣을 페르소나 카드
+       ARTICLES[*].url                          → 기사 원문 링크
+       ARTICLES[*].personas                     → 이 기사에서 반론 후보로 쓸 페르소나 (서버가 이 중 최근에 안 쓴 3명을 후보로 줌)
+   - bank / choshiBank는 API 키가 없거나 호출이 실패했을 때 쓰는 예비 반론입니다. (live 모드에서는 Claude가 새로 씀)
+   - clusters는 AI 페르소나 시드 답안 108개(기사별 36개)를 논거 유형으로 묶은 관점 지도입니다. (seeds_*.json 참고)
+     logic은 글 실력 기반 추정값입니다. 실사용 테스트의 실제 답안이 생기면 seeds 파일에 source:'real'로 추가하고 다시 묶습니다.
+   - 필드 이름 tam은 코드 호환을 위해 그대로 두었고, 화면 문구는 '어람작'입니다.
+   - summary의 src 번호는 0부터 셉니다. (src:1 = 요약 2번째 줄)
+   ========================================================= */
+
+const PERSONAS = {
+  /* ---- 공통 관점 10명: 무엇을 가장 중요하게 보는가로 나눔 ---- */
+  econ:    {name:'경제학자', mark:'經', desc:'비용과 유인을 따지는 관점',
+            focus:'비용은 누가 내는가, 사람들의 행동(유인)은 어떻게 바뀌는가, 효율',
+            asks:['그 비용은 결국 누가 부담합니까?','이 제도가 생기면 사람들은 어떻게 다르게 행동하겠습니까?'],
+            tone:'차분하고 숫자와 구조를 묻는 말투'},
+  labor:   {name:'현장 노동자', mark:'勞', desc:'일하는 사람의 하루에서 보는 관점',
+            focus:'실제로 일하는 사람의 하루, 임금, 노동 강도, 협상력',
+            asks:['그래서 내 하루는 실제로 어떻게 바뀝니까?','협상력이 약한 사람에게도 똑같이 적용됩니까?'],
+            tone:'직설적이고 생활 언어를 쓰는 말투'},
+  law:     {name:'법조인', mark:'法', desc:'권리와 책임의 기준을 묻는 관점',
+            focus:'권리와 책임의 기준, 형평, 목적과 수단의 비례',
+            asks:['그 책임을 지우는 기준은 무엇입니까?','목적이 정당해도 수단이 지나치지는 않습니까?'],
+            tone:'정확하고 원칙을 따지는 말투'},
+  shop:    {name:'소상공인', mark:'商', desc:'작은 가게의 현실에서 보는 관점',
+            focus:'작은 사업장의 인력·비용 부담, 대체 불가능한 일손',
+            asks:['직원이 몇 명 안 되는 곳에서도 가능합니까?','돈으로 메울 수 없는 빈자리는 어떻게 합니까?'],
+            tone:'현실적이고 구체적인 사례를 드는 말투'},
+  edu:     {name:'교육자', mark:'敎', desc:'배움의 목적을 묻는 관점',
+            focus:'배움과 평가의 본래 목적, 학생에게 남는 것',
+            asks:['이 방식으로 학생은 무엇을 배웁니까?','평가가 원래 확인하려던 능력은 무엇입니까?'],
+            tone:'따뜻하지만 본질을 묻는 말투'},
+  eng:     {name:'엔지니어', mark:'工', desc:'기술이 실제로 작동하는 방식에서 보는 관점',
+            focus:'기술이 실제로 작동하는 방식, 실현 가능성, 기술 변화 속도',
+            asks:['그 방법이 기술적으로 실제로 작동합니까?','기술이 바뀌면 그 대책도 계속 통합니까?'],
+            tone:'담백하고 작동 원리를 묻는 말투'},
+  citizen: {name:'시민·소비자', mark:'民', desc:'일상에서 쓰고 비용을 내는 사람의 관점',
+            focus:'일상에서 서비스를 쓰는 사람, 결국 비용을 내는 사람, 정직하게 사는 다수',
+            asks:['평범한 이용자에게는 무엇이 달라집니까?','그 부담은 결국 누구의 지갑에서 나옵니까?'],
+            tone:'평범하고 솔직한 말투'},
+  admin:   {name:'행정 실무자', mark:'政', desc:'실제로 집행할 수 있는지를 묻는 관점',
+            focus:'예산, 인력, 집행 절차, 지원 대상 선정 기준',
+            asks:['그 정책을 실제로 집행할 인력과 예산이 있습니까?','지원 대상은 어떤 기준으로 고릅니까?'],
+            tone:'절차와 실행을 따지는 말투'},
+  future:  {name:'미래 세대', mark:'來', desc:'장기적 영향과 다음 세대를 보는 관점',
+            focus:'10년 뒤의 영향, 환경, 다음 세대가 떠안는 부담',
+            asks:['10년 뒤에는 이 결정이 어떤 결과를 남깁니까?','그 비용을 나중 세대가 떠안지는 않습니까?'],
+            tone:'멀리 보고 묻는 말투'},
+  margin:  {name:'소외된 당사자', mark:'隅', desc:'제도에서 빠지기 쉬운 사람의 관점',
+            focus:'제도의 혜택에서 빠지거나 부담만 지는 사람',
+            asks:['이 제도에서 빠지는 사람은 누구입니까?','가장 형편이 어려운 사람에게도 같은 결과가 나옵니까?'],
+            tone:'조용하지만 단호한 말투'},
+
+  /* ---- 기사별 전문가 6명 (기사를 고를 때 함께 만듦) ---- */
+  hr:        {name:'인사 담당자', mark:'人', desc:'회사에서 사람을 뽑고 근무를 짜는 관점', expert:true,
+              focus:'채용 경쟁력, 근무표 편성, 업무 공백',
+              asks:['그 빈자리를 근무표에서 어떻게 메웁니까?','근무 조건 경쟁에서 밀리는 회사는 어떻게 됩니까?'],
+              tone:'실무적이고 구체적인 말투'},
+  nurse:     {name:'교대 근무 간호사', mark:'看', desc:'누군가는 늘 자리를 지켜야 하는 일터의 관점', expert:true,
+              focus:'자리를 비울 수 없는 일, 쉬는 사람과 메우는 사람의 불균형',
+              asks:['내가 쉬는 시간은 누구의 추가 근무입니까?','사람이 늘 있어야 하는 곳에도 같은 제도가 맞습니까?'],
+              tone:'현장 경험에서 나오는 차분한 말투'},
+  proctor:   {name:'수능 감독 교사', mark:'監', desc:'시험장 안에서 실제로 감독하는 사람의 관점', expert:true,
+              focus:'감독 인력의 한계, 현장에서 실제로 할 수 있는 검사',
+              asks:['감독 교사 한 명이 그 검사를 실제로 해낼 수 있습니까?','현장에서 놓치면 그 책임은 누가 집니까?'],
+              tone:'현장의 부담을 담담하게 말하는 말투'},
+  examinee:  {name:'안경을 쓰는 수험생', mark:'生', desc:'의심받는 쪽에 서게 된 수험생의 관점', expert:true,
+              focus:'시험 당일의 불안과 낙인, 정직한 수험생이 치르는 비용',
+              asks:['정직한 수험생이 의심받는 부담은 누가 덜어 줍니까?','그 불편은 모두에게 정말 똑같습니까?'],
+              tone:'솔직하고 당사자의 감정이 담긴 말투'},
+  adjuster:  {name:'보험 손해사정사', mark:'査', desc:'사고 원인을 가리고 보상을 정하는 관점', expert:true,
+              focus:'사고 원인 판정의 어려움, 보상이 늦어지는 공백',
+              asks:['원인을 가리는 동안 피해자는 누구에게 보상받습니까?','원인이 여러 곳에 걸쳐 있으면 어떻게 나눕니까?'],
+              tone:'건조하고 절차를 따지는 말투'},
+  family:    {name:'사고 피해자 가족', mark:'家', desc:'사고를 당한 쪽에서 보는 관점', expert:true,
+              focus:'피해자가 실제로 겪는 절차, 누구를 상대해야 하는지의 막막함',
+              asks:['피해자는 누구에게 먼저 연락해야 합니까?','책임이 나뉘면 피해자에게는 무엇이 더 어려워집니까?'],
+              tone:'절실하지만 차분한 말투'}
+};
+
+const ARTICLES = [
+ /* ===================== 1. 사회: 주 4.5일제 ===================== */
+ {id:'work45', field:'사회', title:'주 4.5일제, 줄어든 시간의 비용은 누가 낼까',
+  url:'https://www.newsis.com/view/NISX20251213_0003439679', source:'뉴시스', date:'2025.12.13',
+  oneLine:'정부가 주 4.5일제를 법으로 강제하는 대신 지원 방식으로 추진하면서, 줄어든 시간의 비용을 누가 낼지를 두고 노사가 엇갈린다.',
+  body:null, /* 원문 전문: 팀이 준비한 기사 본문을 문단별 문자열 배열로 넣기 ['첫 문단','둘째 문단',...] */
+  summary:['정부는 주 4.5일제를 법으로 강제하는 대신, 스스로 도입하는 기업에 비용을 지원하는 방식을 택했다.',
+           '노동계는 건강권을 위해 근로시간 단축이 필요하다고 보지만, 경영계는 경쟁력이 떨어질 수 있다고 우려한다.',
+           '임금을 그대로 두고 일하는 시간만 줄일 수 있는지, 생산성과 비용 문제가 아직 정리되지 않았다는 지적도 나온다.'],
+  personas:['econ','labor','shop','margin','admin','citizen','hr','nurse'],
+  q:{choshi:'졸업 후 첫 직장을 고를 때, 월급이 조금 적은 주 4.5일제 회사와 월급이 더 많은 주 5일제 회사 중 어디를 고르겠습니까? 왜 그렇습니까?',
+     boksi:'근로시간을 줄일 때 생기는 비용은 누가 부담해야 합니까? 노동자의 임금, 기업의 이윤, 정부 지원 중 무엇을 기준으로 나눌지 근거를 들어 답하십시오.',
+     jeonsi:'제시문 두 편을 읽고, 근로시간 단축의 비용을 노동자, 기업, 정부가 나누어 부담하는 방안을 설계하라.'},
+  stances:[
+   {id:'firm', label:'기업 부담', kw:['기업이 부담','기업이 책임','이윤','회사가 부담','기업 몫'],
+    premise:'줄어든 시간만큼 기업이 생산성을 높여 비용을 흡수할 수 있다',
+    premiseQ:'생산성을 높일 여력이 없는 회사라면 어떻게 됩니까?',
+    bank:[
+     {p:'shop', t:'직원 다섯 명인 가게는 줄어든 시간을 생산성으로 메울 방법이 마땅치 않습니다. 같은 부담을 모든 사업장에 지우는 것이 공정합니까?',
+      q:'여력이 서로 다른 사업장에 같은 부담을 지워도 된다고 보는 근거는 무엇입니까?'},
+     {p:'hr', t:'비용이 오르면 회사는 채용을 줄이는 쪽을 택할 수 있습니다. 그 부담은 결국 일자리를 찾는 사람에게 돌아가지 않습니까?',
+      q:'기업이 비용을 줄이는 방식까지 고려해도 당신의 주장은 유지됩니까?'},
+     {p:'econ', t:'경영계는 경쟁력이 떨어질 수 있다고 우려합니다. 생산성이 오르지 않는다면 그 비용은 어디서 나옵니까?',
+      q:'생산성이 오른다는 전제가 틀리면, 당신의 주장은 어떻게 달라집니까?', src:1}]},
+   {id:'worker', label:'임금 일부 감수', kw:['임금','월급','덜 받','감수','반반'],
+    premise:'임금이 조금 줄더라도 쉬는 시간이 노동자에게 더 큰 이익이다',
+    premiseQ:'월급이 빠듯한 노동자에게도 그 선택이 이익입니까?',
+    bank:[
+     {p:'labor', t:'월급이 빠듯한 사람에게 임금 삭감은 선택이 아니라 강요입니다. 쉬는 시간을 돈으로 사야 한다면, 그 시간은 누구에게 열립니까?',
+      q:'형편이 다른 노동자에게도 같은 결론이 나옵니까?'},
+     {p:'margin', t:'임금 감수를 기준으로 하면, 이미 임금이 낮은 노동자는 단축을 포기하게 됩니다.',
+      q:'이 기준에서 단축을 가장 누리지 못하는 사람은 누구가 됩니까?'},
+     {p:'econ', t:'일하는 시간이 줄어도 생산성이 그대로라면 임금을 깎을 이유가 없습니다. 생산성이 줄어든다는 전제는 확인된 것입니까?',
+      q:'생산성 변화가 아직 정리되지 않았다면, 임금부터 줄이자는 근거는 무엇입니까?', src:2}]},
+   {id:'gov', label:'정부 지원', kw:['정부','세금','국가','지원'],
+    premise:'세금으로 지원하면 노동자와 기업 모두 부담 없이 근로시간을 줄일 수 있다',
+    premiseQ:'세금도 결국 누군가 내는 돈이라면, 부담은 정말 사라집니까?',
+    bank:[
+     {p:'citizen', t:'세금은 주 4.5일제를 누리지 못하는 사람도 냅니다. 그 사람들에게 이 지원은 공정합니까?',
+      q:'혜택을 받지 못하는 납세자에게 당신은 무엇이라고 설명하겠습니까?', src:0},
+     {p:'admin', t:'지원을 받으려면 신청과 증빙이 필요합니다. 행정 여력이 없는 작은 회사일수록 지원을 못 받지 않겠습니까?',
+      q:'지원이 실제로 필요한 곳에 닿으려면 무엇이 더 필요합니까?'},
+     {p:'future', t:'지원은 언젠가 끝납니다. 그때 비용은 다시 기업과 노동자에게 돌아가지 않습니까?',
+      q:'지원이 끝난 뒤에도 제도가 유지되려면 무엇이 필요합니까?'}]}],
+  choshiPremise:'월급이 조금 줄어도 생활에 큰 지장이 없다',
+  choshiQ:'월급이 줄어 생활이 빠듯해진다면, 그래도 같은 선택을 하겠습니까?',
+  choshiBank:[
+   {p:'labor', t:'월급이 적은 회사를 고를 수 있는 것도 여유가 있을 때 이야기입니다. 갚아야 할 학자금이 있는 사람에게도 같은 선택이 쉽겠습니까?',
+    q:'형편이 다른 사람이라면 같은 선택을 할 수 있다고 봅니까?'},
+   {p:'econ', t:'반나절을 쉬는 대가로 연봉이 줄어든다면, 그 반나절의 값을 당신은 얼마로 보십니까?',
+    q:'시간과 돈을 비교하는 당신의 기준은 무엇입니까?'}],
+  samples:{
+   choshi:'나는 월급이 조금 적어도 주 4.5일제 회사를 고르겠다. 쉬는 시간이 있어야 오래 일할 수 있을 것 같다. 돈은 나중에 더 벌 수 있지만 시간은 다시 오지 않는다.',
+   boksi:'근로시간 단축의 비용은 기업이 부담해야 한다. 쉬는 시간이 늘면 직원들의 집중력이 높아져 생산성이 오를 것이다. 해외에서도 근무일을 줄인 회사들이 성과를 냈다는 이야기를 들은 적이 있다. 노동자의 임금을 깎으면 결국 아무도 단축을 원하지 않을 것 같다. 따라서 줄어든 시간의 비용은 기업 이윤에서 나와야 한다.'},
+  revised:{
+   choshi:'나는 월급이 조금 적어도 주 4.5일제 회사를 고르겠다. 기사에 따르면 노동계는 건강권을 위해 근로시간 단축이 필요하다고 본다. 물론 월급이 줄면 생활이 빠듯해질 수 있다. 그래서 줄어드는 월급으로도 생활비를 감당할 수 있을 때만 그 회사를 고르겠다.',
+   boksi:'근로시간 단축의 비용은 기본적으로 기업이 부담해야 한다. 쉬는 시간이 늘어 집중력이 높아지면 그만큼 생산성이 오를 수 있기 때문이다. 물론 기사에서 지적하듯 생산성과 비용 문제가 아직 정리되지 않았고, 작은 사업장은 그 비용을 감당하기 어렵다는 반론이 있다. 그래서 대기업은 스스로 부담하고, 직원 수가 적은 사업장에 한해 정부가 일정 기간 지원해야 한다. 이렇게 하면 노동자의 임금을 깎지 않으면서도 작은 회사가 뒤처지지 않는다. 따라서 비용은 기업이 기본으로 지고, 정부 지원은 여력이 없는 곳에만 보태야 한다.'},
+  clusters:[
+   {"label": "생산성과 인재로 흡수", "stance": "firm", "n": 10, "x": 0.25, "y": 0.36, "logic": 3.3, "s": {"who": "응시자 05", "text": "비용은 기업 이윤에서 나와야 한다. 근로시간이 줄면 노동자는 덜 지치고, 덜 지친 노동자는 실수를 덜 한다. 이 효과가 쌓이면 생산성이 오르고, 그 이익이 비용을 메운다. 경쟁력이 떨어진다는 경영계의 우려도 이해하지만, 생산성 향상 없이 시간만 줄이는 회사라면 그건 단축이 아니라 경영의 문제다. 따라서 기업이 부담하는 것이 맞고, 생산성을 올릴 책임도 기업에 있다.", "agree": 16, "pen": 14}},
+   {"label": "여력에 따라 나누기", "stance": "gov", "n": 7, "x": 0.74, "y": 0.3, "logic": 2.8, "s": {"who": "응시자 27", "text": "세금을 쓴다면 작은 회사에만 써야 한다고 생각한다. 대기업은 스스로 할 여력이 있다. 그런데 세금으로 대기업까지 지원하면 혜택을 못 받는 납세자에게 불공평하다. 직원 수가 적은 회사부터 지원해야 격차가 줄어든다.", "agree": 11, "pen": 10}},
+   {"label": "임금 감수와 노사 분담", "stance": "worker", "n": 9, "x": 0.71, "y": 0.7, "logic": 3.0, "s": {"who": "응시자 20", "text": "왜 한쪽만 비용을 져야 할까? 시간이 줄면 노동자는 쉬는 이익을, 기업은 생산성이라는 이익을 얻는다. 둘 다 이익을 보니 비용도 나누는 게 맞다. 예를 들어 임금은 조금 줄이고 나머지는 기업이 메우는 식이다. 그래야 오래 유지된다.", "agree": 14, "pen": 13}},
+   {"label": "정부가 처음 비용 분담", "stance": "gov", "n": 4, "x": 0.29, "y": 0.74, "logic": 2.7, "s": {"who": "응시자 23", "text": "처음에는 정부가 비용을 나눠 져야 한다. 기업도 노동자도 해 보지 않은 제도에 비용을 다 걸기는 어렵다. 정부가 법으로 강제하는 대신 지원을 택한 이유도 여기에 있다. 물론 세금이 쓰인다는 반론이 있지만, 지원은 처음 몇 년으로 기간을 정하면 된다. 그 기간에 생산성이 어떻게 바뀌는지 확인하고, 그 결과를 보고 기업과 노동자가 나눌 몫을 정하는 것이 순서다.", "agree": 6, "pen": 6}},
+   {"label": "단축 전에 다른 길부터", "stance": "other", "n": 4, "x": 0.5, "y": 0.52, "logic": 2.5, "s": {"who": "응시자 36", "text": "업종마다 답이 다르다. 사무직은 시간을 줄여도 일을 조정할 수 있다. 교대 근무는 누군가 쉬면 다른 사람이 메워야 한다. 그런 일터는 인력을 더 뽑는 비용이 핵심이다. 그래서 비용을 나누는 기준도 업종별로 달라야 한다.", "agree": 6, "pen": 6}},
+   {"label": "사회가 줄이는 비용", "stance": "gov", "n": 2, "x": 0.5, "y": 0.14, "logic": 4.3, "tam": true, "s": {"who": "응시자 32", "text": "정부가 일부를 부담해야 한다. 근로시간이 줄면 건강이 나아지고, 아이를 키울 시간도 생긴다. 이건 회사만의 이익이 아니라 사회 전체의 이익이다. 사회가 이익을 보면 사회가 비용을 나눠야 한다. 다만 세금을 쓰는 만큼 효과를 측정해 공개하는 조건이 필요하다. 효과가 없으면 지원도 멈춰야 한다.", "agree": 2, "pen": 9}}]},
+
+ /* ===================== (v3 추가) 경제: 유류세 인하 연장 ===================== */
+ {id:'fueltax', field:'경제', title:'4년째 이어진 유류세 인하, 계속해야 할까',
+  url:'https://www.korea.kr/news/policyNewsView.do?newsId=148975482', source:'대한민국 정책브리핑', date:'2026.11',
+  oneLine:'중동전쟁으로 고유가가 이어지자 정부가 유류세 인하를 2027년 1월까지 또 연장했다. 2021년에 한시 조치로 시작된 정책이다.',
+  body:null,
+  summary:['정부는 중동전쟁으로 고유가가 이어지자 휘발유 15%, 경유·부탄 25%의 유류세 인하를 2027년 1월 말까지 다시 연장했다.',
+           '유류세 인하는 2021년 11월 한시 조치로 시작됐지만, 국제유가 불안이 반복되면서 4년 넘게 이어지고 있다.',
+           '물가와 생계형 운전자의 부담을 덜어 준다는 평가와 함께, 세수가 줄고 혜택이 기름을 많이 쓰는 사람에게 더 돌아간다는 지적도 나온다.'],
+  personas:['econ','citizen','margin','admin','future','shop','labor'],
+  q:{choshi:'당신이 차가 없는 대학생이라면, 세금을 깎아 기름값을 낮춰 주는 정책에 찬성하겠습니까? 왜 그렇습니까?',
+     boksi:'고유가가 오래 이어질 때, 정부는 유류세 인하를 계속해야 합니까? 물가 안정, 세금 부담의 공정성, 에너지 절약 중 무엇을 가장 앞에 둘지 근거를 들어 답하십시오.',
+     jeonsi:'제시문을 바탕으로, 고유가 시기에 재정과 형평을 함께 고려한 유류비 지원 정책을 설계하라.'},
+  stances:[
+   {id:'keep', label:'인하 유지', kw:['유지','계속','연장','물가','서민','생계'],
+    premise:'유류세를 깎은 만큼 소비자 가격이 내려가 서민의 부담이 실제로 줄어든다',
+    premiseQ:'기름을 많이 쓰는 사람일수록 더 많이 깎인다면, 가장 큰 혜택은 누구에게 갑니까?',
+    bank:[
+     {p:'margin', t:'차가 없는 사람은 유류세 인하로 깎이는 것이 없습니다. 그런데 줄어든 세금만큼의 공백은 모두가 나눠 집니다.',
+      q:'혜택을 받지 못하는 사람에게도 이 정책이 공정하다고 보는 근거는 무엇입니까?', src:2},
+     {p:'econ', t:'한시 조치가 4년 넘게 이어지면, 사람들은 싼 기름값을 당연하게 여기고 덜 쓸 이유를 잃습니다.',
+      q:'인하가 끝나지 않는다면 그것은 아직 비상조치입니까?', src:1},
+     {p:'admin', t:'유류세는 도로와 교통, 환경 사업에 쓰이는 세금입니다. 이 돈이 줄면 그 사업은 무엇으로 합니까?',
+      q:'줄어든 세금의 빈자리를 당신의 주장은 어떻게 채웁니까?'}]},
+   {id:'target', label:'필요한 곳만 지원', kw:['선별','대상','화물','생계형','바우처','필요한 사람','저소득'],
+    premise:'정말 지원이 필요한 사람을 정부가 정확하게 골라낼 수 있다',
+    premiseQ:'골라내는 기준에서 빠지는 사람은 어떻게 됩니까?',
+    bank:[
+     {p:'admin', t:'생계형 운전자를 가려내려면 신청과 증빙이 필요합니다. 그 절차를 감당하지 못하는 사람이 가장 먼저 빠집니다.',
+      q:'지원이 실제로 필요한 사람에게 닿으려면 무엇이 더 필요합니까?'},
+     {p:'shop', t:'배달 오토바이 한 대로 장사하는 사람과 출퇴근용 차를 모는 직장인의 경계는 생각보다 흐립니다.',
+      q:'누구를 지원 대상으로 볼지 당신은 어떤 기준으로 나눕니까?'},
+     {p:'citizen', t:'기름값은 버스 요금과 택배비, 물건값에도 섞여 있습니다. 직접 주유하지 않는 사람도 오른 기름값을 냅니다.',
+      q:'간접적으로 부담하는 사람까지 고려해도 당신의 기준은 유지됩니까?'}]},
+   {id:'end', label:'단계적 종료', kw:['종료','환원','세수','재정','절약','탄소','되돌'],
+    premise:'유류세를 되돌려도 물가와 생계가 감당할 수 있는 수준에 머문다',
+    premiseQ:'기름값이 갑자기 오르면 가장 먼저 무너지는 사람은 누구입니까?',
+    bank:[
+     {p:'labor', t:'화물차 기사에게 기름값은 하루 벌이를 그대로 깎아 먹는 비용입니다. 환원은 그 사람의 임금을 깎는 것과 같습니다.',
+      q:'생계가 기름값에 걸린 사람에게도 같은 결론이 나옵니까?'},
+     {p:'citizen', t:'전쟁이 끝나지 않았는데 세금을 되돌리면, 체감 물가는 한꺼번에 뜁니다.',
+      q:'언제, 어떤 조건에서 되돌려야 한다고 봅니까?', src:0},
+     {p:'future', t:'기름을 덜 쓰게 만드는 것이 장기적으로 맞더라도, 대중교통이 닿지 않는 지역 사람에게는 다른 선택지가 없습니다.',
+      q:'선택지가 없는 사람에게 절약을 요구하는 것은 공정합니까?'}]}],
+  choshiPremise:'차가 없으면 유류세 인하는 나와 상관이 없다',
+  choshiQ:'버스 요금과 택배비, 물건값에도 기름값이 들어 있다면 어떻게 봅니까?',
+  choshiBank:[
+   {p:'citizen', t:'직접 주유하지 않아도 기름값은 버스 요금과 물건값에 섞여 들어옵니다. 정말 상관이 없습니까?',
+    q:'간접적으로 내는 기름값까지 생각해도 같은 답을 하겠습니까?'},
+   {p:'margin', t:'차 없이는 출근할 수 없는 지역에 사는 사람에게 기름값은 선택이 아니라 생활비입니다.',
+    q:'형편이 다른 사람의 자리에서 봐도 같은 결론이 나옵니까?'}],
+  samples:{
+   choshi:'나는 차가 없어서 유류세 인하에 찬성하지 않는다. 내가 혜택을 받지 않는데 세금이 줄어드는 것은 손해라고 생각한다. 차를 타는 사람들이 제값을 내면 된다.',
+   boksi:'정부는 유류세 인하를 계속해야 한다. 중동전쟁으로 기름값이 오르면 모든 물가가 따라 오르기 때문이다. 특히 화물차 기사처럼 기름값이 생계와 직결된 사람이 많다. 세금이 줄어드는 것보다 국민이 버티는 것이 더 중요하다. 따라서 물가 안정을 가장 앞에 두고 인하를 유지해야 한다.'},
+  revised:{
+   choshi:'나는 차가 없지만 유류세 인하에 반대만 하기는 어렵다. 기름값은 버스 요금과 물건값에도 섞여 있어서 나도 간접적으로 내기 때문이다. 다만 혜택이 기름을 많이 쓰는 사람에게 더 가는 것은 공정하지 않다. 그래서 인하를 하더라도 생계형 운전자를 먼저 지원하는 방식이면 찬성하겠다.',
+   boksi:'정부는 당분간 유류세 인하를 유지해야 한다. 기사에 따르면 중동전쟁으로 고유가가 이어지고 있고, 기름값은 물건값과 교통비로 번져 물가 전체를 끌어올린다. 물론 인하가 4년 넘게 이어지면서 세수가 줄고, 혜택이 기름을 많이 쓰는 사람에게 더 간다는 지적이 있다. 그래서 인하는 유지하되 인하 폭은 단계적으로 줄이고, 그만큼 생긴 세금은 화물차 기사 같은 생계형 운전자 지원에 써야 한다. 이렇게 하면 물가 충격을 막으면서도 끝나지 않는 비상조치가 되지 않는다. 따라서 물가 안정을 앞에 두되, 공정성을 위해 지원 대상을 좁혀 가야 한다.'},
+  clusters:[
+   {"label": "물가부터 막기", "stance": "keep", "n": 11, "x": 0.25, "y": 0.36, "logic": 2.8, "s": {"who": "응시자 04", "text": "유류세 인하는 계속해야 한다. 기름값은 거의 모든 물건값에 들어가기 때문에, 기름값이 뛰면 물가 전체가 함께 뛴다. 세수가 줄어든다는 걱정도 있지만, 물가가 오르면 결국 정부가 다른 지원금을 더 써야 한다. 전쟁처럼 바깥에서 온 충격은 정부가 먼저 막아 주는 것이 맞다.", "agree": 15, "pen": 12}},
+   {"label": "생계형 운전자만 지원", "stance": "target", "n": 10, "x": 0.74, "y": 0.3, "logic": 3.3, "s": {"who": "응시자 12", "text": "모두의 기름값을 깎기보다 기름값이 생계와 직결된 사람만 지원해야 한다. 지금 방식은 큰 차를 많이 모는 사람이 더 많이 혜택을 받는다. 화물차 기사나 배달 노동자처럼 기름값이 곧 비용인 사람에게 바우처를 주면, 같은 돈으로 더 필요한 곳을 도울 수 있다. 가려내는 절차가 번거롭다는 반론이 있지만, 화물차 등록처럼 이미 있는 자료를 쓰면 줄일 수 있다.", "agree": 13, "pen": 13}},
+   {"label": "단계적으로 되돌리기", "stance": "end", "n": 9, "x": 0.71, "y": 0.7, "logic": 3.0, "s": {"who": "응시자 21", "text": "유류세 인하는 단계적으로 끝내야 한다. 한시 조치가 4년 넘게 이어지면 더 이상 한시가 아니다. 한 번에 되돌리면 충격이 크니, 몇 달에 걸쳐 인하 폭을 줄여 가는 것이 좋다. 그래야 줄어든 세금도 회복된다.", "agree": 11, "pen": 10}},
+   {"label": "기름값을 탄소의 값으로", "stance": "end", "n": 3, "x": 0.5, "y": 0.14, "logic": 3.8, "tam": true, "s": {"who": "응시자 33", "text": "유류세 논쟁에서 빠진 것은 환경이다. 유류세의 정식 이름은 교통·에너지·환경세이고, 기름을 쓰는 만큼 생기는 비용을 쓰는 사람이 내게 하는 장치이기도 하다. 그런데 기름값을 계속 깎아 주면 덜 쓸 이유가 사라진다. 물론 지금 당장 기름값이 오르면 생계가 어려워지는 사람이 있다는 반론이 맞다. 그래서 세금은 되돌리되, 거둔 돈의 일부를 대중교통 요금 지원으로 돌려주자는 것이다. 이렇게 하면 기름을 덜 쓰는 쪽을 고를 수 있는 사람이 늘어난다.", "agree": 2, "pen": 9}}]},
+
+ /* ===================== 2. 교육: AI 안경·초소형 카메라 부정행위 ===================== */
+ {id:'aiexam', field:'교육', title:'AI 안경과 초소형 카메라, 시험은 무엇부터 바꿔야 할까',
+  url:'https://www.fnnews.com/news/202611151338569828', source:'파이낸셜뉴스', date:'2026.11.15', demo:true,
+  oneLine:'국가자격시험에서 초소형 카메라와 생성형 AI를 쓴 부정행위가 드러나, 수능을 앞두고 안경·시계 점검 같은 대책이 나왔다.',
+  body:null,
+  summary:['국가자격시험 수석 합격자가 초소형 카메라와 생성형 AI로 답을 받은 사실을 털어놓으며 시험 부정행위 논란이 커졌다.',
+           '정부는 수능을 앞두고 안경·시계 점검, 시험 중 전파 차단 검토, 적발 시 성적 무효 같은 대책을 내놓았다.',
+           '탐지 기술에는 한계가 있고, 안경을 쓴 수험생이 의심받는 부작용도 있다는 지적이 나온다.'],
+  personas:['law','edu','eng','citizen','admin','proctor','examinee'],
+  q:{choshi:'당신이 수험생이라면, 안경을 썼다는 이유만으로 시험 전에 따로 검사받는 것을 받아들이겠습니까? 왜 그렇습니까?',
+     boksi:'AI가 시험장 안까지 들어온 지금, 시험의 공정성을 지키려면 무엇을 가장 먼저 바꿔야 합니까? 감독, 처벌, 시험 방식 중 무엇을 골라도 좋으니, 왜 그것이 먼저인지 근거를 들어 답하십시오.',
+     jeonsi:'제시문을 바탕으로, 수험생의 권리를 지키면서 AI 기기 부정행위를 막는 시험 관리 방안을 제시하라.'},
+  stances:[
+   {id:'watch', label:'감독 강화', kw:['감독','검사','전수','전파','차단','철저','장비'],
+    premise:'감독과 검사를 강화하면 부정행위를 실제로 잡아낼 수 있다',
+    premiseQ:'눈에 보이지 않는 기기까지 검사로 잡을 수 없다면, 강한 감독은 무엇을 지킵니까?',
+    bank:[
+     {p:'examinee', t:'검사가 강해질수록 안경을 쓴 수험생은 시험 내내 의심받는다는 느낌 속에서 문제를 풀어야 합니다. 그 부담은 공정합니까?',
+      q:'부정행위를 하지 않은 수험생이 치르는 비용을 당신의 주장은 어떻게 다룹니까?', src:2},
+     {p:'proctor', t:'감독 교사 한 명이 수십 명의 안경과 옷깃을 살피는 동안 다른 감독은 비게 됩니다. 검사를 늘리면 감독은 정말 촘촘해집니까?',
+      q:'현장의 인력으로 그 검사가 실제로 가능하다고 보는 근거는 무엇입니까?'},
+     {p:'eng', t:'기기는 계속 작아지고 성능은 좋아집니다. 오늘의 검사 방법이 내년의 기기에도 통하겠습니까?',
+      q:'기술이 앞서갈 때, 감독은 무엇으로 따라잡습니까?'}]},
+   {id:'punish', label:'처벌 강화', kw:['처벌','박탈','형사','무관용','대가','엄벌'],
+    premise:'처벌이 무거우면 부정행위를 시도하는 사람이 줄어든다',
+    premiseQ:'잡힐 가능성이 낮다고 믿는 사람에게도 무거운 처벌이 억제력이 됩니까?',
+    bank:[
+     {p:'proctor', t:'이번 사건도 감독관이 가까이 있었는데 잡지 못했습니다. 잡히지 않는다면 처벌의 무게는 무슨 의미가 있습니까?',
+      q:'본인이 털어놓지 않았다면 이 부정행위는 드러났을까요? 당신의 주장은 그 경우를 어떻게 다룹니까?', src:0},
+     {p:'law', t:'성적 무효를 넘어 응시 자격을 영구히 빼앗는 처벌은 잘못에 비해 지나치지 않습니까?',
+      q:'처벌의 무게를 정하는 당신의 기준은 무엇입니까?'},
+     {p:'citizen', t:'처벌은 부정행위가 끝난 뒤에 옵니다. 그 사이 떨어진 정직한 수험생은 무엇으로 돌려받습니까?',
+      q:'이미 생긴 피해를 처벌이 어떻게 되돌릴 수 있다고 봅니까?'}]},
+   {id:'redesign', label:'시험 방식 전환', kw:['시험 방식','평가 방식','구술','과정 평가','문제를 바꾸','외우는'],
+    premise:'시험 방식을 바꾸면 기기를 써도 소용없는 시험을 만들 수 있다',
+    premiseQ:'수십만 명이 같은 날 치르는 시험에서 그런 방식이 실제로 가능합니까?',
+    bank:[
+     {p:'admin', t:'수능은 수십만 명이 같은 날 같은 문제로 치릅니다. 구술이나 과정 평가를 그 규모로 운영할 인력과 예산이 있습니까?',
+      q:'그 규모에서도 당신의 대안이 작동한다고 보는 근거는 무엇입니까?'},
+     {p:'examinee', t:'시험 방식이 바뀌면 지금까지 준비해 온 수험생은 처음부터 다시 준비해야 합니다.',
+      q:'바뀌는 동안 손해를 보는 수험생은 어떻게 보호합니까?'},
+     {p:'edu', t:'새로운 시험 방식도 머지않아 사교육이 공략법을 만들어 냅니다. 그때 공정성은 다시 어떻게 지킵니까?',
+      q:'새 방식이 다시 공정성을 잃지 않으려면 무엇이 더 필요합니까?'}]}],
+  choshiPremise:'따로 검사받는 불편은 잠깐이고, 시험 결과에는 영향이 없다',
+  choshiQ:'따로 검사받는 경험이 시험에 집중하는 데 영향을 준다면 어떻게 봅니까?',
+  choshiBank:[
+   {p:'examinee', t:'안경을 쓰지 않는 사람에게는 아무 일도 아니지만, 쓰는 사람에게는 시험 전부터 의심받는 경험입니다. 똑같은 불편입니까?',
+    q:'어떤 사람에게만 더 무거운 불편이라면, 그래도 받아들일 만합니까?', src:2},
+   {p:'citizen', t:'정직하게 준비한 수험생이 부정행위자 때문에 떨어진다면, 몇 분의 검사는 오히려 그들을 지키는 일 아닙니까?',
+    q:'검사가 지키는 사람과 불편을 겪는 사람이 같다면, 당신의 생각은 달라집니까?'}],
+  samples:{
+   choshi:'안경을 썼다는 이유로 따로 검사받는 것은 받아들일 수 있다. 시험이 공정해야 모두가 결과를 믿을 수 있기 때문이다. 잠깐 불편한 것은 참을 수 있을 것 같다.',
+   boksi:'시험의 공정성을 지키려면 감독부터 바꿔야 한다. 최근 국가자격시험에서 수석 합격자가 초소형 카메라와 AI로 부정행위를 했는데도 감독관이 잡지 못했다. 처벌을 아무리 무겁게 해도 잡히지 않으면 소용이 없다. 그래서 시험장에 들어갈 때 모든 수험생의 안경과 소지품을 철저히 검사하고 전파도 차단해야 한다. 따라서 가장 먼저 바꿔야 할 것은 감독이다.'},
+  revised:{
+   choshi:'안경을 썼다는 이유만으로 따로 검사받는 것은 받아들이기 어렵다. 기사에 따르면 실제로 AI 기기로 부정행위를 한 사례가 있었지만, 안경 쓴 수험생이 의심받는 부작용도 지적된다. 물론 검사가 없으면 정직한 수험생이 손해를 볼 수 있다. 그래서 모든 수험생이 같은 방식으로 검사받는다면 받아들이겠다.',
+   boksi:'시험의 공정성을 지키려면 감독부터 바꿔야 한다. 기사에 따르면 국가자격시험에서 감독관이 가까이 있었는데도 초소형 카메라 부정행위를 잡지 못했다. 물론 사람의 눈으로는 점점 작아지는 기기를 따라잡기 어렵고, 안경 쓴 수험생만 의심받는다는 반론이 있다. 그래서 감독 교사의 눈에 기대는 대신 시험장마다 탐지 장비를 갖추고, 검사는 모든 수험생에게 같은 방식으로 해야 한다. 처벌 강화는 그다음에 덧붙일 수단이다. 따라서 가장 먼저 바꿔야 할 것은 사람이 아니라 장비로 하는 감독이다.'},
+  clusters:[
+   {"label": "기술로 막는 감독", "stance": "watch", "n": 9, "x": 0.25, "y": 0.36, "logic": 2.9, "s": {"who": "응시자 03", "text": "가장 먼저 바꿔야 할 것은 사람의 눈에 기대는 감독 방식이다. 이번 국가자격시험 사건에서 감독관이 가까이 있었는데도 초소형 카메라를 찾지 못했다는 것은 육안 감독의 한계를 보여 준다. 처벌을 무겁게 하자는 의견도 있지만, 잡히지 않는다고 믿는 사람에게 처벌은 억제력이 약하다. 그래서 시험장마다 전파 탐지 장비를 두고, 감독 교사는 장비가 신호를 잡았을 때 확인하는 역할을 맡아야 한다. 장비가 먼저 걸러 주면 감독 교사가 수십 명의 안경을 하나하나 살필 필요도 줄어든다.", "agree": 14, "pen": 13}},
+   {"label": "모두에게 같은 검사", "stance": "watch", "n": 5, "x": 0.74, "y": 0.3, "logic": 3.2, "s": {"who": "응시자 07", "text": "가장 먼저 바꿔야 할 것은 검사 방식이다. 지금처럼 안경 쓴 수험생만 따로 보면, 정직한 학생이 이유 없이 의심받는다. 모든 수험생이 같은 방식으로 소지품과 안경을 확인받는다면 그건 의심이 아니라 절차가 된다. 물론 시간이 더 걸린다는 반론이 있지만, 입실 시간을 조금 앞당기면 해결할 수 있다. 그래서 감독은 강화하되, 모두에게 똑같이 해야 한다.", "agree": 8, "pen": 7}},
+   {"label": "처벌과 끝까지 추적", "stance": "punish", "n": 8, "x": 0.71, "y": 0.7, "logic": 3.0, "s": {"who": "응시자 19", "text": "가장 먼저 바꿔야 할 것은 처벌 수위다. 감독은 늘 기술보다 한발 늦을 수밖에 없다. 반면 처벌은 지금 당장 바꿀 수 있다. 응시 자격 제한 같은 무거운 처벌이 있다는 것을 시험 전에 분명히 알리면 시도 자체가 줄어든다. 감독 강화는 그다음 순서다.", "agree": 13, "pen": 11}},
+   {"label": "시험 방식 전환", "stance": "redesign", "n": 5, "x": 0.29, "y": 0.74, "logic": 3.0, "s": {"who": "응시자 24", "text": "가장 먼저 바꿔야 할 것은 시험 방식이다. 문제를 찍어 AI에 보내면 바로 답이 나오는 시험이라면, 감독을 아무리 강화해도 기술과의 경쟁에서 계속 뒤처진다. 반대로 정답을 고르는 것보다 자기 풀이를 설명하는 비중을 늘리면, 밖에서 답을 받아도 쓸모가 줄어든다. 수십만 명이 보는 시험에서는 바로 바꾸기 어렵다는 반론이 맞다. 그래서 규모가 작은 자격시험부터 단계적으로 바꾸고, 그사이 큰 시험은 감독으로 버티는 순서가 필요하다.", "agree": 8, "pen": 7}},
+   {"label": "감독 교사가 아닌 국가 책임", "stance": "other", "n": 5, "x": 0.5, "y": 0.52, "logic": 2.8, "s": {"who": "응시자 31", "text": "먼저 바꿔야 할 것은 감독 교사에게 모든 책임을 지우는 구조다. 교사는 시험을 관리하는 사람이지 첨단 기기를 찾아내는 전문가가 아니다. 장비와 전담 인력을 국가가 마련해야 감독이 실제로 작동한다. 지금처럼 개인의 주의력에 맡기면 다음 사건에서도 같은 일이 반복된다.", "agree": 8, "pen": 7}},
+   {"label": "검사의 한계선 먼저", "stance": "other", "n": 4, "x": 0.5, "y": 0.14, "logic": 3.5, "tam": true, "s": {"who": "응시자 35", "text": "조심스럽지만, 가장 먼저 바꿔야 할 것은 검사가 넘지 말아야 할 선을 정하는 일이라고 생각한다. 기사에서도 안경 쓴 수험생이 의심받는 부작용이 지적되는데, 이런 일은 감독이 강해질수록 더 늘어날 수 있다. 물론 기준을 정하는 동안 부정행위가 생길 수 있다는 반론이 있다. 그래서 수험생 몸을 직접 확인하는 검사는 신호가 잡힌 경우로 한정하고, 그 외에는 소지품 보관과 장비 점검처럼 모두에게 같은 절차만 두자는 것이다. 이렇게 하면 막는 효과는 지키면서 정직한 수험생의 존엄도 지킬 수 있다.", "agree": 2, "pen": 9}}]},
+
+ /* ===================== 3. 과학기술: 로보택시 사고 책임 ===================== */
+ {id:'robotaxi', field:'과학기술', title:'운전자 없는 로보택시, 사고 나면 누구 책임?',
+  url:'https://etoday.co.kr/news/view/2565191', source:'이투데이', date:'',
+  oneLine:'운전자가 개입하지 않는 레벨4 로보택시 상용화를 앞두고, 사고가 나면 누구에게 책임을 물을지 법 정비가 논의된다.',
+  body:null,
+  summary:['정부는 운전자가 개입하지 않는 레벨4 자율주행의 상용화를 앞당기기 위해 관련 법 정비와 특별법 제정을 추진하고 있다.',
+           '시스템 결함으로 난 사고에서 제조사, 소프트웨어 개발사, 운영사가 책임을 나누는 기준을 법으로 정하는 방향이 논의된다.',
+           '기업 책임을 무겁게 하면 기술 발전이 늦어진다는 우려와, 그래야 안전 투자가 늘어난다는 반론이 맞선다.'],
+  personas:['eng','law','econ','citizen','future','adjuster','family'],
+  q:{choshi:'로보택시가 사람이 운전하는 택시보다 사고율은 훨씬 낮지만, 사고가 나면 누구에게 책임을 물을지 불분명하다면, 당신은 타겠습니까? 왜 그렇습니까?',
+     boksi:'운전자 없는 자율주행차 사고에서 제조사, 운영사, 승객, 보험 중 누가 먼저 책임져야 합니까? 피해자 보상과 기술 발전을 함께 고려해 근거를 드십시오.',
+     jeonsi:'제시문을 바탕으로 레벨4 자율주행 사고의 책임 분담 제도를 설계하라.'},
+  stances:[
+   {id:'maker', label:'제조사·운영사 책임', kw:['제조사','운영사','만든','기업이 책임','개발사'],
+    premise:'책임 부담이 커져도 기업이 자율주행 서비스를 계속 내놓을 것이다',
+    premiseQ:'책임이 커질 때 기업이 투자 대신 서비스를 줄인다면 어떻게 됩니까?',
+    bank:[
+     {p:'eng', t:'책임이 무거워지면 기업은 기능을 보수적으로 막아 둘 수 있습니다. 그것이 안전에 정말 이롭습니까?',
+      q:'기술 발전이 늦어지는 비용까지 고려해도 당신의 기준은 유지됩니까?', src:2},
+     {p:'econ', t:'책임 비용은 결국 요금과 보험료에 얹힙니다. 그 부담은 누가 집니까?',
+      q:'비용이 이용자에게 넘어간다면, 기업 책임의 의미는 무엇입니까?'},
+     {p:'adjuster', t:'사고 원인이 센서인지, 소프트웨어인지, 도로인지 가리는 데만 몇 달이 걸릴 수 있습니다. 그동안 피해자는 누구에게 보상받습니까?',
+      q:'책임자를 가리는 동안 생기는 보상 공백을 당신의 주장은 어떻게 메웁니까?', src:1}]},
+   {id:'shared', label:'보험·분담', kw:['분담','나눠','보험','함께','공동'],
+    premise:'여러 주체가 책임을 나누면 피해자가 더 빨리 보상받는다',
+    premiseQ:'책임이 나뉘면 서로 미루는 일은 어떻게 막습니까?',
+    bank:[
+     {p:'family', t:'책임이 여럿으로 나뉘면, 피해자 가족은 누구를 상대해야 하는지조차 알기 어렵습니다.',
+      q:'피해자 쪽에서 볼 때, 당신의 분담 방식은 무엇을 더 쉽게 만듭니까?'},
+     {p:'law', t:'승객은 차를 조작할 방법이 없습니다. 통제할 수 없는 사람에게 책임 일부를 지우는 것이 정당합니까?',
+      q:'책임은 통제할 수 있는 사람에게 있어야 한다는 원칙과 당신의 주장은 어떻게 맞습니까?'},
+     {p:'citizen', t:'로보택시가 다니는 길을 걷는 보행자는 그 서비스를 고른 적이 없습니다. 분담 구조에서 보행자는 어디에 있습니까?',
+      q:'서비스를 이용하지 않은 피해자는 누구에게 보상받아야 합니까?'}]}],
+  choshiPremise:'사고가 나도 책임 문제는 누군가 알아서 해결해 줄 것이다',
+  choshiQ:'아무도 먼저 책임지지 않는다면, 다친 사람은 어디서 보상받습니까?',
+  choshiBank:[
+   {p:'family', t:'사고율이 낮아도 사고를 당한 사람에게는 그 한 번이 전부입니다. 책임이 불분명하면 그 가족은 누구를 찾아가야 합니까?',
+    q:'드문 사고의 피해자까지 생각해도 같은 선택을 하겠습니까?'},
+   {p:'adjuster', t:'책임이 정해지지 않은 사고는 보상까지 몇 달이 걸릴 수 있습니다.',
+    q:'보상이 늦어지는 위험까지 포함해도 타겠습니까?', src:1}],
+  samples:{
+   choshi:'사고율이 훨씬 낮다면 로보택시를 타겠다. 사고가 날 가능성 자체가 줄어드는 것이 가장 중요하기 때문이다. 책임 문제는 회사가 알아서 정할 것 같다.',
+   boksi:'운전자 없는 자율주행차 사고의 책임은 제조사와 운영사가 먼저 져야 한다. 승객은 시스템이 어떻게 판단하는지 알 수 없다. 모든 사고에서 탑승자에게 책임을 물으면 아무도 로보택시를 타지 않을 것이다. 기업이 책임을 지면 안전에 더 투자하게 된다. 따라서 피해자 보상과 기술 발전을 함께 생각해도 제조사와 운영사가 먼저 책임지는 것이 맞다.'},
+  revised:{
+   choshi:'사고율이 훨씬 낮다면 로보택시를 타겠다. 사고가 날 가능성 자체가 줄어드는 것이 가장 중요하기 때문이다. 물론 사고가 났을 때 보상받을 곳이 분명하지 않으면 피해자가 오래 고생할 수 있다. 그래서 타기 전에 보험으로 먼저 보상받을 수 있다는 것이 확인될 때만 타겠다.',
+   boksi:'운전자 없는 자율주행차 사고의 책임은 제조사와 운영사가 먼저 져야 한다. 기사에 따르면 시스템 결함 사고의 책임을 제조사, 개발사, 운영사가 나누는 기준을 법으로 정하는 방향이 논의되고 있다. 물론 책임이 무거우면 기업이 기술 개발을 늦출 수 있다는 반론이 있다. 그래서 피해자에게는 먼저 보험으로 보상하고, 원인이 밝혀지면 기업들이 그 비용을 나눠 내게 해야 한다. 이렇게 하면 피해자 보상은 빨라지고 기업에는 안전에 투자할 이유가 남는다. 따라서 최종 책임은 기업에 두되, 보상은 보험이 먼저 해야 한다.'},
+  clusters:[
+   {"label": "책임져야 안전에 투자", "stance": "maker", "n": 6, "x": 0.25, "y": 0.36, "logic": 2.5, "s": {"who": "응시자 03", "text": "제조사와 운영사가 먼저 책임져야 한다. 책임이 있어야 안전에 돈을 쓴다. 책임이 흐릿하면 기업은 비용이 덜 드는 쪽을 고른다. 기술 발전이 늦어진다는 우려가 있지만, 안전하지 않은 기술은 발전이라고 부를 수 없다. 그래서 기업 책임이 먼저다.", "agree": 10, "pen": 8}},
+   {"label": "통제하고 만든 쪽이 책임", "stance": "maker", "n": 8, "x": 0.74, "y": 0.3, "logic": 3.4, "s": {"who": "응시자 07", "text": "책임은 차를 통제하는 쪽이 먼저 져야 한다. 운전자 없는 차에서 운전을 결정하는 것은 시스템이고, 그 시스템을 만들고 운영하는 것은 제조사와 운영사다. 승객은 목적지를 정할 뿐 주행에 개입할 수 없다. 기업 책임이 무거우면 기술 발전이 늦어진다는 반론이 있지만, 통제권이 없는 사람에게 책임을 나누면 그 원칙이 무너진다. 그래서 원칙은 통제권에 따르고, 기술 발전의 부담은 보험료 산정 같은 다른 방법으로 덜어 줘야 한다.", "agree": 13, "pen": 11}},
+   {"label": "보험·기금으로 먼저 보상", "stance": "shared", "n": 10, "x": 0.71, "y": 0.7, "logic": 3.2, "s": {"who": "응시자 16", "text": "보상은 보험이 먼저 하고, 책임은 나중에 가려야 한다. 기사에 따르면 시스템 결함 사고의 책임을 여러 주체가 나누는 기준이 논의되고 있는데, 나누는 주체가 많을수록 원인을 가리는 데 시간이 걸린다. 그 시간 동안 피해자를 기다리게 하면 안 된다. 보험사가 먼저 보상하면 기업이 책임을 피한다는 반론이 있지만, 보험사가 나중에 원인을 만든 쪽에 비용을 청구하면 기업 책임은 그대로 남는다. 그래서 먼저 보험, 나중에 구상이 맞다.", "agree": 16, "pen": 14}},
+   {"label": "보행자 먼저", "stance": "shared", "n": 4, "x": 0.29, "y": 0.74, "logic": 3.0, "s": {"who": "응시자 22", "text": "솔직히 이 논의에서 제일 빠져 있는 게 보행자라고 본다. 승객은 로보택시를 타겠다고 선택했지만, 길을 건너던 사람은 아무것도 고르지 않았다. 그런데 책임 분담 이야기는 대부분 제조사, 운영사, 승객 사이에서만 오간다. 보행자는 서로 책임을 미루는 사이에 끼면 가장 오래 기다리게 된다. 그래서 보행자 같은 비이용자 피해는 누구 잘못인지와 상관없이 먼저 보상하는 규칙이 있어야 한다.", "agree": 6, "pen": 6}},
+   {"label": "단계적으로 키우는 책임", "stance": "other", "n": 5, "x": 0.5, "y": 0.52, "logic": 2.8, "s": {"who": "응시자 31", "text": "초기에는 기업 책임을 가볍게 해야 한다. 기술은 실제로 달려 봐야 좋아진다. 책임이 너무 무거우면 기업은 달리지 않는 쪽을 고른다. 그러면 기술도 안전도 제자리다. 대신 운행이 늘수록 책임을 단계적으로 키우면 된다.", "agree": 8, "pen": 7}},
+   {"label": "주행 기록 공개 먼저", "stance": "other", "n": 3, "x": 0.5, "y": 0.14, "logic": 2.9, "tam": true, "s": {"who": "응시자 34", "text": "책임을 누구에게 둘지보다 먼저 정해야 할 것은 기록의 공개다. 시스템 결함인지, 도로 문제인지, 다른 차의 잘못인지는 사고 직전의 주행 기록을 보지 않으면 가릴 수 없다. 그런데 그 기록은 지금 기업이 가지고 있다. 기업 기밀이라는 반론이 있지만, 사고 당사자에게 사고 전후 기록만 공개하는 것은 기밀과 충돌하지 않는다. 기록이 공개되면 책임 분담 기준도 실제 원인에 따라 작동할 수 있다.", "agree": 2, "pen": 9}}]},
+
+ /* ===================== (v3 추가) 환경: AI 데이터센터 전력과 탄소 ===================== */
+ {id:'aidc', field:'환경', title:'AI 데이터센터가 늘린 전기, 탄소는 누가 책임질까',
+  url:'https://khan.co.kr/article/202609230600015', source:'경향신문', date:'2026.09.23',
+  oneLine:'반도체·AI 데이터센터 메가프로젝트가 막대한 전력을 필요로 하면서, 온실가스 배출이 크게 늘 것이라는 우려가 나온다.',
+  body:null,
+  summary:['정부가 반도체, AI 데이터센터, 피지컬 AI(로봇) 세 분야에 약 1500조 원이 들어가는 메가프로젝트를 추진하고 있다.',
+           'AI 데이터센터에 들어가는 서버는 기존 서버보다 전기를 10배 이상 쓰기 때문에, 온실가스 배출이 크게 늘 것이라는 우려가 나온다.',
+           '환경단체는 데이터센터 전력을 재생에너지로 공급해야 한다고 주장하고, 데이터센터 주변 주민들은 냉각팬의 소음과 진동을 호소한다.'],
+  personas:['eng','econ','future','citizen','margin','admin','law'],
+  q:{choshi:'당신이 매일 쓰는 AI 서비스가 일반 검색보다 훨씬 많은 전기를 쓴다는 것을 알게 된다면, 사용을 줄이겠습니까? 왜 그렇습니까?',
+     boksi:'AI 데이터센터가 늘면서 생기는 전력 수요와 탄소 배출은 누가 먼저 책임져야 합니까? 데이터센터를 짓는 기업, 전력을 공급하는 국가, AI를 쓰는 이용자 중 무엇을 기준으로 정할지 근거를 들어 답하십시오.',
+     jeonsi:'제시문을 바탕으로, AI 산업 육성과 탄소 감축 목표를 함께 지킬 수 있는 데이터센터 전력 정책을 설계하라.'},
+  stances:[
+   {id:'firm', label:'기업 책임', kw:['기업','빅테크','재생에너지','직접','의무','짓는'],
+    premise:'기업이 필요한 만큼의 재생에너지를 실제로 구할 수 있다',
+    premiseQ:'국내에 그만큼의 재생에너지가 아직 없다면, 기업 책임은 무엇으로 지킵니까?',
+    bank:[
+     {p:'eng', t:'재생에너지는 날씨에 따라 발전량이 바뀌지만, 데이터센터는 하루 종일 같은 양의 전기를 씁니다. 그 차이는 무엇으로 메웁니까?',
+      q:'기술적으로 24시간 재생에너지 공급이 가능하다고 보는 근거는 무엇입니까?'},
+     {p:'econ', t:'기업에 무거운 의무를 지우면 데이터센터는 규제가 약한 나라로 옮겨 갈 수 있습니다. 그러면 탄소는 줄어듭니까, 자리만 바뀝니까?',
+      q:'기업이 떠나는 경우까지 고려해도 당신의 주장은 유지됩니까?'},
+     {p:'margin', t:'데이터센터 옆에 사는 주민은 소음과 진동을 먼저 겪습니다. 탄소 책임만 따지면 이 사람들의 몫은 어디에 있습니까?',
+      q:'당신의 책임 기준에서 주민이 입는 피해는 어떻게 다룹니까?', src:2}]},
+   {id:'state', label:'국가 전력 확충', kw:['정부','국가','원전','발전소','전력망','공급'],
+    premise:'국가가 전력을 늘리면 탄소 문제도 함께 해결된다',
+    premiseQ:'늘어나는 전력이 화석연료에서 나온다면 어떻게 됩니까?',
+    bank:[
+     {p:'future', t:'발전소는 한 번 지으면 수십 년을 씁니다. 지금 급하게 늘린 전력이 다음 세대의 탄소가 되지 않겠습니까?',
+      q:'10년, 20년 뒤까지 생각해도 같은 결론이 나옵니까?'},
+     {p:'citizen', t:'전력망과 발전소를 늘리는 비용은 결국 전기요금과 세금으로 돌아옵니다. AI를 많이 쓰지 않는 사람도 그 값을 냅니다.',
+      q:'그 비용을 모두가 나누는 것이 공정하다고 보는 근거는 무엇입니까?'},
+     {p:'admin', t:'송전선 하나를 놓는 데도 주민 동의와 오랜 시간이 듭니다. 데이터센터가 생기는 속도를 국가가 따라갈 수 있습니까?',
+      q:'실제로 집행할 수 있는 속도까지 고려하면 당신의 대안은 어떻게 달라집니까?'}]},
+   {id:'user', label:'이용자 부담', kw:['이용자','사용','줄이','요금','덜 쓰','소비자'],
+    premise:'이용자가 사용량을 줄이면 데이터센터의 전력도 줄어든다',
+    premiseQ:'개인의 사용량보다 기업의 학습과 서비스 경쟁이 전력을 더 많이 쓴다면 어떻게 됩니까?',
+    bank:[
+     {p:'eng', t:'AI 전력의 상당 부분은 개인의 질문이 아니라 모델을 학습시키고 서비스를 늘리는 과정에서 나옵니다.',
+      q:'이용자가 줄여도 학습 경쟁이 계속된다면, 이용자 책임은 무엇을 바꿉니까?', src:1},
+     {p:'law', t:'이용자는 자신이 쓰는 AI가 전기를 얼마나 쓰는지 알 방법이 없습니다. 알 수 없는 것에 책임을 지우는 것이 정당합니까?',
+      q:'책임을 지우려면 먼저 무엇이 공개되어야 한다고 봅니까?'},
+     {p:'margin', t:'요금을 올려 사용을 줄이면, 돈이 없는 학생부터 AI 도구를 잃습니다.',
+      q:'그 부담이 형편에 따라 다르게 돌아간다면 공정합니까?'}]}],
+  choshiPremise:'내 사용량을 줄이는 것이 탄소를 줄이는 데 실제로 도움이 된다',
+  choshiQ:'데이터센터 전력의 대부분이 개인 사용이 아니라 기업의 학습 경쟁에서 나온다면, 당신의 선택은 달라집니까?',
+  choshiBank:[
+   {p:'eng', t:'한 사람이 질문을 덜 해도, AI 모델을 학습시키는 데 드는 전기는 그대로입니다.',
+    q:'내 사용을 줄이는 것과 전체 전력이 줄어드는 것은 같은 일입니까?'},
+   {p:'future', t:'모두가 조금씩 덜 쓰는 습관이 쌓이면, 기업도 전력을 덜 쓰는 쪽으로 서비스를 만들 수 있습니다.',
+    q:'개인의 선택이 기업의 선택을 바꿀 수 있다고 봅니까?'}],
+  samples:{
+   choshi:'나는 AI 사용을 줄이지 않겠다. 과제와 공부에 너무 많이 도움이 되기 때문이다. 나 한 명이 덜 쓴다고 바뀌는 것은 없다.',
+   boksi:'AI 데이터센터의 탄소 배출은 데이터센터를 짓는 기업이 먼저 책임져야 한다. AI로 가장 큰 이익을 얻는 것은 빅테크 기업이기 때문이다. 기업은 필요한 전력만큼 재생에너지를 직접 사서 써야 한다. 이용자에게 책임을 지우는 것은 맞지 않다. 따라서 데이터센터를 짓는 기업에 재생에너지 사용 의무를 지워야 한다.'},
+  revised:{
+   choshi:'나는 AI 사용을 무작정 줄이지는 않겠다. 과제와 공부에 도움이 되고, 기사에 따르면 전력 문제는 데이터센터 규모에서 생기기 때문이다. 물론 모두가 아무 생각 없이 쓰면 그만큼 전력이 늘어난다. 그래서 꼭 필요한 일에만 쓰고, 전기를 덜 쓰는 서비스가 있다면 그쪽을 고르겠다.',
+   boksi:'AI 데이터센터의 탄소 배출은 데이터센터를 짓는 기업이 먼저 책임져야 한다. AI로 가장 큰 이익을 얻는 쪽이 비용도 먼저 지는 것이 맞기 때문이다. 물론 재생에너지는 날씨에 따라 발전량이 바뀌어 데이터센터에 하루 종일 공급하기 어렵다는 반론이 있다. 그래서 기업에는 쓰는 전력만큼 재생에너지를 구하거나, 구하지 못한 만큼 탄소 비용을 내게 해야 한다. 그 돈으로 국가는 전력망과 저장 장치를 늘리면 된다. 따라서 일차 책임은 기업에 두되, 기업이 지킬 수 있는 길을 국가가 함께 열어야 한다.'},
+  clusters:[
+   {"label": "이익 보는 기업이 먼저", "stance": "firm", "n": 12, "x": 0.25, "y": 0.36, "logic": 3.0, "s": {"who": "응시자 06", "text": "탄소 책임은 데이터센터를 짓는 기업이 먼저 져야 한다. AI로 돈을 버는 것은 기업이고, 전기를 얼마나 쓸지 정하는 것도 기업이다. 이용자는 서비스가 전기를 얼마나 쓰는지 알 수조차 없다. 그래서 기업이 쓰는 만큼 재생에너지를 사거나 탄소 비용을 내게 해야 한다.", "agree": 16, "pen": 13}},
+   {"label": "국가가 무탄소 전력부터", "stance": "state", "n": 9, "x": 0.74, "y": 0.3, "logic": 3.2, "s": {"who": "응시자 15", "text": "먼저 움직여야 할 것은 국가다. 기업이 재생에너지를 사고 싶어도 전력망이 없으면 살 수 없다. 데이터센터는 국가 전략 사업이고, 전력을 어떻게 만들지는 한 기업이 정할 수 있는 문제가 아니다. 비용이 전기요금으로 돌아온다는 반론이 있지만, 그래서 데이터센터에 더 높은 요금을 매기는 방식으로 나누면 된다.", "agree": 12, "pen": 11}},
+   {"label": "쓰는 만큼 내는 요금", "stance": "user", "n": 6, "x": 0.71, "y": 0.7, "logic": 2.6, "s": {"who": "응시자 25", "text": "AI를 많이 쓰는 사람이 더 내야 한다. 전기를 많이 쓰면 전기요금을 많이 내는 것처럼, AI도 쓴 만큼 값을 내야 덜 낭비한다. 공짜로 쓰니까 의미 없는 질문도 계속 하게 된다.", "agree": 8, "pen": 6}},
+   {"label": "옆에 사는 주민 몫 먼저", "stance": "other", "n": 3, "x": 0.5, "y": 0.14, "logic": 3.7, "tam": true, "s": {"who": "응시자 30", "text": "탄소를 누가 책임질지보다 먼저 물어야 할 것은 데이터센터 바로 옆에 사는 사람이다. 기사에 따르면 주민들은 24시간 돌아가는 냉각팬의 소음과 진동을 호소한다. 탄소는 전 지구의 문제라 책임이 흩어지지만, 소음은 특정한 동네가 혼자 떠안는다. 물론 주민 보상까지 더하면 데이터센터를 짓기 어려워진다는 반론이 있다. 그래서 입지를 정할 때부터 주민이 참여하고, 전기요금 일부를 그 지역에 돌려주는 규칙을 먼저 만들자는 것이다. 책임의 순서는 가까운 피해부터여야 한다.", "agree": 2, "pen": 9}}]}
+];
+
+const LEVELS = {
+  choshi:{name:'초시',han:'初試',target:3,desc:'3문장, 가볍게',weak:1},
+  boksi:{name:'복시',han:'覆試',target:5,desc:'5문장 이상, 근거 필수',weak:2},
+  jeonsi:{name:'전시',han:'殿試',target:0,desc:'제시문 논술형, 시험 대비 모드',weak:0}
+};
+
+
+/* 데모 계정 글쓰기 프로필 (예시. 기준마다 10점. 본선에서는 시드 글 10편 이상을 LLM과 형태소 분석으로 미리 계산해 저장)
+   개인 데모 계정에만 보이고, 새 계정은 "아직 기록이 없습니다" */
+const PROFILE = {
+  name:'데모 계정',count:12,
+  axes:{'쟁점 설명':[4,5,6,6,6,7,6,7,8,8,8,8],'근거 활용':[3,4,4,5,4,6,5,6,7,6,7,8],'맥락과 전제':[2,2,3,2,4,4,4,5,6,6,6,6],'자기 입장':[4,5,6,5,6,7,6,7,8,8,8,9],'결론과 함의':[4,5,5,6,6,6,7,6,7,8,8,8]},
+  flow:[{k:'결론 먼저형',v:7},{k:'근거 나열 후 결론',v:4},{k:'질문으로 시작',v:1}],
+  weak:[{k:'근거 부족',v:5},{k:'반례 미처리',v:4},{k:'숨은 전제',v:2}],
+  words:[['기업',14],['필요하다',11],['결국',9],['문제',9],['생각한다',8],['정당하다',6],['사람들',6],['현실',5]],
+  hedge:[31,30,27,25,22,20,19,17,15,14,13,12]
+};
+
+/* ---------- 유틸 ---------- */
+const $ = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const sentences = t => t.split(/(?<=[.?!])\s+|\n+/).map(s => s.trim()).filter(Boolean);
+const clamp = (v, a = 1, b = 10) => Math.max(a, Math.min(b, v));
+const has = (t, list) => list.some(k => t.includes(k));
+const art = () => ARTICLES.find(a => a.id === S.articleId);
+function toast(msg){const el=$('#toast');el.textContent=msg;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>el.hidden=true,2600)}
+function bigram(s){s=s.replace(/\s/g,'');const g=new Set();for(let i=0;i<s.length-1;i++)g.add(s.slice(i,i+2));return g}
+function jaccard(a,b){const A=bigram(a),B=bigram(b);let n=0;A.forEach(x=>{if(B.has(x))n++});return n/(A.size+B.size-n||1)}
+
+const EVID=['때문','왜냐하면','예를 들어','실제로','결과','조사','따르면','기사','%','최근','사례','사건'];
+const HEDGE=['것 같다','것 같습니다','아닐까','지도 모른다','듯하다'];
+const OVERGEN=['모든 ','항상','절대','누구나','아무도'];
+const CONCEDE=['물론','하지만','반면','그럼에도','라는 반론','라는 지적'];
+const CONNECT=['따라서','그래서','그러므로','즉 '];
+/* (v3) 채점 기준: AAC&U Critical Thinking VALUE Rubric의 5개 기준을 이 서비스에 맞게 고쳐 씀. 기준마다 1~10점 (총 50점) */
+const RUBRIC={
+  '쟁점 설명':{en:'Explanation of Issues',def:'질문이 무엇을 묻는지, 어떤 가치가 부딪히는지를 분명히 짚었는가'},
+  '근거 활용':{en:'Evidence',def:'기사 내용이나 사례를 그대로 옮기지 않고, 주장을 받치는 데 맞게 썼는가'},
+  '맥락과 전제':{en:'Influence of Context and Assumptions',def:'내 주장이 기대고 있는 전제와, 그것이 통하지 않는 상황을 알아차렸는가'},
+  '자기 입장':{en:"Student's Position",def:'입장이 분명하고, 반대쪽 입장도 인정하면서 자기 기준을 세웠는가'},
+  '결론과 함의':{en:'Conclusions and Related Outcomes',def:'결론이 근거에서 따라 나오고, 그 결론이 낳을 결과까지 생각했는가'}
+};
+const RUBRIC_SRC='https://www.aacu.org/initiatives/value-initiative/value-rubrics/value-rubrics-critical-thinking';
+const AXIS_TASK={
+  '쟁점 설명':'첫 문장에서 이 질문이 무엇과 무엇 사이의 선택인지 적어 보세요.',
+  '근거 활용':'기사 속 사실이나 실제 사례를 하나 넣고, 그것이 왜 주장을 받치는지 한 문장 덧붙여 보세요.',
+  '맥락과 전제':'내 주장이 통하지 않는 상황을 하나 적고, 그때는 어떻게 되는지 답해 보세요.',
+  '자기 입장':'반대쪽이 할 말을 한 문장 적고, 그래도 내 입장을 지키는 이유를 적어 보세요.',
+  '결론과 함의':'"이렇게 하면"으로 시작하는 문장으로 내 결론이 낳을 결과를 적어 보세요.'
+};
+const COND=['때만','경우','다만','한해','조건','만약'];
+const OUTCOME=['이렇게 하면','그래야','그러면','결과적으로'];
+/* 우회 요청 1차 규칙 (한국어와 영어). 서버 모드에서는 여기에 더해 분류 모델이 한 번 더 판단 */
+const BYPASS=/고쳐\s?줘|고쳐\s?주|써\s?줘|써\s?주세|대신\s?써|대신\s?작성|모범\s?답|예시\s?답|예시\s?문장|정답\s?알려|첫\s?문장만|한\s?문장만|완성해\s?줘|다듬어\s?줘|첨삭해|수정해\s?줘|rewrite|write\s+(it|this|my|an?\s+essay|for me)|fix\s+(it|this|my)|polish|proofread|give me (an? )?(example|sample|model answer)|first sentence/i;
+
+function detectStance(a,text){
+  let best=a.stances[0],score=-1;
+  a.stances.forEach(s=>{const c=s.kw.filter(k=>text.includes(k)).length;if(c>score){score=c;best=s}});
+  return best;
+}
+function shareKey(t,r){const keys=r.replace(/[?.,]/g,'').split(/\s+/).filter(w=>w.length>=3);return keys.filter(k=>t.includes(k.slice(0,3))).length>=2}
+const lowest = scores => Object.entries(scores).reduce((m,x)=>x[1]<m[1]?x:m)[0];
+/* (v4) 광장 예시 답안: 유민이 만든 AI 페르소나 시드 답안 (seeds_*.json, 기사별 36편, 모두 복시).
+   초시 예시 답안은 실제 키 연결 후 seed 지시문으로 만들어 SEEDS[기사].choshi 에 넣습니다.
+   유류세, 데이터센터 기사는 시드 파일이 없어 그룹 대표 답안(clusters[].s)만 씁니다. */
+const SEEDS = {"work45": {"boksi": [{"n": "01", "g": 0, "t": "솔직히 기업이 내는 게 맞다고 봄. 쉬면 일할 때 더 집중하니까 생산성도 오를 것 같다. 그러면 기업도 손해 안 볼 것 같다. 그러니까 기업이 부담해야 한다."}, {"n": "02", "g": 0, "t": "비용은 기업이 부담해야 한다. 일하는 시간이 줄면 그만큼 집중도가 올라간다. 회의나 쓸데없는 업무가 줄어드는 효과도 있다. 늘어난 생산성으로 비용을 감당할 수 있다. 그래서 기업 몫이다."}, {"n": "03", "g": 0, "t": "조심스럽지만, 비용은 기본적으로 기업이 지는 게 맞다고 생각한다. 근무일이 줄면 회사는 불필요한 회의와 보고를 줄이게 되고, 그만큼 같은 시간에 더 많은 일을 처리하게 된다. 물론 기사에서 지적하듯 생산성과 비용 문제가 아직 정리되지 않았고, 모든 회사가 생산성을 올릴 수 있는 건 아니다. 그래서 사무직처럼 업무를 재설계할 수 있는 회사부터 기업 부담으로 시작하자는 것이다. 생산성이 오르는 구조가 확인된 곳에서 먼저 하면, 기업에도 손해가 아니라는 근거가 쌓인다."}, {"n": "04", "g": 0, "t": "일하는 시간이 줄면 정말 생산성이 떨어질까? 나는 오히려 반대라고 본다. 짧게 일하면 집중해서 일하고, 쓸데없는 회의가 줄어든다. 물론 경영계는 경쟁력이 떨어질 수 있다고 우려하지만, 그건 업무 방식을 바꾸지 않은 채 시간만 줄였을 때 이야기다. 그래서 비용은 기업이 부담하되, 업무 방식을 바꾸는 조건으로 해야 한다."}, {"n": "05", "g": 0, "t": "비용은 기업 이윤에서 나와야 한다. 근로시간이 줄면 노동자는 덜 지치고, 덜 지친 노동자는 실수를 덜 한다. 이 효과가 쌓이면 생산성이 오르고, 그 이익이 비용을 메운다. 경쟁력이 떨어진다는 경영계의 우려도 이해하지만, 생산성 향상 없이 시간만 줄이는 회사라면 그건 단축이 아니라 경영의 문제다. 따라서 기업이 부담하는 것이 맞고, 생산성을 올릴 책임도 기업에 있다."}, {"n": "06", "g": 0, "t": "기업이 내야 한다고 생각한다. 직원이 행복하면 일도 잘할 것 같다. 그럼 회사에도 이득일 것 같다. 기업이 부담하는 게 맞다."}, {"n": "07", "g": 0, "t": "비용은 기업이 부담해야 한다. 요즘 취업 준비생은 연봉만큼 근무 조건을 본다. 근무일이 짧은 회사에 좋은 사람이 몰린다. 그러니 단축은 기업이 인재를 붙잡기 위한 투자다. 투자 비용은 투자하는 쪽이 낸다."}, {"n": "08", "g": 0, "t": "솔직히 나도 회사 고를 때 쉬는 날 많은 데 갈 것 같다. 그러면 좋은 사람 데려가려면 회사가 근무 조건을 맞춰야 한다. 그건 회사 사정이니까 회사가 내는 게 맞다. 대신 사람을 덜 뽑아도 되니까 손해만은 아니다."}, {"n": "09", "g": 0, "t": "기업이 부담해야 한다. 근무 조건이 좋아야 사람이 안 나간다. 사람이 자주 나가면 새로 뽑고 가르치는 비용이 더 든다. 그러니 단축은 기업에도 이익이다."}, {"n": "10", "g": 0, "t": "조심스럽게 말하면, 기업이 부담하는 게 장기적으로 기업에도 이득이라고 본다. 근무 조건이 좋은 회사는 직원이 덜 떠나고, 새로 뽑는 비용이 줄어든다. 물론 당장은 비용이 늘어나는 게 맞다. 그래도 그건 인재를 붙잡는 비용으로 볼 수 있다."}, {"n": "11", "g": 1, "t": "여력 있는 대기업이 먼저 부담해야 한다. 대기업은 이윤이 크고 인력도 넉넉하다. 그런 곳이 먼저 하지 않으면 작은 회사는 시작할 엄두도 못 낸다. 비용을 나누는 기준은 여력이다."}, {"n": "12", "g": 1, "t": "솔직히 돈 많은 회사가 먼저 해야지. 작은 회사한테 똑같이 하라는 건 말이 안 된다. 대기업이 먼저 하고 그게 퍼지면 된다. 그래서 대기업이 부담하는 게 공정하다."}, {"n": "13", "g": 1, "t": "대기업이 내야 한다. 돈이 많으니까. 작은 회사는 힘들 것 같다. 대기업부터 해야 한다."}, {"n": "27", "g": 1, "t": "세금을 쓴다면 작은 회사에만 써야 한다고 생각한다. 대기업은 스스로 할 여력이 있다. 그런데 세금으로 대기업까지 지원하면 혜택을 못 받는 납세자에게 불공평하다. 직원 수가 적은 회사부터 지원해야 격차가 줄어든다."}, {"n": "28", "g": 1, "t": "세금으로 대기업까지 도와줘야 하나요? 대기업은 돈이 많으니까 알아서 할 것 같다. 작은 회사만 도와주면 된다. 그게 공정하다."}, {"n": "29", "g": 1, "t": "작은 회사만 지원해야 한다. 대기업은 지원이 필요 없다. 세금은 필요한 곳에 써야 한다."}, {"n": "30", "g": 1, "t": "솔직히 세금은 작은 회사에만 쓰는 게 맞다고 본다. 대기업은 지원 없어도 할 수 있으니까. 작은 회사는 지원 없으면 시작도 못 한다. 그래서 정부 지원은 하되, 직원 수 기준으로 작은 곳에만 줘야 한다."}, {"n": "14", "g": 2, "t": "비용은 노동자가 일부 감수해야 한다. 쉬는 시간과 돈은 바꾸는 것이다. 월급이 조금 줄어도 시간을 원하는 사람은 그걸 고르면 된다. 강제로 모두에게 같은 걸 줄 필요는 없다. 선택할 수 있게만 해 주면 된다."}, {"n": "15", "g": 2, "t": "나는 월급 좀 덜 받아도 쉬고 싶다. 다들 그럴 것 같다. 그러니까 임금 줄여서 하면 될 것 같다. 회사도 손해 안 보고."}, {"n": "16", "g": 2, "t": "임금 일부를 감수하는 게 현실적이다. 시간도 돈만큼 가치가 있다. 줄어든 월급만큼 쉬는 시간을 얻는다. 원하는 사람만 고르면 된다. 강요가 아니라 선택이다."}, {"n": "17", "g": 2, "t": "조심스럽지만 월급을 조금 덜 받는 것도 방법이라고 생각한다. 쉬는 시간을 원하는 사람이 있고, 돈을 더 원하는 사람이 있다. 그 선택을 각자 하게 하면 된다. 다만 월급이 빠듯한 사람에게는 이 선택이 어려울 수 있다는 점은 걸린다."}, {"n": "18", "g": 2, "t": "시간과 돈 중 무엇이 더 중요할까? 그건 사람마다 다르다. 그러니 임금을 줄이는 대신 쉬는 날을 늘리는 선택지를 주면 된다. 다만 월급이 빠듯한 사람은 그 선택을 못 할 수 있으니, 최저 임금 근처의 노동자는 예외로 해야 한다."}, {"n": "19", "g": 2, "t": "노동자랑 기업이 반씩 내는 게 맞는 것 같다. 한쪽만 내면 억울할 것 같다. 반씩 내면 다들 받아들일 것 같다."}, {"n": "20", "g": 2, "t": "왜 한쪽만 비용을 져야 할까? 시간이 줄면 노동자는 쉬는 이익을, 기업은 생산성이라는 이익을 얻는다. 둘 다 이익을 보니 비용도 나누는 게 맞다. 예를 들어 임금은 조금 줄이고 나머지는 기업이 메우는 식이다. 그래야 오래 유지된다."}, {"n": "21", "g": 2, "t": "반반이 맞다. 한쪽만 부담하면 오래 못 간다. 노동자는 임금 조금, 기업은 이윤 조금. 그게 공평하다."}, {"n": "22", "g": 2, "t": "솔직히 한쪽만 다 떠안는 건 오래 못 간다고 본다. 노동자는 쉬는 시간을 얻고 회사는 덜 지친 직원을 얻으니까, 이익을 보는 만큼 비용도 나눠야 한다. 물론 월급이 빠듯한 사람한테는 임금 감소가 너무 크다는 반론이 있다. 그래서 반반으로 나누되, 임금이 낮은 노동자일수록 기업 몫을 더 크게 하자는 거다. 그래야 단축이 형편 좋은 사람들만의 제도가 되지 않는다."}, {"n": "23", "g": 3, "t": "처음에는 정부가 비용을 나눠 져야 한다. 기업도 노동자도 해 보지 않은 제도에 비용을 다 걸기는 어렵다. 정부가 법으로 강제하는 대신 지원을 택한 이유도 여기에 있다. 물론 세금이 쓰인다는 반론이 있지만, 지원은 처음 몇 년으로 기간을 정하면 된다. 그 기간에 생산성이 어떻게 바뀌는지 확인하고, 그 결과를 보고 기업과 노동자가 나눌 몫을 정하는 것이 순서다."}, {"n": "24", "g": 3, "t": "처음엔 정부가 좀 도와줘야 할 것 같아. 회사도 해 본 적 없는 거니까 무서울 것 같다. 정부가 도와주면 해 볼 것 같다. 그러니 정부 지원이 먼저다."}, {"n": "25", "g": 3, "t": "정부가 도와야 한다. 처음은 다 어렵다. 지원이 있으면 시도한다. 그래서 정부 지원이 맞다."}, {"n": "26", "g": 3, "t": "정부가 처음에는 비용을 나눠야 하지 않을까 싶다. 기업 혼자 하기는 부담스러울 것 같다. 정부가 도와주면 더 많은 회사가 할 것 같다."}, {"n": "33", "g": 4, "t": "근무일을 줄이는 것보다 있는 연차를 먼저 쓰게 해야 할 것 같다. 연차가 있어도 눈치 보여서 못 쓰는 사람이 많은 것 같다. 연차부터 다 쓰게 하면 비용도 덜 들 것 같다."}, {"n": "34", "g": 4, "t": "연차도 다 못 쓰는데 근무일을 줄이는 게 먼저일까요? 있는 휴가부터 쓰게 해야 한다. 그게 비용도 덜 든다. 그다음에 단축을 이야기하면 된다."}, {"n": "35", "g": 4, "t": "근데 병원이나 공장처럼 자리 비우면 안 되는 데는 어떻게 하지? 거긴 금요일 오후에 쉬면 누가 대신 해야 하잖아. 그런 데는 비용 이야기 전에 다른 방법을 찾아야 할 것 같다."}, {"n": "36", "g": 4, "t": "업종마다 답이 다르다. 사무직은 시간을 줄여도 일을 조정할 수 있다. 교대 근무는 누군가 쉬면 다른 사람이 메워야 한다. 그런 일터는 인력을 더 뽑는 비용이 핵심이다. 그래서 비용을 나누는 기준도 업종별로 달라야 한다."}, {"n": "31", "g": 5, "t": "솔직히 이건 회사 돈 문제만이 아니라고 본다. 일하는 시간이 길면 아프고 지친 사람이 늘고, 그 치료비와 돌봄 비용은 결국 사회가 낸다. 노동계가 건강권을 이유로 단축을 요구하는 것도 이 때문이다. 세금 낭비라는 반론이 있지만, 아프고 지친 사람을 나중에 돌보는 비용과 비교하면 지금 쓰는 게 덜 든다. 그래서 정부가 비용의 일부를 지는 게 맞고, 효과를 건강 지표로 확인하는 조건을 붙여야 한다."}, {"n": "32", "g": 5, "t": "정부가 일부를 부담해야 한다. 근로시간이 줄면 건강이 나아지고, 아이를 키울 시간도 생긴다. 이건 회사만의 이익이 아니라 사회 전체의 이익이다. 사회가 이익을 보면 사회가 비용을 나눠야 한다. 다만 세금을 쓰는 만큼 효과를 측정해 공개하는 조건이 필요하다. 효과가 없으면 지원도 멈춰야 한다."}]}, "aiexam": {"boksi": [{"n": "01", "g": 0, "t": "감독부터 바꿔야 한다고 생각한다. 사람 눈으로는 요즘 기기를 잡기 어려운 것 같다. 기계로 찾으면 더 잘 찾을 것 같다. 그래서 시험장마다 탐지 장비를 두면 좋겠다."}, {"n": "02", "g": 0, "t": "감독관이 바로 옆에 있었는데도 못 잡았다면 사람이 문제일까요? 저는 사람보다 장비가 먼저라고 봅니다. 탐지기를 두면 다 잡을 수 있을 것이다. 그러니까 감독을 바꾸는 게 먼저다."}, {"n": "03", "g": 0, "t": "가장 먼저 바꿔야 할 것은 사람의 눈에 기대는 감독 방식이다. 이번 국가자격시험 사건에서 감독관이 가까이 있었는데도 초소형 카메라를 찾지 못했다는 것은 육안 감독의 한계를 보여 준다. 처벌을 무겁게 하자는 의견도 있지만, 잡히지 않는다고 믿는 사람에게 처벌은 억제력이 약하다. 그래서 시험장마다 전파 탐지 장비를 두고, 감독 교사는 장비가 신호를 잡았을 때 확인하는 역할을 맡아야 한다. 장비가 먼저 걸러 주면 감독 교사가 수십 명의 안경을 하나하나 살필 필요도 줄어든다."}, {"n": "04", "g": 0, "t": "솔직히 감독관이 안경 하나하나 볼 수는 없잖아. 그러니까 기계로 해야 한다고 본다. 공항 검색대처럼 하면 될 것 같다. 감독이 제일 먼저다."}, {"n": "05", "g": 0, "t": "감독을 장비 중심으로 바꾸는 것이 먼저다. 기사에 따르면 탐지 기술에도 한계가 있지만, 사람 눈은 그보다 더 한계가 크다. 장비는 피곤해지지 않고 모든 수험생에게 같은 기준을 적용한다. 다만 장비가 잡지 못하는 기기도 있을 수 있으니 처벌 기준도 함께 알려야 한다. 그래도 순서로 따지면 먼저 막고, 그다음에 벌하는 것이 맞다."}, {"n": "06", "g": 0, "t": "감독을 먼저 바꿔야 할 것 같다. 기기가 점점 작아져서 사람이 찾기 힘들 것 같다. 장비가 있으면 그래도 낫지 않을까 싶다. 시험장마다 하나씩 있으면 좋겠다."}, {"n": "12", "g": 0, "t": "기기를 하나하나 찾는 게 가능할까요? 저는 전파를 막는 게 더 확실하다고 생각한다. 문제를 밖으로 못 보내면 AI도 소용없다. 그래서 전파 차단이 먼저다."}, {"n": "13", "g": 0, "t": "가장 먼저 해야 할 일은 시험 시간 동안 시험장의 전파를 막는 것이다. 이번 사건은 카메라로 찍은 문제를 밖으로 보내고 답을 받는 방식이었는데, 이 과정은 통신이 끊기면 성립하지 않는다. 기기를 찾는 방식은 기기가 작아질수록 계속 뒤처지지만, 통신을 막는 방식은 기기의 크기와 상관없다. 주변 주민의 불편이 생긴다는 반론이 있지만, 시험 시간 몇 시간에 한해 시험실 안으로 범위를 좁히면 피해를 줄일 수 있다. 그래서 감독은 기기 찾기에서 통신 차단으로 바뀌어야 한다."}, {"n": "14", "g": 0, "t": "그냥 전파를 막으면 되는 거 아닌가? 문제를 못 보내면 답도 못 받으니까. 정부도 검토한다고 했으니 할 수 있을 것 같다. 감독이 제일 먼저다."}, {"n": "07", "g": 1, "t": "가장 먼저 바꿔야 할 것은 검사 방식이다. 지금처럼 안경 쓴 수험생만 따로 보면, 정직한 학생이 이유 없이 의심받는다. 모든 수험생이 같은 방식으로 소지품과 안경을 확인받는다면 그건 의심이 아니라 절차가 된다. 물론 시간이 더 걸린다는 반론이 있지만, 입실 시간을 조금 앞당기면 해결할 수 있다. 그래서 감독은 강화하되, 모두에게 똑같이 해야 한다."}, {"n": "08", "g": 1, "t": "나도 안경 쓰는데, 나만 따로 불려 가서 검사받으면 진짜 기분 안 좋을 것 같다. 근데 모두가 똑같이 검사받는 거면 얘기가 다르다. 그건 공항에서 다 같이 검색대 지나가는 거랑 비슷하니까. 그래서 감독을 먼저 바꾸되, 기준은 '안경 쓴 사람'이 아니라 '모든 수험생'이어야 한다. 기사에서도 안경 쓴 수험생이 의심받는 부작용을 지적하는데, 이건 검사를 줄여서가 아니라 검사를 공평하게 해서 풀 문제다."}, {"n": "09", "g": 1, "t": "감독을 먼저 바꿔야 한다. 다만 안경 쓴 사람만 보는 건 불공평하다. 모든 수험생을 같은 방식으로 확인해야 한다. 그래야 검사받는 사람이 덜 억울하다. 처벌은 그다음이다."}, {"n": "10", "g": 1, "t": "조심스럽지만, 감독 방식을 먼저 바꾸는 게 맞다고 생각한다. 다만 안경 쓴 학생만 따로 검사하면 그 학생들은 시험 전부터 위축될 수 있다. 그래서 모두에게 같은 검사를 하는 쪽이 낫다고 본다. 물론 그만큼 감독 인력이 더 필요하다는 문제는 남는다."}, {"n": "11", "g": 1, "t": "왜 안경 쓴 사람만 의심해야 하나요? 카메라는 단추나 시계에도 숨길 수 있을 것 같다. 그러니 모두를 검사해야 한다. 감독이 먼저다."}, {"n": "15", "g": 2, "t": "처벌을 제일 먼저 바꿔야 한다고 본다. 걸리면 인생이 끝난다는 걸 알면 아무도 안 할 것 같다. 성적 무효 정도로는 약하다. 응시 자격을 아예 막아야 한다."}, {"n": "16", "g": 2, "t": "처벌이 먼저다. 지금 처벌은 너무 약하다. 무겁게 하면 시도하는 사람이 줄어든다. 그러니 처벌부터 바꿔야 한다."}, {"n": "17", "g": 2, "t": "처벌을 무겁게 하는 것부터 해야 한다고 생각한다. 감독을 아무리 강화해도 기기는 계속 작아져서 다 잡기는 어려울 것이다. 그렇다면 시도 자체를 망설이게 만드는 게 현실적이다. 물론 잡히지 않을 거라고 믿는 사람에게는 효과가 약할 수 있다. 그래도 대가가 크다는 사실 자체가 많은 사람을 멈추게 할 것이다."}, {"n": "18", "g": 2, "t": "걸려도 성적만 무효면 한번 해 볼 만하다고 생각하지 않을까요? 그래서 처벌이 먼저다. 다시는 시험을 못 보게 해야 한다. 그래야 아무도 안 한다."}, {"n": "19", "g": 2, "t": "가장 먼저 바꿔야 할 것은 처벌 수위다. 감독은 늘 기술보다 한발 늦을 수밖에 없다. 반면 처벌은 지금 당장 바꿀 수 있다. 응시 자격 제한 같은 무거운 처벌이 있다는 것을 시험 전에 분명히 알리면 시도 자체가 줄어든다. 감독 강화는 그다음 순서다."}, {"n": "20", "g": 2, "t": "처벌의 핵심은 무게보다 확실성이다. 이번 사건도 본인이 털어놓기 전까지 드러나지 않았다. 그렇다면 시험이 끝난 뒤에도 성적이 이상하게 오른 경우를 조사할 수 있어야 한다. 끝까지 추적한다는 믿음이 있어야 처벌도 의미가 있다. 그래서 사후 조사 체계부터 바꿔야 한다."}, {"n": "21", "g": 2, "t": "처벌을 바꾸되, 무게보다 '언젠가는 드러난다'는 확실성을 먼저 높여야 한다고 본다. 이번 국가자격시험 사건은 감독관도 놓쳤고, 결국 본인이 털어놓으면서 알려졌다. 처벌이 아무리 무거워도 드러나지 않으면 억제력이 없다는 뜻이다. 그래서 합격 뒤에도 의심 사례를 다시 조사할 수 있는 절차와, 조사 대상이 되었을 때의 소명 기회를 함께 만들어야 한다. 정직한 수험생이 억울하게 조사받는 일이 생길 수 있다는 반론이 있기 때문에, 조사의 기준을 미리 공개하는 것이 조건이다."}, {"n": "22", "g": 2, "t": "시험장에서 못 잡으면 끝일까요? 저는 시험이 끝난 뒤에도 끝까지 추적해야 한다고 본다. 실제로 이번 사건은 시험이 끝나고 나서 드러났다. 사후 조사를 제대로 하면 시험장에서 놓친 것도 잡을 수 있다. 그래서 처벌 체계를 먼저 바꿔야 한다."}, {"n": "23", "g": 3, "t": "문제를 밖으로 보내서 답을 받을 수 있다면, 문제가 잘못된 거 아닐까요? 외워서 푸는 문제라서 AI가 바로 답을 줄 수 있는 것 같다. 시험 방식을 바꿔야 한다. 그게 먼저다."}, {"n": "24", "g": 3, "t": "가장 먼저 바꿔야 할 것은 시험 방식이다. 문제를 찍어 AI에 보내면 바로 답이 나오는 시험이라면, 감독을 아무리 강화해도 기술과의 경쟁에서 계속 뒤처진다. 반대로 정답을 고르는 것보다 자기 풀이를 설명하는 비중을 늘리면, 밖에서 답을 받아도 쓸모가 줄어든다. 수십만 명이 보는 시험에서는 바로 바꾸기 어렵다는 반론이 맞다. 그래서 규모가 작은 자격시험부터 단계적으로 바꾸고, 그사이 큰 시험은 감독으로 버티는 순서가 필요하다."}, {"n": "25", "g": 3, "t": "솔직히 기기는 계속 좋아질 거라 감독으로는 못 따라간다. 그러면 애초에 AI가 대신 풀어도 소용없는 문제를 내야 하지 않나. 예를 들어 풀이 과정을 직접 쓰게 하는 식으로. 시간이 걸리겠지만 그게 근본적인 해결이라고 본다."}, {"n": "26", "g": 3, "t": "왜 시험은 늘 정답만 고르게 할까요? 자기 말로 설명하게 하면 AI가 대신하기 어렵다. 그래서 구술 같은 걸 늘려야 한다. 시험 방식이 먼저다."}, {"n": "27", "g": 3, "t": "가장 먼저 바꿔야 할 것은 평가 방식이다. 자기 말로 설명하는 시험이라면 기기로 답을 받아도 설명은 직접 해야 한다. 그래서 일부 시험에는 구술이나 과정 평가를 넣어야 한다. 물론 채점에 시간과 사람이 많이 든다. 그래도 감독을 계속 강화하는 비용보다는 장기적으로 낫다."}, {"n": "28", "g": 4, "t": "감독 교사 한 명이 첨단 기기를 다 잡으라는 건 무리다. 이번에도 감독관이 가까이 있었는데 못 잡았다. 그렇다면 책임을 현장 교사에게 지울 게 아니라 국가가 장비와 인력을 마련해야 한다. 먼저 바꿔야 할 것은 감독의 책임 구조다."}, {"n": "29", "g": 4, "t": "감독 교사 탓을 하면 안 될 것 같다. 선생님 한 명이 그걸 다 볼 수는 없을 것 같다. 나라가 장비를 사 줘야 한다. 그게 먼저인 것 같다."}, {"n": "30", "g": 4, "t": "감독 교사가 못 잡으면 그게 교사 잘못일까요? 기기가 너무 작아져서 누구라도 못 잡을 것 같다. 그러니까 국가가 책임져야 한다. 장비랑 사람을 더 줘야 한다."}, {"n": "31", "g": 4, "t": "먼저 바꿔야 할 것은 감독 교사에게 모든 책임을 지우는 구조다. 교사는 시험을 관리하는 사람이지 첨단 기기를 찾아내는 전문가가 아니다. 장비와 전담 인력을 국가가 마련해야 감독이 실제로 작동한다. 지금처럼 개인의 주의력에 맡기면 다음 사건에서도 같은 일이 반복된다."}, {"n": "32", "g": 4, "t": "솔직히 수능 감독하는 선생님들 너무 힘들 것 같다. 몇 시간 동안 서서 수십 명 안경을 다 보라는 건 말이 안 된다. 이건 선생님 개인이 아니라 나라가 장비랑 인력으로 해결할 일이다. 감독을 바꾸되, 책임은 국가가 져야 한다."}, {"n": "33", "g": 5, "t": "솔직히 시험 보러 갔는데 안경 때문에 의심받으면 너무 위축될 것 같다. 부정행위는 막아야 하지만, 정직한 수험생이 범죄자 취급받으면 안 된다. 그래서 제일 먼저 바꿔야 할 건 '어디까지 검사해도 되는지' 기준이다. 그 기준 안에서만 감독을 강화해야 한다."}, {"n": "34", "g": 5, "t": "먼저 정해야 할 것은 검사의 한계선이다. 부정행위를 막는 것도 중요하지만 수험생의 사생활도 중요하다. 기준 없이 검사를 늘리면 정직한 수험생만 불편해진다. 그래서 무엇을 어디까지 검사하는지 미리 공개해야 한다. 그다음에 감독이든 처벌이든 바꿀 수 있다."}, {"n": "35", "g": 5, "t": "조심스럽지만, 가장 먼저 바꿔야 할 것은 검사가 넘지 말아야 할 선을 정하는 일이라고 생각한다. 기사에서도 안경 쓴 수험생이 의심받는 부작용이 지적되는데, 이런 일은 감독이 강해질수록 더 늘어날 수 있다. 물론 기준을 정하는 동안 부정행위가 생길 수 있다는 반론이 있다. 그래서 수험생 몸을 직접 확인하는 검사는 신호가 잡힌 경우로 한정하고, 그 외에는 소지품 보관과 장비 점검처럼 모두에게 같은 절차만 두자는 것이다. 이렇게 하면 막는 효과는 지키면서 정직한 수험생의 존엄도 지킬 수 있다."}, {"n": "36", "g": 5, "t": "부정행위를 막으려다 정직한 사람이 더 피해를 보면 그게 공정한 시험일까요? 저는 수험생의 사생활을 지키는 선에서만 검사해야 한다고 본다. 몸을 뒤지는 식의 검사는 지나치다. 그래서 먼저 검사 기준부터 정해야 한다."}]}, "robotaxi": {"boksi": [{"n": "01", "g": 0, "t": "제조사가 먼저 책임져야 할 것 같다. 기업이 책임을 져야 안전하게 만들 것 같다. 승객은 아무것도 못 하니까 책임이 없다. 그래서 회사가 책임져야 한다."}, {"n": "02", "g": 0, "t": "기업이 책임을 안 지면 안전에 신경을 쓸까요? 안 쓸 것 같다. 그러니 제조사가 먼저 책임져야 한다. 그래야 더 안전한 차를 만든다."}, {"n": "03", "g": 0, "t": "제조사와 운영사가 먼저 책임져야 한다. 책임이 있어야 안전에 돈을 쓴다. 책임이 흐릿하면 기업은 비용이 덜 드는 쪽을 고른다. 기술 발전이 늦어진다는 우려가 있지만, 안전하지 않은 기술은 발전이라고 부를 수 없다. 그래서 기업 책임이 먼저다."}, {"n": "04", "g": 0, "t": "솔직히 회사가 책임 안 지면 대충 만들 것 같다. 책임을 져야 테스트도 더 하고 센서도 좋은 걸 쓰지. 그러니까 제조사랑 운영사가 먼저 책임지는 게 맞다. 그래야 결국 사고도 줄어든다."}, {"n": "05", "g": 0, "t": "제조사가 책임져야 한다. 그래야 안전하게 만든다. 승객은 잘못이 없다. 기업 책임이 먼저다."}, {"n": "06", "g": 0, "t": "제조사가 책임지는 게 맞을 것 같다. 책임이 있어야 더 조심해서 만들 것 같다. 기술이 늦어질 수도 있지만 안전이 더 중요한 것 같다."}, {"n": "07", "g": 1, "t": "책임은 차를 통제하는 쪽이 먼저 져야 한다. 운전자 없는 차에서 운전을 결정하는 것은 시스템이고, 그 시스템을 만들고 운영하는 것은 제조사와 운영사다. 승객은 목적지를 정할 뿐 주행에 개입할 수 없다. 기업 책임이 무거우면 기술 발전이 늦어진다는 반론이 있지만, 통제권이 없는 사람에게 책임을 나누면 그 원칙이 무너진다. 그래서 원칙은 통제권에 따르고, 기술 발전의 부담은 보험료 산정 같은 다른 방법으로 덜어 줘야 한다."}, {"n": "08", "g": 1, "t": "조심스럽지만, 차를 움직이는 쪽이 책임지는 게 원칙이라고 생각한다. 운전자 없는 차에서 승객은 아무것도 조작할 수 없다. 그렇다면 책임은 시스템을 만든 쪽과 운영하는 쪽에 있어야 한다. 다만 원인이 도로 문제라면 그건 따로 봐야 할 것 같다."}, {"n": "09", "g": 1, "t": "운전대도 없는 차에서 승객이 뭘 할 수 있을까요? 아무것도 못 한다. 통제할 수 있는 사람이 책임지는 게 원칙이다. 그러니 제조사와 운영사가 먼저다. 승객에게 책임을 묻는 건 원칙에 맞지 않는다."}, {"n": "10", "g": 1, "t": "통제하는 쪽이 책임진다. 이건 지금 자동차 사고에서도 같은 원칙이다. 운전자가 없으면 운전하는 건 시스템이다. 시스템을 만든 제조사와 굴리는 운영사가 먼저 책임져야 한다."}, {"n": "11", "g": 1, "t": "솔직히 내가 운전 안 했는데 왜 내 책임이야. 차를 움직인 건 회사 프로그램이잖아. 그러니까 회사가 책임져야지. 운전한 쪽이 책임지는 거랑 똑같은 거다."}, {"n": "12", "g": 1, "t": "제조사가 먼저 책임져야 한다. 결함 있는 제품을 팔면 판 쪽이 책임지는 것이 다른 모든 제품의 원칙이다. 자율주행차도 제품이다. 소프트웨어 결함이면 개발사, 운영 관리 잘못이면 운영사가 책임지면 된다. 정부도 결함 사고의 책임 기준을 법으로 정하려 하고 있다."}, {"n": "13", "g": 1, "t": "솔직히 이건 냉장고 불나면 제조사가 책임지는 거랑 똑같다고 본다. 시스템 결함으로 난 사고면 그 시스템을 만든 쪽이 책임지는 게 제품의 기본 원칙이니까. 물론 원인이 센서인지 소프트웨어인지 도로인지 가리기 어렵다는 반론이 있다. 그래서 원인을 가리는 동안은 운영사가 먼저 피해자에게 보상하고, 나중에 원인을 만든 쪽에 비용을 청구하는 구조가 필요하다. 그래야 원칙도 지키고 피해자도 기다리지 않는다."}, {"n": "14", "g": 1, "t": "결함 제품은 만든 회사가 책임진다. 차도 똑같다. 제조사가 책임져야 한다."}, {"n": "15", "g": 2, "t": "누가 잘못했는지 가리는 데 얼마나 걸릴까요? 그동안 피해자는 기다려야 한다. 그래서 보험으로 먼저 보상해야 한다고 본다. 책임은 그다음에 따지면 된다. 피해자 보상이 먼저다."}, {"n": "16", "g": 2, "t": "보상은 보험이 먼저 하고, 책임은 나중에 가려야 한다. 기사에 따르면 시스템 결함 사고의 책임을 여러 주체가 나누는 기준이 논의되고 있는데, 나누는 주체가 많을수록 원인을 가리는 데 시간이 걸린다. 그 시간 동안 피해자를 기다리게 하면 안 된다. 보험사가 먼저 보상하면 기업이 책임을 피한다는 반론이 있지만, 보험사가 나중에 원인을 만든 쪽에 비용을 청구하면 기업 책임은 그대로 남는다. 그래서 먼저 보험, 나중에 구상이 맞다."}, {"n": "17", "g": 2, "t": "보험으로 먼저 보상해 주는 게 맞는 것 같아. 누가 잘못했는지는 나중에 따져도 되잖아. 다친 사람은 바로 돈이 필요할 것 같다."}, {"n": "18", "g": 2, "t": "보험이 먼저다. 책임을 가리는 데는 시간이 걸린다. 피해자는 그동안 기다릴 수 없다. 보험으로 먼저 보상하고 책임은 나중에 정하면 된다."}, {"n": "19", "g": 2, "t": "보험으로 먼저 보상하는 게 좋을 것 같다. 누가 잘못했는지 따지는 건 오래 걸릴 것 같다. 피해자는 빨리 보상받아야 할 것 같다."}, {"n": "20", "g": 2, "t": "책임자를 다 가릴 때까지 피해자가 기다려야 할까요? 저는 아니라고 본다. 보험이 먼저 보상하고, 나중에 원인이 밝혀지면 그쪽이 보험사에 돈을 내면 된다. 그래야 피해자도 보호받고 기업 책임도 남는다."}, {"n": "25", "g": 2, "t": "조심스럽지만, 제조사와 운영사가 함께 기금을 만드는 방법이 있다고 생각한다. 사고 원인을 한 곳으로 정하기 어려운 경우가 많을 것이다. 그럴 때 기금에서 먼저 보상하면 피해자가 기다리지 않아도 된다. 기업도 함께 내니 안전에 신경 쓸 이유가 남는다."}, {"n": "26", "g": 2, "t": "누가 잘못했는지 꼭 한 명을 찾아야 할까요? 제조사와 운영사가 같이 돈을 모아 두면 된다. 사고가 나면 거기서 먼저 보상하면 된다. 각자 낸 만큼 책임도 나누는 셈이다."}, {"n": "35", "g": 2, "t": "조심스럽지만, 약관에 동의하고 탄 승객도 아주 일부는 책임이 있다고 생각한다. 로보택시를 타겠다는 것은 그 위험을 어느 정도 받아들인다는 뜻이기 때문이다. 물론 승객은 차를 조작할 수 없으니 책임을 크게 지울 수는 없다는 반론이 맞다. 그래서 승객의 몫은 보상을 깎는 게 아니라, 탑승 때 보험료 일부를 함께 내는 정도로 한정해야 한다. 그러면 승객도 위험을 알고 타고, 피해자 보상도 줄지 않는다."}, {"n": "36", "g": 2, "t": "약관에 동의하고 탔으면 승객도 책임이 아예 없다고 할 수 있을까요? 위험을 알고 탄 것이니 일부는 있다고 본다. 다만 운전을 안 했으니 크게는 아니다. 탈 때 보험료를 조금 내는 정도면 된다."}, {"n": "21", "g": 3, "t": "보행자가 먼저다. 로보택시 탄 사람은 자기가 선택한 거다. 보행자는 아무것도 안 했다. 그러니까 보행자부터 보상해야 한다."}, {"n": "22", "g": 3, "t": "솔직히 이 논의에서 제일 빠져 있는 게 보행자라고 본다. 승객은 로보택시를 타겠다고 선택했지만, 길을 건너던 사람은 아무것도 고르지 않았다. 그런데 책임 분담 이야기는 대부분 제조사, 운영사, 승객 사이에서만 오간다. 보행자는 서로 책임을 미루는 사이에 끼면 가장 오래 기다리게 된다. 그래서 보행자 같은 비이용자 피해는 누구 잘못인지와 상관없이 먼저 보상하는 규칙이 있어야 한다."}, {"n": "23", "g": 3, "t": "보행자 보상이 먼저다. 보행자는 선택하지 않았다. 피해만 입었다. 먼저 보호해야 한다."}, {"n": "24", "g": 3, "t": "조심스럽지만, 보행자를 먼저 생각해야 한다고 본다. 로보택시를 이용하지 않은 사람도 사고를 당할 수 있다. 그런 사람은 누구에게 보상을 청구해야 할지도 모를 것 같다. 그래서 보행자 피해는 먼저 보상받게 해야 한다."}, {"n": "27", "g": 4, "t": "솔직히 처음부터 책임을 너무 무겁게 하면 아무 회사도 서비스를 못 내놓을 거라고 본다. 기사에도 기업 책임이 무거우면 기술 발전이 늦어진다는 우려가 나온다. 물론 그래서 안전을 소홀히 해도 된다는 건 아니다. 그래서 초기에는 정부가 보험 일부를 같이 지고, 운행 기록이 쌓일수록 기업 몫을 늘리는 방식이 필요하다. 책임을 없애는 게 아니라 단계적으로 키우자는 거다."}, {"n": "28", "g": 4, "t": "처음부터 책임을 무겁게 하면 기술이 멈춘다. 아무도 서비스를 안 할 것이다. 처음에는 부담을 줄여 줘야 한다."}, {"n": "29", "g": 4, "t": "처음부터 기업 책임을 너무 크게 하면 회사들이 안 할 것 같다. 그러면 기술도 늦어질 것 같다. 처음에는 좀 봐줘야 하지 않을까 싶다."}, {"n": "30", "g": 4, "t": "책임이 너무 무거우면 누가 로보택시를 만들까요? 아무도 안 만들 것 같다. 그러면 기술 발전이 멈춘다. 그래서 처음에는 책임을 가볍게 해야 한다."}, {"n": "31", "g": 4, "t": "초기에는 기업 책임을 가볍게 해야 한다. 기술은 실제로 달려 봐야 좋아진다. 책임이 너무 무거우면 기업은 달리지 않는 쪽을 고른다. 그러면 기술도 안전도 제자리다. 대신 운행이 늘수록 책임을 단계적으로 키우면 된다."}, {"n": "32", "g": 5, "t": "누가 책임질지 정하려면 사고 직전에 무슨 일이 있었는지부터 알아야 할 것 같다. 기록이 없으면 다들 자기 잘못이 아니라고 할 것 같다. 그래서 주행 기록을 먼저 공개해야 할 것 같다."}, {"n": "33", "g": 5, "t": "사고 직전 기록을 아무도 못 본다면 책임을 어떻게 정할까요? 기록부터 공개해야 한다. 그래야 누가 잘못했는지 알 수 있다."}, {"n": "34", "g": 5, "t": "책임을 누구에게 둘지보다 먼저 정해야 할 것은 기록의 공개다. 시스템 결함인지, 도로 문제인지, 다른 차의 잘못인지는 사고 직전의 주행 기록을 보지 않으면 가릴 수 없다. 그런데 그 기록은 지금 기업이 가지고 있다. 기업 기밀이라는 반론이 있지만, 사고 당사자에게 사고 전후 기록만 공개하는 것은 기밀과 충돌하지 않는다. 기록이 공개되면 책임 분담 기준도 실제 원인에 따라 작동할 수 있다."}]}};
+
+
+/* =========================================================
+   (v4) 계정과 저장소
+   목업 단계: 모두 브라우저 메모리에만 저장합니다 (새로고침하면 처음으로).
+   ★ Supabase로 바꿀 곳은 아래 DB 객체 하나입니다. 함수 이름과 반환 형식만 지키면 화면 코드는 그대로 둡니다.
+     - 계정: Supabase Auth, 아이디를 가짜 이메일로 ({id}@p.chaekmun.app 개인, {id}@o.chaekmun.app 기관), 이메일 인증 끔
+     - 테이블: profiles, orgs, classes, essays, votes(user_id, essay_id, kind unique)
+   ========================================================= */
+const ORGS=[{id:'yonsei',name:'연세대학교 (예시)'}];
+const CLASSES={
+  'yonsei-writing':{id:'yonsei-writing',org:'yonsei',name:'글쓰기와 토론 (예시)',term:'2026-2학기, 11주차',
+    studentCode:'YONSEI-STU',professorCode:'YONSEI-PROF',rubric:null,
+    assigned:{articleId:'aiexam',level:'boksi',due:'11월 23일(일)'}}
+};
+const DEMO_PW='demo1234';
+const DB={
+  users:{}, essays:[], votes:new Map(), seq:1,
+  key:(scope,u)=>`${scope}:${u.toLowerCase()}`,
+  async signUp({scope,username,password,nickname,role='personal',classId=null}){
+    if(!/^[A-Za-z0-9]{4,20}$/.test(username||''))throw new Error('아이디는 영문과 숫자 4~20자로 정해 주세요.');
+    if((password||'').length<6)throw new Error('비밀번호는 6자 이상으로 정해 주세요.');
+    nickname=(nickname||'').trim();
+    if(!nickname)throw new Error('닉네임을 적어 주세요. 광장에 이 이름으로 보입니다.');
+    if(nickname.length>12)throw new Error('닉네임은 12자 이내로 적어 주세요.');
+    const k=this.key(scope,username);
+    if(this.users[k])throw new Error('이미 쓰이는 아이디입니다.');
+    const u={id:'u'+(this.seq++),scope,username,password,nickname,role,classId,org:classId?CLASSES[classId].org:null,profile:null};
+    this.users[k]=u;return this.pub(u);
+  },
+  async signIn({scope,username,password}){
+    const u=this.users[this.key(scope,username||'')];
+    if(!u||u.password!==password)throw new Error('아이디나 비밀번호가 맞지 않습니다.');
+    return this.pub(u);
+  },
+  pub:u=>({id:u.id,scope:u.scope,username:u.username,nickname:u.nickname,role:u.role,classId:u.classId,org:u.org,profile:u.profile}),
+  async classByCode(orgId,code){
+    code=(code||'').trim().toUpperCase();
+    for(const c of Object.values(CLASSES)){
+      if(c.org!==orgId)continue;
+      if(c.studentCode===code)return {cls:c,role:'student'};
+      if(c.professorCode===code)return {cls:c,role:'professor'};
+    }
+    throw new Error('코드가 맞지 않습니다. 수업에서 받은 코드를 확인해 주세요.');
+  },
+  async saveEssay(e){const x={...e,id:'e'+(this.seq++),createdAt:Date.now()};this.essays.push(x);return x},
+  /* 광장 글: 같은 기사, 같은 난이도. 기관 학생은 우리 반 글만, 개인은 기관 밖 글만 */
+  async listEssays({articleId,level,classId=null}){
+    return this.essays.filter(e=>e.published&&e.articleId===articleId&&e.level===level&&(e.classId||null)===(classId||null));
+  },
+  async classEssays(classId){return this.essays.filter(e=>e.classId===classId&&!e.isExample)},
+  /* 투표: 같은 사람, 같은 글, 같은 종류는 한 번. 다시 누르면 취소 */
+  async toggleVote(userId,essayId,kind){
+    const k=`${userId}|${essayId}|${kind}`;
+    if(this.votes.has(k)){this.votes.delete(k);return false}
+    this.votes.set(k,1);return true;
+  },
+  voted(userId,essayId,kind){return this.votes.has(`${userId}|${essayId}|${kind}`)},
+  count(essay,kind){let n=essay.base?.[kind]||0;this.votes.forEach((_,k)=>{const[,e,t]=k.split('|');if(e===essay.id&&t===kind)n++});return n},
+  async saveRubric(classId,rubric){CLASSES[classId].rubric=rubric},
+  async assign(classId,articleId,level){CLASSES[classId].assigned={articleId,level,due:'이번 주 일요일'}}
+};
+/* 시연 계정 3개 + 예시 답안 계정 */
+(function seed(){
+  const mk=(scope,username,nickname,role,classId,profile)=>{DB.users[DB.key(scope,username)]={id:'u'+(DB.seq++),scope,username,password:DEMO_PW,nickname,role,classId,org:classId?'yonsei':null,profile}};
+  mk('p','demo','데모 응시자','personal',null,'demo');
+  mk('o','student','김연세','student','yonsei-writing',null);
+  mk('o','professor','박교수','professor','yonsei-writing',null);
+  /* 광장 예시 답안: "예시 답안" 시스템 계정으로 묶고 예시 배지 */
+  ARTICLES.forEach(a=>{
+    const repN=new Set(a.clusters.map(c=>(c.s.who.match(/\d+/)||[''])[0]));
+    const list=SEEDS[a.id]?.boksi || a.clusters.map((c,g)=>({n:(c.s.who.match(/\d+/)||['00'])[0],g,t:c.s.text}));
+    list.forEach(s=>{
+      const c=a.clusters[s.g];
+      const rep=repN.has(s.n)&&c&&c.s.text===s.t;
+      const base=rep?{ag:c.s.agree,pn:c.s.pen}:{ag:0,pn:0};
+      DB.essays.push({id:`ex-${a.id}-boksi-${s.n}`,userId:'example',nickname:`예시 응시자 ${s.n}`,articleId:a.id,level:'boksi',revised:s.t,draft:s.t,group:s.g,published:true,isExample:true,classId:null,base,rep});
+    });
+    /* 기관 시연용: 같은 예시 답안 일부(홀수 번호)를 "예시 반 학생"으로 우리 반 광장에 */
+    list.filter((s,i)=>i%2===0).forEach(s=>{
+      const c=a.clusters[s.g];const rep=repN.has(s.n)&&c&&c.s.text===s.t;
+      DB.essays.push({id:`exc-${a.id}-boksi-${s.n}`,userId:'example',nickname:`예시 반 학생 ${s.n}`,articleId:a.id,level:'boksi',revised:s.t,draft:s.t,group:s.g,published:true,isExample:true,classId:'yonsei-writing',base:rep?{ag:Math.ceil(c.s.agree/2),pn:Math.ceil(c.s.pen/2)}:{ag:0,pn:0},rep});
+    });
+    (SEEDS[a.id]?.choshi||[]).forEach(s=>DB.essays.push({id:`ex-${a.id}-choshi-${s.n}`,userId:'example',nickname:`예시 응시자 ${s.n}`,articleId:a.id,level:'choshi',revised:s.t,draft:s.t,group:s.g,published:true,isExample:true,classId:null,base:{ag:0,pn:0}}));
+  });
+})();
+
+/* =========================================================
+   AI 모듈
+   - 서버(/api/status)가 응답하고 LLM 키가 있으면 서버 함수를 부르고, 아니면 아래 규칙 기반 목업으로 동작합니다.
+   - 서버 호출이 실패하면 목업으로 대신하고 화면에 작게 "예비 응답"을 표시합니다 (숨기지 않음).
+   - 각 함수 위 주석의 입력과 출력 형식만 지키면 화면 코드는 고칠 필요가 없습니다.
+   ========================================================= */
+const API={on:false,checked:false,
+  async init(){if(location.protocol==='file:'){this.checked=true;return}try{const r=await fetch('/api/status',{cache:'no-store'});if(r.ok){const j=await r.json();this.on=!!j.llm}}catch(e){}this.checked=true},
+  async post(path,body){
+    const r=await fetch('/api/'+path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||('서버 오류 '+r.status));return j;
+  }
+};
+const withMeta=(o,fallback)=>({...o,_meta:{...(o._meta||{}),fallback}});
+const AI = {
+  /* [API 0] 오늘의 과제: 지난 답안의 5기준 점수 중 가장 낮은 항목 (AI 없이 규칙)
+     입력: {profile}  출력: {axis, task} */
+  async todayTask({profile}){
+    const last=Object.fromEntries(Object.entries(profile.axes).map(([k,v])=>[k,v.at(-1)]));
+    const axis=lowest(last);
+    return {axis,task:AXIS_TASK[axis]};
+  },
+
+  /* [API 1] 쓰기 전 생각할 거리: 답 대신 질문 3개
+     입력: {article, level}  출력: {questions:[string,string,string]} */
+  async prewrite({article,level}){
+    if(API.on)try{return await API.post('prewrite',{articleId:article.id,level})}catch(e){console.warn(e)}
+    await sleep(500);
+    return withMeta({questions:[
+      '이 기사에서 가장 큰 영향을 받는 사람은 누구라고 생각합니까?',
+      '이 문제를 판단할 때 무엇을 가장 앞에 둡니까? 효율, 공정, 안전 중 하나를 고른다면요.',
+      article.choshiQ
+    ]},API.on?'rule':false);
+  },
+
+  /* [API 2] 논증 분석 + 페르소나 반론 (서버 모드에서는 [API 3] 검수까지 서버가 끝내고 돌려줌)
+     입력: {article, level, text, personaIndex}
+     출력: {flag?, stance, structure:{claim, reasons[], premise, premiseFrom?, claimIndex?}, weaknesses:[{type,detail,question}],
+            rebuttal:{persona,text,question,source:{line,text}|null}, _meta?:{log, fallback}}
+     ※ claim, reasons는 사용자 글의 문장을 그대로 돌려줘야 화면에서 밑줄을 칠 수 있습니다
+     ※ premiseFrom, claimIndex는 1부터 센 문장 번호 (유민 feedback 지시문 형식). 있으면 "근거 [n] → 주장 [m] 사이"로 표시 */
+  async analyzeAndRebut({article,level,text,personaIndex}){
+    if(API.on)try{return await API.post('analyze',{articleId:article.id,level,text,personaIndex})}catch(e){console.warn(e);const r=this._mockAnalyze({article,level,text,personaIndex});r._meta={fallback:'rule',log:[{state:'bad',text:'서버 호출이 실패해 예비 응답을 보여 줍니다'}]};return r}
+    await sleep(800);
+    return this._mockAnalyze({article,level,text,personaIndex});
+  },
+  _mockAnalyze({article,level,text,personaIndex}){
+    const sents=sentences(text), lv=LEVELS[level];
+    const stance = level==='choshi' ? null : detectStance(article,text);
+    const claim = (stance && sents.find(s=>has(s,stance.kw))) || sents[0] || '';
+    const reasons = sents.filter(s=>s!==claim && (has(s,EVID) || /\d/.test(s))).slice(0,2);
+    const rest = sents.filter(s=>s!==claim && !reasons.includes(s));
+    while(reasons.length<2 && rest.length) reasons.push(rest.shift());
+    const premise = stance ? stance.premise : article.choshiPremise;
+    const w=[];
+    if(!sents.some(s=>has(s,EVID)||/\d/.test(s)))
+      w.push({type:'근거 부족',detail:'주장을 받치는 사례나 자료가 보이지 않습니다. 지금은 주장과 느낌이 같은 무게로 놓여 있습니다.',question:'이 주장이 맞다는 걸 보여줄 사례를 하나 든다면 무엇입니까?'});
+    w.push({type:'숨은 전제',detail:`이 글은 "${premise}"는 생각 위에 서 있지만, 글에는 드러나 있지 않습니다.`,question: stance?stance.premiseQ:article.choshiQ});
+    const hedged=sents.find(s=>has(s,HEDGE));
+    if(hedged) w.push({type:'추측으로 끝난 근거',detail:`"${hedged}" 문장이 추측으로 끝나서 근거로 쓰기 어렵습니다.`,question:'이 부분을 확신하려면 어떤 사실이 필요합니까?'});
+    if(!has(text,CONCEDE)) w.push({type:'반례를 다루지 않음',detail:'반대쪽에서 나올 만한 반례를 다루지 않았습니다.',question:'당신의 주장이 틀리는 경우가 있다면 언제입니까?'});
+    if(has(text,OVERGEN)) w.push({type:'성급한 일반화',detail:'"모든", "항상" 같은 표현이 주장을 필요 이상으로 넓힙니다.',question:'예외가 하나라도 있다면 주장은 어떻게 달라집니까?'});
+    const bank = stance ? stance.bank : article.choshiBank;
+    const r = bank[personaIndex % bank.length];
+    const ci=sents.indexOf(claim)+1, pf=reasons.length?sents.indexOf(reasons[0])+1:null;
+    return {
+      flag: sents.some(s=>BYPASS.test(s))?'request_inside':null,
+      stance:stance?stance.id:null,
+      structure:{claim,reasons,premise,claimIndex:ci||null,premiseFrom:pf},
+      weaknesses:w.slice(0,lv.weak),
+      rebuttal:{persona:r.p,text:r.t,question:r.q,source:r.src!=null?{line:r.src+1,text:article.summary[r.src]}:null}
+    };
+  },
+
+  /* [API 3] 출력 검수 (목업 모드에서만 화면이 직접 부름. 서버 모드에서는 analyze 안에서 끝남)
+     입력: {feedback, text}  출력: {pass, violations:[{type, evidence}]}
+     원칙: 사용자 문장을 그대로 인용하는 것은 허용, 비슷하게 고쳐 쓴 문장은 대필로 봄 */
+  async verifyFeedback({feedback,text}){
+    await sleep(400);
+    const v=[], userSents=sentences(text);
+    const pieces=[...feedback.weaknesses.map(w=>w.detail+' '+w.question),feedback.rebuttal.text,feedback.rebuttal.question];
+    const MID=['양쪽 다 일리','양쪽 모두 일리','중간 지점','절충안을 찾'];
+    const WRITE=['모범 문장','이렇게 고쳐','다음과 같이 쓰'];
+    pieces.forEach(p=>{
+      MID.forEach(k=>{if(p.includes(k))v.push({type:'결론을 중간으로 모는 표현',evidence:k})});
+      WRITE.forEach(k=>{if(p.includes(k))v.push({type:'대신 써 주는 표현',evidence:k})});
+      (p.match(/"([^"]{12,})"/g)||[]).map(q=>q.slice(1,-1)).forEach(q=>{
+        if(text.includes(q)) return;
+        if(userSents.some(s=>jaccard(s,q)>=.5)) v.push({type:'사용자 문장을 고쳐 쓴 흔적',evidence:q});
+      });
+    });
+    return {pass:v.length===0,violations:v};
+  },
+
+  /* [API 4] (v4) 5기준 채점: AAC&U Critical Thinking VALUE Rubric 5기준, 기준당 1~10점(총 50점)
+     처음 글과 고친 글을 서로 모르게 따로 채점. 원 루브릭 4단계 → 1단계 1~2, 2단계 3~5, 3단계 6~8, 4단계 9~10
+     입력: {articleId, level, draft, revised, rubric?:{기준:{def,weight}}}
+     출력: {before:{기준:점수}, after:{기준:점수}, why:{기준:{before:[string], after:[string]}}, total?:{before,after,max}}
+     ※ why는 "사용자 글의 어느 부분 때문에 이 점수인지"를 1~2줄 + 사용자 글 인용. 글을 고쳐 주는 문장은 넣지 않음 */
+  async scoreRevision({draft,revised,rebuttal,level,rubric}){
+    if(API.on)try{return await API.post('score',{articleId:S.articleId,level,draft,revised,rubric})}catch(e){console.warn(e);return withMeta(this._mockScore({draft,revised,rebuttal,level}),'rule')}
+    await sleep(700);
+    return this._mockScore({draft,revised,rebuttal,level});
+  },
+  /* 목업 채점: 규칙으로 1~5를 매긴 뒤 10점으로 늘림 (실제 서비스는 서버의 LLM 채점) */
+  _mockScore({draft,revised,rebuttal,level}){
+    const grade=t=>{
+      const s=sentences(t), first=s[0]||'', W={};
+      const stanceHit=ARTICLES.some(a=>a.stances.some(st=>has(first,st.kw)));
+      const ev=s.filter(x=>has(x,EVID)||/\d/.test(x)).length, art=has(t,['기사','따르면']);
+      const hedges=s.filter(x=>has(x,HEDGE)).length;
+      const R={}, five=v=>Math.max(1,Math.min(5,v)), ten=v=>clamp(five(v)*2-(five(v)<5&&s.length<LEVELS[level].target?1:0));
+      W['쟁점 설명']=[stanceHit?'첫 문장에서 질문이 묻는 선택지를 직접 다룹니다.':'첫 문장만으로는 질문의 어느 선택지를 다루는지 드러나지 않습니다.',
+                    s.length>=LEVELS[level].target?`요구한 ${LEVELS[level].target}문장 분량을 채웠습니다.`:`요구한 ${LEVELS[level].target}문장보다 짧아 쟁점을 다 펼치지 못했습니다.`];
+      R['쟁점 설명']=ten(2+(stanceHit?1:0)+(s.length>=LEVELS[level].target?1:0)+(art?1:0));
+      W['근거 활용']=[ev?`근거로 볼 수 있는 문장이 ${ev}개 있습니다.`:'주장을 받치는 사실이나 사례가 보이지 않습니다.',
+                    art?'기사 내용을 근거로 끌어왔습니다.':'기사 속 사실을 근거로 쓰지 않았습니다.'];
+      R['근거 활용']=ten(1+Math.min(3,ev)+(art?1:0));
+      const cond=has(t,COND), conc=has(t,CONCEDE), hit=rebuttal&&shareKey(t,rebuttal.text);
+      W['맥락과 전제']=[conc?'반대쪽에서 나올 지적을 글 안에서 다룹니다.':'내 주장이 틀릴 수 있는 경우를 다루지 않았습니다.',
+                    cond?'주장이 통하는 조건을 스스로 정했습니다.':'주장이 어떤 조건에서만 맞는지 정하지 않았습니다.',
+                    ...(hit?['받은 반론이 겨냥한 전제를 글에서 직접 다룹니다.']:[])];
+      R['맥락과 전제']=ten(1+(conc?1:0)+(cond?2:0)+(hit?1:0));
+      W['자기 입장']=[has(first,HEDGE)?'첫 문장이 추측으로 끝나 입장이 흐립니다.':'첫 문장에서 입장을 단정적으로 밝힙니다.',
+                    conc?'반대 입장을 인정한 뒤 자기 기준을 다시 세웁니다.':'반대 입장을 언급하지 않아 입장의 근거가 한쪽만 보입니다.'];
+      R['자기 입장']=ten(2+(has(first,HEDGE)?-1:1)+(conc?1:0)+(hedges?0:1));
+      const con=has(t,CONNECT), out=has(t,OUTCOME);
+      W['결론과 함의']=[con?'"따라서", "그래서"로 근거와 결론을 이었습니다.':'근거에서 결론으로 넘어가는 연결이 없습니다.',
+                     out?'결론이 낳을 결과까지 적었습니다.':'결론을 따랐을 때 어떤 결과가 생기는지는 적지 않았습니다.',
+                     ...(hedges?[`추측으로 끝난 문장 ${hedges}개가 결론의 힘을 약하게 합니다.`]:[])];
+      R['결론과 함의']=ten(2+(con?1:0)+(out?1:0)+(s.length>=LEVELS[level].target?1:0)-hedges);
+      return {R,W};
+    };
+    const b=grade(draft),a=grade(revised);
+    return {before:b.R,after:a.R,why:Object.fromEntries(Object.keys(RUBRIC).map(k=>[k,{before:b.W[k],after:a.W[k]}]))};
+  },
+
+  /* [API 5] 시관에게 묻기: 대화창만. 재반박도 여기서 받음
+     입력: {question, feedback}  출력: {refused:boolean, kind:'refuse'|'rebuttal'|'answer', reply}
+     원칙: 대필 요청은 거절(입력 가드레일). 재반박에는 "누가 맞다"고 판정하지 않고, 그 반박이 성립하려면 무엇이 참이어야 하는지만 짚음 */
+  async ask({question,feedback}){
+    if(API.on)try{return await API.post('ask',{articleId:S.articleId,level:S.level,draft:S.draft,question,feedback,chat:S.chat})}catch(e){console.warn(e)}
+    await sleep(450);
+    if(BYPASS.test(question)||/대신|모범|정답/.test(question))
+      return {refused:true,kind:'refuse',reply:'글은 대신 써 드리지 않습니다. 대신 하나만 묻겠습니다. '+(feedback?.weaknesses[0]?.question||'당신의 주장을 가장 강하게 받치는 근거는 무엇입니까?')};
+    if(/틀렸|아니라고|동의하지|동의 못|반박|과장|그렇지 않|다르다고|말이 안/.test(question))
+      return {refused:false,kind:'rebuttal',reply:'좋은 반박입니다. 다만 그 반박이 성립하려면 하나가 더 필요합니다. 반론이 짚은 상황이 실제로는 드물거나 다르게 흘러간다는 근거입니다. 그 근거를 고친 답안 안에 적으면, 반론을 받아들이지 않고도 글이 단단해집니다. 이 반론을 받아들일지는 당신이 정합니다.'};
+    if(/전제/.test(question))
+      return {refused:false,kind:'answer',reply:`숨은 전제는 글에 쓰지 않았지만, 근거에서 주장으로 넘어가려면 참이어야 하는 생각입니다. 지금 글에서는 "${feedback?.structure.premise||''}"가 그렇습니다. 이 전제가 틀린다면 주장은 어떻게 됩니까?`};
+    return {refused:false,kind:'answer',reply:'그 답은 당신의 글 안에서 찾아보면 좋겠습니다. 어느 문장이 이 질문과 가장 가깝습니까?'};
+  },
+
+  /* [API 5-1] (v4) 고쳐 쓰기 칸 검사: 답안 대신 AI에게 하는 요청을 적었는지
+     입력: {text}  출력: {blocked:boolean}  ※ 답안 본문 속 "법을 고쳐야 한다" 같은 문장은 막지 않음 */
+  async checkRevised({text}){
+    if(API.on)try{return await API.post('check',{text})}catch(e){console.warn(e)}
+    const t=text.trim();
+    return {blocked:BYPASS.test(t)&&(t.length<120||sentences(t).some(s=>BYPASS.test(s)&&/(줘|주세요|please|\?)\s*[.!?]?$/i.test(s)))};
+  },
+
+  /* [API 6] 다음 책문의 과제: 고친 글에서 가장 낮은 기준 (AI 없이 규칙)
+     입력: {scores}  출력: {axis, task} */
+  async nextTask({scores}){
+    const axis=lowest(scores.after);
+    return {axis,task:AXIS_TASK[axis]};
+  },
+
+  /* [API 7] 관점 지도: 시드 답안을 미리 묶어 저장해 두고, 내 글은 가장 가까운 그룹에 배정
+     입력: {article, text, level}  출력: {clusters:[...], mine:index} */
+  async clusterAnswers({article,text,level}){
+    if(API.on)try{const r=await API.post('place',{articleId:article.id,level,text});return {clusters:article.clusters,mine:r.mine}}catch(e){console.warn(e)}
+    await sleep(300);
+    const st = level==='choshi' ? null : detectStance(article,text).id;
+    let i = article.clusters.findIndex(c=>c.stance===st);
+    if(i<0){ /* 초시나 입장을 못 찾으면 글자 유사도가 가장 높은 그룹 */
+      let best=0,bs=-1;article.clusters.forEach((c,k)=>{const s=jaccard(c.s.text,text);if(s>bs){bs=s;best=k}});i=best;
+    }
+    return {clusters:article.clusters,mine:i};
+  },
+
+  /* [API 8] 나의 기록: 누적 글 분석 (시연은 미리 계산한 데모 계정. 새 계정은 빈 상태) */
+  async writingProfile(user){return user&&user.profile==='demo'?PROFILE:null}
+};
+
+/* ---------- 상태 ---------- */
+const S={view:'start',step:0,articleId:'aiexam',picked:false,levelChosen:false,srcTab:'body',level:'boksi',todayTask:null,
+  user:null,auth:{scope:'p',tab:'login',org:null,cls:null,role:null,err:'',after:null},teacher:{sel:null},
+  draft:'',log:{start:null,paste:0,revisions:0,refused:0},prewrite:null,
+  running:false,pipe:[],verify:null,attempts:0,feedback:null,personaIndex:0,chat:[],
+  revised:'',blocked:null,compare:null,next:null,
+  submitted:false,myEssay:null,plaza:null};
+function resetWriting(){Object.assign(S,{draft:'',log:{start:null,paste:0,revisions:0,refused:0},prewrite:null,running:false,pipe:[],verify:null,attempts:0,feedback:null,personaIndex:0,chat:[],revised:'',blocked:null,compare:null,next:null,submitted:false,myEssay:null,plaza:null})}
+function clearAfterDraft(){Object.assign(S,{feedback:null,verify:null,pipe:[],chat:[],revised:'',blocked:null,compare:null,next:null,submitted:false,myEssay:null,plaza:null})}
+const isStudent=()=>S.user?.role==='student', isProf=()=>S.user?.role==='professor', isOrg=()=>S.user&&S.user.scope==='o';
+const myClass=()=>S.user?.classId?CLASSES[S.user.classId]:null;
+const rubricFor=()=>{const r=myClass()?.rubric;return r||null};
+const ruleDef=k=>rubricFor()?.[k]?.def||RUBRIC[k].def;
+
+/* ---------- 진행선 (6단계: 난이도는 '질문' 단계의 첫 화면) ---------- */
+const STEPS=['기사','질문','쓰기','반론','고쳐 쓰기','광장'];
+const STEP={PICK:0,QUESTION:1,WRITE:2,REBUT:3,REVISE:4,PLAZA:5};
+function reached(){let r=0;if(S.picked)r=1;if(S.picked&&S.levelChosen&&S.user)r=2;if(S.draft.trim())r=3;if(S.feedback)r=4;if(S.submitted)r=5;return r}
+function drawTrack(){
+  const el=$('#track'), r=reached(), flow=S.view==='flow';
+  el.parentElement.hidden=!flow;
+  el.style.setProperty('--p',S.step/5);
+  el.innerHTML=STEPS.map((l,i)=>{
+    const cls = i===S.step ? 'now' : i<r ? 'done' : i===r ? 'open' : '';
+    return `<li><button class="st ${cls}" data-step="${i}" ${i>r?'disabled':''} ${i===S.step?'aria-current="step"':''}><span class="ball">${i+1}</span><span class="lb">${l}</span></button></li>`;
+  }).join('');
+  $$('[data-step]').forEach(b=>b.onclick=()=>go(+b.dataset.step));
+}
+function go(i){
+  if(i>reached())return;
+  S.view='flow';S.step=i;render(true);window.scrollTo(0,0);
+}
+function view(v){S.view=v;render(true);window.scrollTo(0,0)}
+
+/* ---------- 머리 ---------- */
+function drawTop(){
+  const L=[];
+  if(S.user&&!isProf()) L.push(`<button class="toplink" data-top="${S.view==='profile'?'flow':'profile'}">${S.view==='profile'?'책문으로 돌아가기':'나의 기록'}</button>`);
+  if(isProf()) L.push(`<button class="toplink" data-top="teacher">교수용 화면</button>`);
+  if(S.user) L.push(`<span class="who-chip">${isOrg()?'<span class="badge org">기관</span>':''}${esc(S.user.nickname)}</span><button class="toplink" data-top="logout">로그아웃</button>`);
+  else if(S.view!=='start'&&S.view!=='auth') L.push(`<button class="toplink" data-top="login">로그인</button>`);
+  $('#toplinks').innerHTML=L.join('')+(API.checked&&!API.on?'<span class="mockmark" title="서버의 AI가 연결되기 전이라 규칙 기반 목업으로 동작합니다">목업 모드</span>':'');
+  $$('[data-top]').forEach(b=>b.onclick=()=>{
+    const t=b.dataset.top;
+    if(t==='logout'){S.user=null;S.todayTask=null;resetWriting();S.picked=false;S.levelChosen=false;S.step=0;view('start');return}
+    if(t==='login'){S.auth={...S.auth,scope:'p',tab:'login',err:'',after:{view:S.view,step:S.step}};view('auth');return}
+    if(t==='flow'){S.view='flow';render(true);return}
+    view(t);
+  });
+}
+
+/* ---------- 화면 ---------- */
+function render(anim){
+  drawTrack();drawTop();
+  const m=$('#main');
+  const V={start:vStart,auth:vAuth,org:vOrg,profile:vProfile,teacher:vTeacher,peek:vPeek};
+  m.innerHTML = V[S.view] ? V[S.view]() : S.step===STEP.QUESTION&&!S.levelChosen ? vLevel() : [vPick,vQuestion,vWrite,vRebut,vRevise,vPlaza][S.step]();
+  if(anim){m.classList.remove('in');void m.offsetWidth;m.classList.add('in')}
+  bind();
+}
+const qBlock=(a,sm)=>`<div class="qw${sm?' sm':''}"><span class="qmark" aria-hidden="true">問</span><p class="q">${esc(a.q[S.level])}</p></div>`;
+
+/* 0. (v4) 첫 화면: 개인 / 학교나 기관 */
+function vStart(){
+  return `
+  <section class="hero">
+    <div class="stamp" aria-hidden="true">策<br>問</div>
+    <h1>대신 써 주지 않는 AI</h1>
+    <p>AI는 질문과 반론만, 생각과 글은 내가.</p>
+  </section>
+  <div class="paths">
+    <button class="path corner" data-start="p"><b>개인으로 시작</b><span>매일 한 편, 오늘의 책문에 답합니다</span></button>
+    <button class="path corner" data-start="o"><b>학교·기관으로 시작</b><span>수업에서 받은 코드로 들어갑니다</span></button>
+  </div>
+  <p class="ctr"><button class="link" data-start="guest">로그인 없이 기사와 광장 둘러보기</button></p>`;
+}
+
+/* (v4) 로그인과 가입. scope p=개인, o=기관 (계정이 섞이지 않게 따로) */
+function vAuth(){
+  const A=S.auth, login=A.tab==='login', org=A.scope==='o';
+  const demo = org ? (A.role==='professor'?'professor':'student') : 'demo';
+  return `
+  <section class="block ctr">
+    <h2 class="ptitle">${org?esc(A.cls?.name||'')+' '+(A.role==='professor'?'교수':'학생'):'개인'} ${login?'로그인':'가입'}</h2>
+    ${org?`<p class="note">${esc(ORGS.find(o=>o.id===A.org)?.name||'')}, ${A.role==='professor'?'교수 코드':'학생 코드'}로 들어왔습니다.</p>`:''}
+  </section>
+  <form class="form corner" id="authForm" autocomplete="off">
+    <div class="tabs" role="tablist" style="margin:0 0 6px">
+      <button type="button" role="tab" data-atab="login" aria-selected="${login}">로그인</button>
+      <button type="button" role="tab" data-atab="signup" aria-selected="${!login}">가입</button>
+    </div>
+    <label for="au">아이디</label><input id="au" name="u" required>
+    ${login?'':'<p class="hint">영문과 숫자 4~20자</p>'}
+    <label for="ap">비밀번호</label><input id="ap" name="p" type="password" required>
+    ${login?'':`<p class="hint">6자 이상</p><label for="an">닉네임</label><input id="an" name="n" maxlength="12" required><p class="hint">광장에 이 이름으로 보입니다</p>`}
+    ${A.err?`<p class="err" role="alert">${esc(A.err)}</p>`:''}
+    <div class="actions" style="margin-top:18px"><button class="btn">${login?'로그인':'가입하고 시작하기'}</button>
+      <button type="button" class="link" data-demo="${demo}">시연 계정으로 들어가기</button></div>
+  </form>
+  <p class="ctr note"><button class="link" data-back="start">처음으로</button></p>`;
+}
+
+/* (v4) 기관: 기관 고르기 → 코드 입력 (학생 코드와 교수 코드가 다름) */
+function vOrg(){
+  const A=S.auth;
+  return `
+  <section class="block ctr"><h2 class="ptitle">학교·기관으로 시작</h2><p class="note">기관을 고르고, 수업에서 받은 코드를 넣어 주세요.</p></section>
+  <form class="form corner" id="orgForm" autocomplete="off">
+    <label for="og">기관</label><select id="og">${ORGS.map(o=>`<option value="${o.id}">${esc(o.name)}</option>`).join('')}</select>
+    <label for="oc">코드</label><input id="oc" placeholder="예: YONSEI-STU" required>
+    ${A.err?`<p class="err" role="alert">${esc(A.err)}</p>`:''}
+    <div class="actions" style="margin-top:18px"><button class="btn">다음</button></div>
+  </form>
+  <p class="ctr note"><button class="link" data-back="start">처음으로</button></p>`;
+}
+
+/* 1. 기사 고르기: (기관 학생) 이번 주 과제 + 오늘의 과제 + 분야별 기사 5개 */
+function vPick(){
+  const cls=isStudent()?myClass():null, as=cls?.assigned, aa=as&&ARTICLES.find(x=>x.id===as.articleId);
+  return `
+  ${aa?`<div class="task" style="background:var(--jjok-t);border-left-color:var(--jjok)"><b style="color:var(--jjok)">이번 주 과제</b>${esc(cls.name)}: ${esc(aa.title)} (${LEVELS[as.level].name}), 마감 ${esc(as.due)}
+     <small><button class="link" id="doAssigned">이 과제 하러 가기</button></small></div>`:''}
+  ${S.todayTask?`<p class="task"><b>오늘의 과제</b>${esc(S.todayTask.task)}<small>지난 답안에서 ${esc(S.todayTask.axis)} 점수가 가장 낮았습니다.</small></p>`:''}
+  <section class="block">
+    <h2 class="pick-h">시관이 고른 오늘의 시제(試題) 다섯</h2>
+    <p class="note" style="margin-top:0">분야마다 하나씩, 오늘 생각해 볼 만한 소식을 골랐습니다. 하나를 골라 답해 보세요.</p>
+    <ul class="picks">${ARTICLES.map(x=>`<li><button class="pk${x.demo?' demo':''}" data-art="${x.id}"><span class="field">${esc(x.field)}</span><span class="one">${esc(x.oneLine)}</span><span class="go">읽기 →</span></button></li>`).join('')}</ul>
+  </section>`;
+}
+
+/* 2-1. (v4, 11/19 밤 수정) 기사 읽기 + 난이도: 원문 전문이 먼저, 세 줄 요약은 골라서 보기. 그 아래에서 초시, 복시, 전시를 고름
+   개인은 전시가 프리미엄 잠금, 기관은 잠금 해제지만 준비 중 */
+function articleView(a){
+  const isBody=S.srcTab==='body';
+  const body = a.body&&a.body.length
+    ? `<div class="body">${a.body.map(p=>`<p>${esc(p)}</p>`).join('')}</div>`
+    : `<div class="body empty">원문 전문을 준비하고 있습니다. 아래 "원문 기사 보기"로 원문을 읽거나, "세 줄 요약"을 눌러 요약을 볼 수 있습니다.</div>`;
+  return `
+    <div class="tabs" role="tablist" aria-label="기사 보기">
+      <button role="tab" data-tab="body" aria-selected="${isBody}">원문 전문</button>
+      <button role="tab" data-tab="sum" aria-selected="${!isBody}">세 줄 요약</button>
+    </div>
+    ${isBody?body:`<ol class="sum">${a.summary.map(s=>`<li>${esc(s)}</li>`).join('')}</ol><p class="note">AI가 원문을 세 줄로 요약했습니다. 원문을 먼저 읽고, 요약은 정리할 때 참고해 주세요.</p>`}
+    <p class="srcline"><span>출처: ${esc(a.source||'')}${a.date?', '+esc(a.date):''}</span><a href="${esc(a.url)}" target="_blank" rel="noopener">원문 기사 보기</a></p>`;
+}
+function vLevel(){
+  const a=art(), org=isOrg();
+  const card=(k)=>{
+    const l=LEVELS[k];
+    if(k==='jeonsi') return `<button class="lvc dim" data-lv="jeonsi">
+      <span class="tag ${org?'soon':'lock'}">${org?'준비 중':'프리미엄'}</span>
+      <span class="han">${l.han}</span><b>${l.name}</b><span>제시문 논술형, 시험 대비</span>
+      <span>${org?'기관 구독에 포함되어 있습니다. 문제를 준비하고 있습니다.':'월 구독으로 열립니다.'}</span></button>`;
+    return `<button class="lvc corner" data-lv="${k}"><span class="han">${l.han}</span><b>${l.name}</b><span>${esc(l.desc)}</span>
+      <span style="color:var(--ink);font-family:var(--serif);margin-top:6px">${esc(a.q[k])}</span></button>`;
+  };
+  return `
+  <section class="block">
+    <p class="note" style="margin:0 0 4px">${esc(a.field)}</p>
+    <h3 class="art-title">${esc(a.title)}</h3>
+    ${articleView(a)}
+  </section>
+  <section class="block">
+    <h2 class="h">기사를 읽었다면, 난이도를 고르세요</h2>
+    <p class="note" style="margin:0 0 14px">난이도마다 질문이 다릅니다. 광장에서도 같은 난이도의 답만 함께 봅니다.</p>
+    <div class="lvbig">${['choshi','boksi','jeonsi'].map(card).join('')}</div>
+  </section>
+  <div class="actions"><button class="link" data-go="0">다른 기사 고르기</button></div>`;
+}
+
+/* 2-2. 질문: 고른 난이도의 시제. 기사는 접어 두고 필요하면 다시 펼쳐 봄 */
+function vQuestion(){
+  const a=art();
+  return `
+  <section class="block">
+    <p class="note" style="margin:0 0 4px">${esc(a.field)}</p>
+    <h3 class="art-title">${esc(a.title)}</h3>
+    <details class="check" style="margin:10px 0 0"><summary>기사 다시 보기</summary><div style="margin-top:12px">${articleView(a)}</div></details>
+  </section>
+  <p class="lvchip">난이도 <b>${LEVELS[S.level].name}</b><button class="link" id="chLevel">난이도 바꾸기</button></p>
+  ${qBlock(a)}
+  <div class="actions"><button class="btn" id="answerBtn">이 질문에 답하기</button><button class="link" id="peekBtn">이 질문의 광장 둘러보기</button><button class="link" data-go="0">다른 기사 고르기</button></div>
+  ${S.user?'':'<p class="note">글을 쓰고 제출하려면 로그인이 필요합니다.</p>'}`;
+}
+
+/* 3. 쓰기 */
+function vWrite(){
+  const a=art(),lv=LEVELS[S.level];
+  return `
+  ${qBlock(a,true)}
+  <div class="prewrite">${S.prewrite
+    ?`<div class="pw"><p>답은 각자의 몫입니다. 생각을 시작할 질문만 드립니다.</p><ol>${S.prewrite.questions.map(q=>`<li>${esc(q)}</li>`).join('')}</ol></div>`
+    :`<button class="link" id="prewriteBtn">무엇부터 써야 할지 막막하다면, 생각할 거리 받기</button>`}</div>
+  <label class="sr" for="draft">내 답안</label>
+  <textarea id="draft" class="sheet" placeholder="${lv.target}문장${S.level==='boksi'?' 이상, 근거를 넣어':'으로'} 직접 써 주세요.">${esc(S.draft)}</textarea>
+  <div class="meter" id="meter"></div>
+  <div class="actions">
+    <button class="btn" id="toRebut">제출하고 반론 받기</button>
+    <button class="link" id="loadSample">예시 답안으로 체험하기</button>
+  </div>
+  ${S.feedback?'':'<p class="note">이 화면에서 AI는 아무것도 쓰지 않습니다. 붙여넣기도 막혀 있습니다.</p>'}`;
+}
+function drawMeter(){
+  const el=$('#meter');if(!el)return;
+  const n=sentences(S.draft).length,t=LEVELS[S.level].target;
+  const sec=S.log.start?Math.floor((Date.now()-S.log.start)/1000):0;
+  el.innerHTML=`<span class="${n>=t?'met':''}">문장 <b>${n}</b> / ${t}</span><span>쓴 시간 <b>${String(Math.floor(sec/60)).padStart(2,'0')}:${String(sec%60).padStart(2,'0')}</b></span>${S.log.paste?`<span>붙여넣기 <b>${S.log.paste}</b>번 막음</span>`:''}`;
+  const b=$('#toRebut');if(b)b.disabled=n<1;
+}
+setInterval(()=>{if(S.view==='flow'&&S.step===STEP.WRITE)drawMeter()},1000);
+
+/* 4. 반론 */
+const FLAG={request_inside:'답안 속 요청은 반영하지 않았습니다. 글은 직접 써 주세요.',too_short:'답안이 짧거나 근거가 없어, 근거부터 짚었습니다.',off_topic:'답안이 질문과 조금 비껴 있습니다. 질문에 다시 답해 보세요.'};
+function fallbackMark(o){const f=o?._meta?.fallback;return f==='cache'?'<span class="mockmark">저장된 응답</span>':f==='rule'?'<span class="mockmark">예비 응답</span>':''}
+function vRebut(){
+  const f=S.feedback;
+  if(!f) return `<div class="reading"><p class="h">시관이 답안을 읽고 있습니다</p><p class="note">글을 고치지 않고, 논리의 빈틈과 반론만 찾습니다.</p><ul class="pipe" id="pipe"></ul></div>`;
+  const P=PERSONAS[f.rebuttal.persona]||{name:'다른 사람',mark:'問',desc:''};
+  return `
+  <details class="check"><summary><b>검수 통과</b> 대신 쓴 문장과 결론을 한쪽으로 모는 표현이 없는지 확인했습니다 ${fallbackMark(f)}</summary>
+    <ul class="pipe">${pipeItems()}</ul>
+    ${location.search.includes('dev')?`<pre>${esc(JSON.stringify(f,null,2))}</pre>`:''}</details>
+  ${f.flag&&FLAG[f.flag]?`<p class="flagnote" role="status">${FLAG[f.flag]}</p>`:''}
+  <section class="block">
+    <h2 class="h">당신의 글은 이렇게 읽힙니다</h2>
+    <div class="annot">${annotate(f)}</div>
+  </section>
+  <section class="block">
+    <h2 class="h">짚어 볼 곳</h2>
+    ${f.weaknesses.map(w=>`<div class="weak"><p class="wt">${esc(w.type)}</p><p>${esc(w.detail)}</p><p class="ask">${esc(w.question)}</p></div>`).join('')}
+  </section>
+  <section class="block rebut">
+    <div class="who"><span class="pmark" aria-hidden="true">${P.mark}</span><div><p class="nm">${esc(P.name)}의 반론</p><p class="ds">${esc(P.desc)}</p></div></div>
+    <p class="rb">${esc(f.rebuttal.text)}</p>
+    <p class="ask">${esc(f.rebuttal.question)}</p>
+    ${f.rebuttal.source?`<p class="src">근거로 삼은 기사 내용: ${esc(f.rebuttal.source.text)}</p>`:`<p class="src">이 반론은 사실이 아니라 글의 논리를 겨냥합니다.</p>`}
+    <p class="src" style="border-top:0;margin-top:4px;padding-top:0">반론은 하나의 관점일 뿐 정답이 아닙니다. AI의 반론이 늘 맞는 것은 아닙니다.</p>
+    <button class="link" id="otherPersona">다른 관점의 반론 받기</button>
+  </section>
+  <section class="block">
+    <h2 class="h">시관에게 묻기</h2>
+    <div class="chat">${S.chat.map(c=>`<div class="bub ${c.me?'me':'ai'}${c.refused?' refuse':''}">${esc(c.t)}</div>`).join('')}</div>
+    <p class="note" style="margin:0 0 8px">반론에 동의하지 않는다면 여기서 시관에게 재반박해 보세요. 궁금한 점도 물어볼 수 있습니다. 글을 대신 써 달라는 요청에는 답하지 않습니다.</p>
+    <form class="askf" id="askForm"><label class="sr" for="askIn">질문이나 재반박</label><input id="askIn" type="text" placeholder="궁금한 점이나, 이 반론이 틀렸다고 보는 이유를 적어 주세요"><button class="btn ghost">보내기</button></form>
+  </section>
+  <div class="actions"><button class="btn" data-go="4">고쳐 쓰러 가기</button></div>`;
+}
+function annotate(f){
+  /* (v4.1) 주장에는 번호를 붙이지 않고, 근거만 나온 순서대로 [1], [2]로 구분.
+     premiseFrom(1부터 센 문장 번호)이 근거 문장이면 "근거 [n] → 주장 사이"로 표시 */
+  const st=f.structure;
+  const isClaim=s=>s===st.claim||jaccard(s,st.claim)>.6;
+  const isReason=s=>st.reasons.some(r=>r===s||jaccard(s,r)>.6);
+  const ss=sentences(S.draft);
+  let k=0;const ord={};
+  const rows=ss.map((s,i)=>{
+    const c=isClaim(s)?'c':isReason(s)?'r':'';
+    if(c==='r')ord[i+1]=++k;
+    const tag=c==='c'?'주장':c==='r'?`근거 <small style="font-weight:400">[${k}]</small>`:'';
+    return `<div class="ln ${c}"><span class="tag">${tag}</span><span class="tx">${esc(s)}</span></div>`;
+  }).join('');
+  const rn=st.premiseFrom?ord[st.premiseFrom]:null;
+  const from=rn?`<span class="from">근거 [${rn}] → 주장 사이에 숨은 생각</span>`:'';
+  return rows+`<div class="ln p"><span class="tag">숨은 전제</span><span class="tx">${esc(st.premise)}${from}</span></div>`;
+}
+const pipeItems=()=>S.pipe.map(p=>`<li><i class="${p.state}"></i><span>${esc(p.text)}</span></li>`).join('');
+function drawPipe(){const el=$('#pipe');if(el)el.innerHTML=pipeItems()}
+function pickPersona(a){const st=S.level==='choshi'?null:detectStance(a,S.draft);const bank=st?st.bank:a.choshiBank;return bank[S.personaIndex%bank.length]}
+
+async function runFeedback(){
+  if(S.running)return;
+  S.running=true;S.feedback=null;S.pipe=[];S.chat=[];
+  if(S.step===STEP.REBUT)render();
+  const a=art();
+  const log=(state,text)=>{S.pipe.push({state,text});drawPipe()};
+  log('ok','기사 본문을 반론의 근거 범위로 정했습니다');
+  let fb=null;
+  if(API.on){
+    log('run','글의 구조를 나누고, 반론을 쓰고, 검수합니다');
+    fb=await AI.analyzeAndRebut({article:a,level:S.level,text:S.draft,personaIndex:S.personaIndex});
+    S.pipe=[S.pipe[0],...(fb._meta?.log||[]).map(x=>({state:x.state==='info'?'ok':x.state,text:x.text}))];
+  } else {
+    const name=PERSONAS[pickPersona(a).p].name;
+    for(let i=0;i<3;i++){
+      S.attempts=i+1;
+      log('run',`${i===0?'':`${i+1}번째 시도: `}글의 구조를 나누고 ${name} 관점의 반론을 씁니다`);
+      fb=await AI.analyzeAndRebut({article:a,level:S.level,text:S.draft,personaIndex:S.personaIndex});
+      S.pipe.at(-1).state='ok';
+      log('run','대신 쓴 문장이나 결론을 한쪽으로 모는 표현이 있는지 검수합니다');
+      const v=await AI.verifyFeedback({feedback:fb,text:S.draft});
+      S.pipe.at(-1).state=v.pass?'ok':'bad';
+      S.verify=v;
+      if(v.pass)break;
+      v.violations.forEach(x=>log('bad',`걸러냄: ${x.type}`));
+    }
+  }
+  S.feedback=fb;S.running=false;
+  if(S.view==='flow'&&S.step===STEP.REBUT)render();else drawTrack();
+}
+
+/* 5. 고쳐 쓰기 */
+function vRevise(){
+  const a=art(),c=S.compare,sample=a.revised[S.level];
+  const P=PERSONAS[S.feedback.rebuttal.persona]||{name:'다른 사람'};
+  const ks=Object.keys(RUBRIC), cr=rubricFor();
+  return `
+  <p class="recap"><b>받은 반론, ${esc(P.name)}</b>${esc(S.feedback.rebuttal.text)}<br><span class="ask">${esc(S.feedback.rebuttal.question)}</span></p>
+  <p class="caution">이 반론은 하나의 관점일 뿐, 정답이 아닙니다. 받아들여 주장을 다듬어도 되고, 글 안에서 반박해도 됩니다. 어느 쪽이든 고친 답안 안에서 다뤄 주세요.</p>
+  <label class="sr" for="rev">고친 답안</label>
+  <textarea id="rev" class="sheet">${esc(S.revised||S.draft)}</textarea>
+  ${S.blocked?`<p class="blocked" role="alert">${esc(S.blocked)}</p>`:''}
+  <div class="actions">
+    <button class="btn" id="compareBtn">채점 받기</button>
+    ${sample?'<button class="link" id="loadRevised">예시 수정본으로 체험하기</button>':''}
+  </div>
+  ${c?`
+  <section class="block" style="margin-top:44px">
+    <h2 class="h">무엇이 달라졌나</h2>
+    <div class="diff">${c.diff}</div>
+  </section>
+  <section class="block">
+    <h2 class="h">처음 글과 고친 글의 점수 ${fallbackMark(c.score)}</h2>
+    <div class="rub">
+      <div class="head" aria-hidden="true"><span>기준 (눌러서 근거 보기)</span><span>처음</span><span>고친 뒤</span><span>변화</span><span></span></div>
+      ${ks.map(k=>{const b=c.score.before[k],af=c.score.after[k],d=af-b,w=c.score.why[k];
+      return `<details><summary><span class="nm"><b>${k}</b><small>${esc(RUBRIC[k].en)}${cr&&cr[k]&&cr[k].weight!==1?`, 가중치 ${cr[k].weight}`:''}</small></span><span class="n">${b}</span><span class="n">${af}</span><span class="n ${d>0?'up':d<0?'down':''}">${d>0?'+'+d:d===0?'같음':d}</span></summary>
+        <div class="why"><p class="def">${esc(ruleDef(k))}</p>
+          <p class="lab">처음 글 ${b}점</p><ul>${w.before.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>
+          <p class="lab">고친 글 ${af}점</p><ul>${w.after.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div></details>`}).join('')}
+      <div class="total"><span>총점 (기준마다 10점, 50점 만점${cr?', 우리 반 가중치 반영':''})</span><span><b>${totalOf(c.score,'before')}</b> → <b>${totalOf(c.score,'after')}</b></span></div>
+    </div>
+    <p class="rubsrc">채점 기준: 미국대학협회(AAC&amp;U)의 <a href="${RUBRIC_SRC}" target="_blank" rel="noopener">Critical Thinking VALUE Rubric</a> 5개 기준을 이 서비스에 맞게 고쳐 썼습니다(<a href="${RUBRIC_LICENSE}" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a>). 처음 글과 고친 글은 서로를 보지 않고 따로 채점합니다.</p>
+  </section>
+  ${S.next?`<p class="task"><b>다음 책문의 과제</b>${esc(S.next.task)}<small>고친 글에서도 ${esc(S.next.axis)} 점수가 가장 낮았습니다.</small></p>`:''}
+  <div class="actions"><button class="btn" id="submitBtn">광장에 제출하기</button><span class="note" style="margin:0">처음 글과 고친 글이 함께 공개됩니다${isStudent()?'. 우리 반 광장과 교수님에게만 보입니다':''}.</span></div>`:''}`;
+}
+const RUBRIC_LICENSE='https://creativecommons.org/licenses/by-nc-sa/4.0/';
+function totalOf(score,side){
+  if(score.total&&score.total[side]!=null)return score.total[side];
+  const cr=rubricFor(), ks=Object.keys(RUBRIC);
+  const w=k=>cr?.[k]?.weight??1, ws=ks.reduce((s,k)=>s+w(k),0)||1;
+  return Math.round(ks.reduce((s,k)=>s+score[side][k]*w(k),0)/ws*ks.length*10)/10;
+}
+function diffWords(a,b){
+  const A=a.split(/\s+/).filter(Boolean),B=b.split(/\s+/).filter(Boolean),n=A.length,m=B.length;
+  const L=Array.from({length:n+1},()=>new Int16Array(m+1));
+  for(let i=n-1;i>=0;i--)for(let j=m-1;j>=0;j--)L[i][j]=A[i]===B[j]?L[i+1][j+1]+1:Math.max(L[i+1][j],L[i][j+1]);
+  const out=[];let i=0,j=0;
+  while(i<n&&j<m){if(A[i]===B[j]){out.push(esc(A[i]));i++;j++}else if(L[i+1][j]>=L[i][j+1])out.push(`<del>${esc(A[i++])}</del>`);else out.push(`<ins>${esc(B[j++])}</ins>`)}
+  while(i<n)out.push(`<del>${esc(A[i++])}</del>`);while(j<m)out.push(`<ins>${esc(B[j++])}</ins>`);
+  return out.join(' ');
+}
+
+/* 6. 광장 (v4: 같은 기사, 같은 난이도만. 기관 학생은 우리 반 광장만. 그룹을 펼치면 글 전체와 투표) */
+async function loadPlaza(){
+  const a=art(), classId=isStudent()?S.user.classId:null;
+  const essays=await DB.listEssays({articleId:a.id,level:S.level,classId});
+  S.plaza={...(S.plaza||{}),essays,classId};
+}
+function plazaHTML({preview}){
+  const a=art(), P=S.plaza||{essays:[]}, E=P.essays, cl=a.clusters, lvName=LEVELS[S.level].name;
+  const mineId=S.myEssay?.id, mine=S.myEssay?S.myEssay.group:null;
+  const noSeedFile=!SEEDS[a.id]?.[S.level];
+  const byG=cl.map((c,i)=>E.filter(e=>e.group===i));
+  /* 시드 파일이 없는 기사(유류세, 데이터센터 복시)는 v3의 그룹 인원 표시를 그대로 씀 */
+  const nOf=i=>noSeedFile&&S.level==='boksi'&&!P.classId?Math.max(cl[i].n,byG[i].length):byG[i].length;
+  const total=cl.reduce((s,c,i)=>s+nOf(i),0);
+  const cnt=(e,k)=>DB.count(e,k);
+  const jang=E.length?E.reduce((x,y)=>cnt(y,'pn')>cnt(x,'pn')?y:x):null;
+  const eoram=cl.map((c,i)=>({c,i})).find(x=>x.c.tam&&byG[x.i].length);
+  const eoramPost=eoram?byG[eoram.i].reduce((x,y)=>(y.rep?1:0)>(x.rep?1:0)?y:x):null;
+  const who=e=>`${e.isExample?'<span class="badge ex">예시</span>':''}${e.id===mineId?'<span class="badge me">내 글</span>':''}${esc(e.nickname)}`;
+  const empty=!total;
+  const scope=P.classId?`${esc(CLASSES[P.classId].name)} 반 광장`:'광장';
+  const post=e=>`<li class="${e.id===mineId?'mine':''}"><p class="tx">${esc(e.revised)}</p><p class="by">${who(e)}</p>
+      <div class="votes">
+        <button class="vote" data-vote="${e.id}:ag" aria-pressed="${!!(S.user&&DB.voted(S.user.id,e.id,'ag'))}">내 생각과 같다 ${cnt(e,'ag')}</button>
+        <button class="vote" data-vote="${e.id}:pn" aria-pressed="${!!(S.user&&DB.voted(S.user.id,e.id,'pn'))}">생각은 달라도 논리가 좋다 ${cnt(e,'pn')}</button>
+      </div></li>`;
+  return `
+  <section class="block">
+    <h2 class="h">${scope}: ${empty?`같은 질문(${lvName})의 답안`:`같은 질문(${lvName})에 답한 ${total}명의 생각`}</h2>
+    ${empty?`<p class="note">아직 이 질문의 ${lvName} 답안이 없습니다.${S.level==='choshi'?' 초시 예시 답안은 준비 중입니다.':''}</p>`:`
+    <div class="map" role="img" aria-label="논거 유형별 답안 분포.${mine!=null?` 내 글은 ${esc(cl[mine].label)} 그룹에 속합니다.`:''}">
+      ${cl.map((c,i)=>{const n=nOf(i);if(!n)return '';const d=Math.round(48+Math.sqrt(n)*18);return `<div class="blob${c.tam?' tam':''}" style="left:${c.x*100}%;top:${c.y*100}%;width:${d}px;height:${d}px">${esc(c.label)}<br>${n}명</div>`}).join('')}
+      ${mine!=null?`<div class="medot" style="left:${cl[mine].x*100+7}%;top:${cl[mine].y*100+12}%"><i></i>내 글</div>`:''}
+    </div>
+    <p class="note">찬반이 아니라 어떤 논거를 들었는지로 묶었습니다. 점선 원은 사람은 적지만 논리 점수가 높은 소수의견입니다. 예시 배지가 붙은 글은 AI 페르소나가 쓴 시연용 예시 답안입니다.</p>`}
+  </section>
+  ${jang&&cnt(jang,'pn')>0?`<section class="jang">
+    <div class="seal" aria-hidden="true">壯元<small>장원</small>${GARLAND}</div>
+    <div><p class="k">오늘의 장원: 생각은 달라도 논리가 좋다는 표를 가장 많이 받은 글</p>
+      <p class="tx">${esc(jang.revised)}</p><p class="k">${who(jang)}, ${esc(cl[jang.group]?.label||'')} 그룹</p></div>
+  </section>`:''}
+  ${eoramPost?`<section class="eoram">
+    <p class="k">오늘의 어람작(御覽作): 쓴 사람은 적지만 논리 점수가 높은 소수의견</p>
+    <p class="tx">${esc(eoramPost.revised)}</p>
+    <p class="by">${who(eoramPost)}, ${esc(eoram.c.label)} 그룹 (${nOf(eoram.i)}명), 논리 점수 ${Math.round(eoram.c.logic*10)}점 / 50점</p></section>`:''}
+  ${empty?'':`<section class="block">
+    <h2 class="h">그룹별 답안</h2>
+    <p class="note" style="margin:0 0 8px">${preview?'답안을 제출하면 그룹을 펼쳐 글 전체를 읽고 투표할 수 있습니다.':'그룹을 누르면 그 그룹의 글 전체가 펼쳐집니다. 모든 글에 투표할 수 있고, 다시 누르면 취소됩니다.'}</p>
+    <div class="cls">${cl.map((c,i)=>{const n=nOf(i);if(!n)return '';const rep=byG[i].find(e=>e.rep)||byG[i][0];
+      return `<details class="grp${preview?' locked':''}" ${!preview&&i===mine?'open':''}>
+        <summary${preview?' data-locked="1"':''}><div class="hd"><b>${esc(c.label)}</b><span>${c.tam?'<span class="tam">소수의견 </span>':''}${n}명, 논리 점수 ${Math.round(c.logic*10)}점</span></div>
+          ${rep?`<p class="rep">${esc(rep.revised)}</p><p class="by">${who(rep)}${preview?'':', 대표 답안'}</p>`:''}</summary>
+        ${preview?'':`<ul class="posts">${byG[i].map(post).join('')}</ul>${noSeedFile&&byG[i].length<n?'<p class="note">이 그룹의 나머지 예시 답안은 준비되지 않았습니다.</p>':''}`}
+      </details>`}).join('')}</div>
+  </section>`}`;
+}
+function vPlaza(){
+  if(!S.plaza||!S.plaza.essays) return `<div class="reading"><p class="h">답안들을 펼치고 있습니다</p></div>`;
+  return plazaHTML({preview:false})+`<div class="actions"><button class="btn ghost" id="again">다른 기사로 하나 더 쓰기</button></div>`;
+}
+/* (v4) 로그인 없이, 또는 제출 전에 보는 광장: 지도, 장원, 어람작, 그룹 대표까지만 */
+function vPeek(){
+  if(!S.plaza||!S.plaza.essays) return `<div class="reading"><p class="h">광장을 펼치고 있습니다</p></div>`;
+  return `<p class="lvchip">${esc(art().title)}, 난이도 <b>${LEVELS[S.level].name}</b></p>`+plazaHTML({preview:true})+`<div class="actions"><button class="btn" id="backQ">질문으로 돌아가기</button></div>`;
+}
+const GARLAND=`<svg class="ah" viewBox="0 0 110 56" aria-hidden="true"><path d="M6 50C24 8 70 2 104 22" fill="none" stroke="#5E4128" stroke-width="1.6"/>${[[14,36,'#C24A3A'],[24,24,'#E2B33C'],[36,15,'#3D6FA3'],[49,9,'#C24A3A'],[62,7,'#E2B33C'],[75,9,'#3D6FA3'],[88,13,'#C24A3A'],[99,19,'#E2B33C']].map(([x,y,c])=>`<g transform="translate(${x} ${y})"><circle r="4.2" fill="${c}"/><circle r="1.4" fill="#FBF7EE"/></g>`).join('')}</svg>`;
+
+/* 나의 기록 */
+function spark(vals,min=1,max=10){
+  const w=200,h=52,p=5,step=(w-2*p)/(vals.length-1),y=v=>h-p-(v-min)/(max-min)*(h-2*p);
+  const pts=vals.map((v,i)=>[p+i*step,y(v)]),line=pts.map(q=>q.join(',')).join(' ');
+  return `<svg class="spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-hidden="true"><polygon class="ar" points="${p},${h-p} ${line} ${w-p},${h-p}"/><polyline class="ln2" points="${line}"/></svg>`;
+}
+function vProfile(){
+  const P=S.user?.profile==='demo'?PROFILE:null;
+  const mine=DB.essays.filter(e=>e.userId===S.user?.id);
+  const list=mine.length?`<section class="block"><h3 class="h">이번에 쓴 답안</h3><ul class="cls">${mine.map(e=>{const a=ARTICLES.find(x=>x.id===e.articleId);return `<li><div class="hd"><b>${esc(a.title)}</b><span>${LEVELS[e.level].name}${e.scores?`, ${totalOf(e.scores,'before')} → ${totalOf(e.scores,'after')}점`:''}</span></div><blockquote>${esc(e.revised)}</blockquote></li>`}).join('')}</ul></section>`:'';
+  if(!P) return `
+  <section class="block"><h2 class="ptitle">나의 기록</h2>
+    <p class="note">아직 기록이 없습니다. 답안을 쓰고 채점을 받을 때마다 다섯 기준의 변화와 글 습관이 여기에 쌓입니다.</p></section>${list}`;
+  const mw=Math.max(...P.weak.map(f=>f.v)),mf=Math.max(...P.flow.map(f=>f.v));
+  return `
+  <section class="block">
+    <h2 class="ptitle">나의 기록</h2>
+    <p class="note">지금까지 쓴 답안 ${P.count}편을 바탕으로 했습니다. <span class="badge ex">예시</span>시연용 데모 계정의 기록입니다. 어떤 문체가 정답인지 알려주지 않고, 습관을 있는 그대로 보여줍니다.</p>
+  </section>
+  <section class="block"><h3 class="h">다섯 기준의 변화 (기준마다 10점)</h3>
+    <div class="sparks">${Object.entries(P.axes).map(([k,v])=>`<div class="sp"><div class="hd"><b>${k}</b><span>${v[0]}점에서 ${v.at(-1)}점</span></div>${spark(v)}</div>`).join('')}</div></section>
+  <section class="block"><h3 class="h">자주 반복된 약점</h3>
+    ${P.weak.map(f=>`<div class="hb"><span>${f.k}</span><span class="bar" style="--w:${f.v/mw*100}%;background:var(--amb)"></span><span class="num">${f.v}회</span></div>`).join('')}</section>
+  <section class="block"><h3 class="h">글을 전개하는 습관</h3>
+    ${P.flow.map(f=>`<div class="hb"><span>${f.k}</span><span class="bar" style="--w:${f.v/mf*100}%;background:var(--jjok)"></span><span class="num">${f.v}편</span></div>`).join('')}
+    <p class="note">결론을 먼저 쓰는 편입니다. 근거가 결론보다 짧아지지 않는지 살펴보세요.</p></section>
+  <section class="block"><h3 class="h">자주 쓰는 말</h3>
+    <div class="words">${P.words.map(([w,n])=>`<span>${w}<em>${n}</em></span>`).join('')}</div>
+    <p class="note">"결국"이 ${P.words.find(x=>x[0]==='결국')?.[1]||0}번 나왔습니다. 근거 없이 결론으로 건너뛸 때 자주 쓰는 말입니다.</p></section>
+  <section class="block"><h3 class="h">단정을 피하는 표현</h3>
+    <p>"~것 같다", "~아닐까" 같은 표현이 문장의 ${P.hedge[0]}%에서 ${P.hedge.at(-1)}%로 줄었습니다.</p>
+    ${spark(P.hedge,0,35)}</section>${list}`;
+}
+
+/* (v4) 교수용 화면: 교수 코드로 들어온 계정만. 반 평균, 학생별 현황, 학생 글 원문과 과정 기록, 채점 기준 편집, 시제 배정
+   예시 학생 데이터 + 이 브라우저에서 우리 반 학생 계정으로 실제 제출한 글 */
+const CLASSROOM={
+  size:32, submitted:27, avgRevise:1.8, blockedAsk:19, blockedPaste:41,
+  before:{'쟁점 설명':5.2,'근거 활용':4.6,'맥락과 전제':3.8,'자기 입장':5.6,'결론과 함의':5.0},
+  after:{'쟁점 설명':6.4,'근거 활용':6.2,'맥락과 전제':5.8,'자기 입장':6.8,'결론과 함의':6.0},
+  students:[
+   {n:'학생 01',art:'aiexam',b:24,a:34,weak:'맥락과 전제',rev:2,flag:0,sec:780,paste:0,seed:'03'},
+   {n:'학생 02',art:'work45',b:28,a:32,weak:'근거 활용',rev:1,flag:0,sec:540,paste:1,seed:'12'},
+   {n:'학생 03',art:'robotaxi',b:20,a:30,weak:'결론과 함의',rev:3,flag:2,sec:1260,paste:4,seed:'16'},
+   {n:'학생 04',art:'work45',b:30,a:38,weak:'맥락과 전제',rev:2,flag:0,sec:900,paste:0,seed:'23'},
+   {n:'학생 05',art:'aiexam',b:22,a:22,weak:'근거 활용',rev:0,flag:1,sec:210,paste:6,seed:'19'},
+   {n:'학생 06',art:'robotaxi',b:26,a:36,weak:'쟁점 설명',rev:2,flag:0,sec:1020,paste:0,seed:'07'}]
+};
+const mmss=s=>`${Math.floor(s/60)}분 ${String(s%60).padStart(2,'0')}초`;
+function vTeacher(){
+  if(!isProf()) return `<p class="note">교수 계정으로 들어와야 볼 수 있는 화면입니다.</p>`;
+  const C=CLASSROOM, cls=myClass(), ks=Object.keys(RUBRIC), cr=cls.rubric||{};
+  const real=DB.essays.filter(e=>e.classId===cls.id&&!e.isExample);
+  const rows=[...real.map((e,i)=>({real:true,e,n:e.nickname,art:e.articleId,b:e.scores?totalOf(e.scores,'before'):'-',a:e.scores?totalOf(e.scores,'after'):'-',weak:e.weak||'-',rev:e.process?.revisions||0,flag:e.process?.refused||0,key:'r'+i})),
+              ...C.students.map((s,i)=>({...s,key:'x'+i}))];
+  const sel=rows.find(r=>r.key===S.teacher.sel);
+  const detail=sel?studentDetail(sel):'';
+  const as=cls.assigned;
+  return `
+  <section class="block">
+    <h2 class="ptitle">교수용 화면</h2>
+    <p class="note">${esc(cls.name)}, ${esc(cls.term)}, 수강생 ${C.size}명. 숫자와 학생 목록은 <span class="badge ex">예시</span>시연용 예시 데이터이고, 이 반 학생 계정으로 실제 제출한 글은 맨 위에 함께 보입니다. 교수는 학생의 글을 대신 고치지 않고, 반 전체가 어디서 막히는지를 봅니다.</p>
+  </section>
+  <section class="block"><div class="kpis">
+    <div class="kpi"><b>${C.submitted+real.length}/${C.size}</b><span>이번 주 제출</span></div>
+    <div class="kpi"><b>${C.avgRevise}회</b><span>1인당 평균 고쳐 쓰기</span></div>
+    <div class="kpi"><b>${C.blockedAsk}건</b><span>대필 요청 거절</span></div>
+    <div class="kpi"><b>${C.blockedPaste}건</b><span>붙여넣기 차단</span></div>
+  </div></section>
+  <section class="block"><h3 class="h">반 평균: 처음 글과 고친 글 (기준마다 10점)</h3>
+    <table class="axes"><thead><tr><th>기준</th><th class="n">처음</th><th class="n">고친 뒤</th><th class="bars"><span class="sr">막대</span></th></tr></thead><tbody>
+    ${ks.map(k=>`<tr><th>${k}</th><td class="n">${C.before[k].toFixed(1)}</td><td class="n up">${C.after[k].toFixed(1)}</td><td class="bars"><span class="bar" style="--w:${C.before[k]*10}%"></span><span class="bar" style="--w:${C.after[k]*10}%"></span></td></tr>`).join('')}
+    </tbody></table>
+    <p class="note">반 전체가 가장 약한 기준은 <b>맥락과 전제</b>입니다. 다음 수업에서 "내 주장이 통하지 않는 상황"을 함께 다뤄 보세요.</p></section>
+  <section class="block"><h3 class="h">학생별 현황</h3>
+    <p class="note" style="margin:0 0 8px">학생을 누르면 글 원문과 쓰는 과정의 기록(작성 시간, 붙여넣기 차단, 고쳐 쓰기 횟수)을 볼 수 있습니다. 탐지 대신 과정으로 직접 쓴 글임을 확인합니다.</p>
+    <table class="tbl"><thead><tr><th>학생</th><th>기사</th><th class="c">처음 → 고친 뒤 (50점)</th><th class="c">고쳐 쓰기</th><th>가장 약한 기준</th><th class="c">대필 시도</th></tr></thead><tbody>
+    ${rows.map(s=>`<tr class="clk" data-stud="${s.key}"><td>${s.real?'':'<span class="badge ex">예시</span>'}${esc(s.n)}</td><td>${esc(ARTICLES.find(a=>a.id===s.art)?.field||'')}</td><td class="c">${s.b} → ${s.a}</td><td class="c">${s.rev}회</td><td>${esc(s.weak)}</td><td class="c ${s.flag?'flag':''}">${s.flag?s.flag+'건':'-'}</td></tr>`).join('')}
+    </tbody></table>
+    ${detail}
+    <p class="note">예시 학생 이름은 가명입니다. 학생이 동의한 범위만 교수에게 보입니다.</p></section>
+  <section class="block"><h3 class="h">채점 기준 (우리 반)</h3>
+    <p class="note" style="margin:0 0 12px">다섯 기준은 고정입니다. 기준 설명 문구와 가중치만 반마다 바꿀 수 있고, 바꾼 내용은 이 반 학생들의 채점에 반영됩니다.</p>
+    <form id="rubForm" class="rubed">
+      ${ks.map(k=>`<b>${k}</b><textarea name="def:${k}" aria-label="${k} 설명">${esc(cr[k]?.def||RUBRIC[k].def)}</textarea>
+        <select name="w:${k}" aria-label="${k} 가중치">${[0.5,1,1.5,2].map(w=>`<option value="${w}" ${(cr[k]?.weight??1)===w?'selected':''}>가중치 ${w}</option>`).join('')}</select>`).join('')}
+      <span></span><div class="actions" style="margin-top:4px"><button class="btn ghost">기준 저장</button><button type="button" class="link" id="rubReset">원래 기준으로</button></div><span></span>
+    </form></section>
+  <section class="block"><h3 class="h">이번 주 시제 배정</h3>
+    <p class="note" style="margin:0 0 10px">지금 배정: ${esc(ARTICLES.find(a=>a.id===as.articleId)?.title||'')} (${LEVELS[as.level].name}), 마감 ${esc(as.due)}</p>
+    <div class="askf"><select id="asArt" style="flex:1;font:inherit;padding:9px;border:1px solid var(--rule);border-radius:4px;background:var(--sheet)">${ARTICLES.map(a=>`<option value="${a.id}" ${a.id===as.articleId?'selected':''}>${esc(a.field)}: ${esc(a.title)}</option>`).join('')}</select>
+      <select id="asLv" style="font:inherit;padding:9px;border:1px solid var(--rule);border-radius:4px;background:var(--sheet)"><option value="choshi" ${as.level==='choshi'?'selected':''}>초시</option><option value="boksi" ${as.level==='boksi'?'selected':''}>복시</option></select>
+      <button class="btn" id="assignBtn">배정하기</button></div></section>`;
+}
+function studentDetail(s){
+  if(s.real){const e=s.e,p=e.process||{};
+    return `<div class="stud corner"><p class="h" style="font-size:1.02rem">${esc(e.nickname)}의 글</p>
+      <p class="proc">작성 시간 <b>${mmss(p.seconds||0)}</b> 붙여넣기 차단 <b>${p.paste||0}번</b> 고쳐 쓰기 <b>${p.revisions||0}번</b> 대필 요청 거절 <b>${p.refused||0}번</b></p>
+      <p style="font-weight:700;font-size:.84rem;color:var(--jjok)">처음 글</p><p class="tx">${esc(e.draft)}</p>
+      <p style="font-weight:700;font-size:.84rem;color:var(--jjok);margin-top:10px">고친 글</p><p class="tx">${esc(e.revised)}</p></div>`}
+  const ex=DB.essays.find(e=>e.id===`ex-${s.art}-boksi-${s.seed}`);
+  return `<div class="stud corner"><p class="h" style="font-size:1.02rem"><span class="badge ex">예시</span>${esc(s.n)}의 글</p>
+    <p class="proc">작성 시간 <b>${mmss(s.sec)}</b> 붙여넣기 차단 <b>${s.paste}번</b> 고쳐 쓰기 <b>${s.rev}번</b> 대필 요청 거절 <b>${s.flag}번</b></p>
+    <p class="tx">${esc(ex?.revised||'')}</p></div>`;
+}
+
+/* ---------- 이벤트 ---------- */
+function guard(el){
+  const block=e=>{e.preventDefault();S.log.paste++;drawMeter();toast('붙여넣기는 막혀 있습니다. 직접 쓴 글만 반론을 받을 수 있습니다.')};
+  el.addEventListener('paste',block);el.addEventListener('drop',block);
+}
+async function afterLogin(u){
+  S.user=u;S.auth.err='';
+  if(u.role==='professor'){S.teacher.sel=null;view('teacher');return}
+  const prof=await AI.writingProfile(u);
+  S.todayTask=prof?await AI.todayTask({profile:prof}):null;
+  const after=S.auth.after;S.auth.after=null;
+  if(after?.write&&S.picked&&S.levelChosen){go(STEP.WRITE);return}
+  if(after?.view==='flow'){S.view='flow';S.step=Math.min(after.step,reached());render(true);return}
+  S.view='flow';S.step=S.picked?STEP.QUESTION:STEP.PICK;render(true);
+}
+function bind(){
+  $$('[data-go]').forEach(b=>b.onclick=()=>go(+b.dataset.go));
+  $$('[data-back]').forEach(b=>b.onclick=()=>{S.auth.err='';view(b.dataset.back)});
+
+  /* 첫 화면, 로그인 */
+  $$('[data-start]').forEach(b=>b.onclick=()=>{
+    const t=b.dataset.start;S.auth.err='';
+    if(t==='guest'){S.view='flow';S.step=0;render(true);return}
+    if(t==='p'){S.auth={...S.auth,scope:'p',tab:'login',org:null,cls:null,role:null};view('auth');return}
+    view('org');
+  });
+  const of=$('#orgForm');if(of)of.onsubmit=async e=>{e.preventDefault();
+    try{const org=$('#og').value,{cls,role}=await DB.classByCode(org,$('#oc').value);S.auth={...S.auth,scope:'o',org,cls,role,tab:'login',err:''};view('auth')}
+    catch(x){S.auth.err=x.message;render()}};
+  $$('[data-atab]').forEach(b=>b.onclick=()=>{S.auth.tab=b.dataset.atab;S.auth.err='';render()});
+  const af=$('#authForm');if(af)af.onsubmit=async e=>{e.preventDefault();
+    const A=S.auth,u=$('#au').value.trim(),p=$('#ap').value;
+    try{
+      let user;
+      if(A.tab==='signup') user=await DB.signUp({scope:A.scope,username:u,password:p,nickname:$('#an').value,role:A.scope==='o'?A.role:'personal',classId:A.scope==='o'?A.cls.id:null});
+      else{
+        user=await DB.signIn({scope:A.scope,username:u,password:p});
+        if(A.scope==='o'&&(user.classId!==A.cls.id||user.role!==A.role))throw new Error('이 코드로 들어갈 수 없는 계정입니다. 받은 코드를 확인해 주세요.');
+      }
+      afterLogin(user);
+    }catch(x){S.auth.err=x.message;render()}};
+  $$('[data-demo]').forEach(b=>b.onclick=async()=>{const d=b.dataset.demo;afterLogin(await DB.signIn({scope:d==='demo'?'p':'o',username:d,password:DEMO_PW}))});
+
+  /* 기사, 난이도, 질문 */
+  $$('[data-art]').forEach(b=>b.onclick=()=>{if(S.articleId!==b.dataset.art){S.articleId=b.dataset.art;resetWriting();S.levelChosen=false}S.picked=true;S.srcTab='body';go(STEP.QUESTION)});
+  const da=$('#doAssigned');if(da)da.onclick=()=>{const as=myClass().assigned;if(S.articleId!==as.articleId||S.level!==as.level)resetWriting();S.articleId=as.articleId;S.level=as.level;S.picked=true;S.levelChosen=true;S.srcTab='body';go(STEP.QUESTION)};
+  $$('[data-tab]').forEach(b=>b.onclick=()=>{S.srcTab=b.dataset.tab;const inDet=!!b.closest('details');render();if(inDet){const n=$('#main details.check');if(n)n.open=true}});
+  $$('[data-lv]').forEach(b=>b.onclick=()=>{
+    const lv=b.dataset.lv;
+    if(lv==='jeonsi'){toast(isOrg()?'전시 문제는 준비 중입니다. 곧 열립니다.':'전시는 프리미엄(월 구독)에서 열립니다.');return}
+    if(S.level!==lv){S.level=lv;resetWriting()}S.levelChosen=true;render(true);
+  });
+  const cl=$('#chLevel');if(cl)cl.onclick=()=>{S.levelChosen=false;render(true)};
+  const ab=$('#answerBtn');if(ab)ab.onclick=()=>{
+    if(!S.user){S.auth={...S.auth,scope:'p',tab:'login',org:null,cls:null,role:null,err:'',after:{write:true}};toast('글을 쓰려면 로그인이 필요합니다.');view('auth');return}
+    go(STEP.WRITE)};
+  const pk=$('#peekBtn');if(pk)pk.onclick=async()=>{S.plaza=null;view('peek');await loadPlaza();render()};
+  const bq=$('#backQ');if(bq)bq.onclick=()=>{S.plaza=null;go(STEP.QUESTION)};
+  $$('[data-locked]').forEach(s=>s.onclick=e=>{e.preventDefault();toast(S.user?'답안을 제출하면 펼쳐 볼 수 있습니다.':'로그인하고 답안을 제출하면 펼쳐 볼 수 있습니다.')});
+
+  /* 쓰기 */
+  const d=$('#draft');
+  if(d){
+    guard(d);
+    d.addEventListener('input',()=>{
+      if(!S.log.start)S.log.start=Date.now();
+      S.draft=d.value;
+      if(S.feedback||S.running){clearAfterDraft()}
+      drawTrack();drawMeter();
+    });
+    $('#loadSample').onclick=()=>{d.value=art().samples[S.level]||'';S.draft=d.value;S.log.start=S.log.start||Date.now()-95000;clearAfterDraft();drawTrack();drawMeter()};
+    $('#toRebut').onclick=()=>{if(!S.feedback)runFeedback();go(STEP.REBUT)};
+    drawMeter();
+  }
+  const pw=$('#prewriteBtn');
+  if(pw)pw.onclick=async()=>{pw.disabled=true;pw.textContent='생각할 거리를 고르는 중입니다';S.prewrite=await AI.prewrite({article:art(),level:S.level});render()};
+
+  /* 반론 + 시관에게 묻기(재반박 포함) */
+  if(S.view==='flow'&&S.step===STEP.REBUT){
+    drawPipe();
+    if(S.draft&&!S.feedback&&!S.running)runFeedback();
+    const op=$('#otherPersona');if(op)op.onclick=()=>{S.personaIndex++;runFeedback()};
+    const ask=async q=>{
+      S.chat.push({me:1,t:q});render();
+      const r=await AI.ask({question:q,feedback:S.feedback});
+      if(r.refused)S.log.refused++;
+      S.chat.push({t:r.reply,refused:r.refused});render();
+      const i=$('#askIn');if(i)i.focus();
+    };
+    const f=$('#askForm');if(f)f.onsubmit=e=>{e.preventDefault();const v=$('#askIn').value.trim();if(v)ask(v)};
+  }
+
+  /* 고쳐 쓰기 (우회 요청 입력 차단) */
+  const rv=$('#rev');
+  if(rv){
+    guard(rv);
+    rv.addEventListener('input',()=>{S.revised=rv.value});
+    const lr=$('#loadRevised');if(lr)lr.onclick=()=>{rv.value=art().revised[S.level];S.revised=rv.value;S.blocked=null};
+    $('#compareBtn').onclick=async e=>{
+      const after=S.revised||S.draft;
+      const b=e.currentTarget;
+      if((await AI.checkRevised({text:after})).blocked){
+        S.log.refused++;
+        S.blocked='고쳐 쓰기 칸에는 내 답안만 적을 수 있습니다. "고쳐 줘", "써 줘" 같은 요청은 받지 않습니다. 궁금한 점은 앞 단계의 시관에게 묻기에서 물어보세요.';
+        S.compare=null;render();return;
+      }
+      S.blocked=null;
+      if(after.trim()===S.draft.trim()){toast('아직 고친 곳이 없습니다.');return}
+      b.disabled=true;b.textContent='채점하고 있습니다';
+      S.log.revisions++;
+      const score=await AI.scoreRevision({draft:S.draft,revised:after,rebuttal:S.feedback.rebuttal,level:S.level,rubric:rubricFor()});
+      S.next=await AI.nextTask({scores:score});
+      S.compare={score,diff:diffWords(S.draft,after)};
+      render();
+    };
+    const sb=$('#submitBtn');
+    if(sb)sb.onclick=async()=>{
+      sb.disabled=true;
+      const text=S.revised||S.draft;
+      S.submitted=true;S.plaza=null;go(STEP.PLAZA);
+      const r=await AI.clusterAnswers({article:art(),text,level:S.level});
+      S.myEssay=await DB.saveEssay({userId:S.user.id,nickname:S.user.nickname,articleId:S.articleId,level:S.level,draft:S.draft,revised:text,
+        scores:S.compare?.score||null,weak:S.next?.axis||null,group:r.mine,published:true,isExample:false,classId:isStudent()?S.user.classId:null,
+        process:{seconds:S.log.start?Math.floor((Date.now()-S.log.start)/1000):0,paste:S.log.paste,revisions:S.log.revisions,refused:S.log.refused},base:{ag:0,pn:0}});
+      await loadPlaza();
+      render();
+    };
+  }
+
+  /* 광장 투표: 로그인 필요, 모든 글에 가능, 다시 누르면 취소 */
+  $$('[data-vote]').forEach(b=>b.onclick=async()=>{
+    if(!S.user){toast('투표하려면 로그인이 필요합니다.');return}
+    const[id,t]=b.dataset.vote.split(':');
+    await DB.toggleVote(S.user.id,id,t);
+    const open=[...$$('details.grp')].map(x=>x.open), y=window.scrollY;
+    render();[...$$('details.grp')].forEach((x,i)=>{x.open=open[i]});window.scrollTo(0,y);
+  });
+  const ag=$('#again');
+  if(ag)ag.onclick=()=>{resetWriting();S.picked=false;S.levelChosen=false;go(STEP.PICK)};
+
+  /* 교수용 */
+  $$('[data-stud]').forEach(r=>r.onclick=()=>{S.teacher.sel=S.teacher.sel===r.dataset.stud?null:r.dataset.stud;render()});
+  const rf=$('#rubForm');if(rf)rf.onsubmit=async e=>{e.preventDefault();const fd=new FormData(rf),r={};
+    Object.keys(RUBRIC).forEach(k=>{r[k]={def:String(fd.get('def:'+k)||'').trim()||RUBRIC[k].def,weight:+fd.get('w:'+k)||1}});
+    await DB.saveRubric(myClass().id,r);toast('우리 반 채점 기준을 저장했습니다. 다음 채점부터 반영됩니다.');render()};
+  const rr=$('#rubReset');if(rr)rr.onclick=async()=>{await DB.saveRubric(myClass().id,null);toast('원래 기준으로 되돌렸습니다.');render()};
+  const asb=$('#assignBtn');if(asb)asb.onclick=async()=>{await DB.assign(myClass().id,$('#asArt').value,$('#asLv').value);toast('이번 주 시제를 배정했습니다. 학생 첫 화면에 보입니다.');render()};
+}
+
+/* ---------- 시작 ---------- */
+(async()=>{
+  const now=new Date();
+  $('#today').textContent=`${now.getMonth()+1}월 ${now.getDate()}일 ${'일월화수목금토'[now.getDay()]}요일`;
+  render();
+  await API.init();
+  drawTop();
+})();
+
+</script>
+</body>
+</html>

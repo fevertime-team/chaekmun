@@ -1,0 +1,109 @@
+﻿id,article,level,stance,stance_label,angle,skill,major,tone,source
+work45-01,work45,boksi,firm,기업 부담,생산성이 오르니 줄어든 시간의 비용을 기업이 흡수할 수 있다,하,예체능,구어체가 조금 섞인,ai
+work45-02,work45,boksi,firm,기업 부담,생산성이 오르니 줄어든 시간의 비용을 기업이 흡수할 수 있다,중,사회과학,담백하고 짧게 끊어 쓰는,ai
+work45-03,work45,boksi,firm,기업 부담,생산성이 오르니 줄어든 시간의 비용을 기업이 흡수할 수 있다,상,공학,조심스럽게 돌려 말하는,ai
+work45-04,work45,boksi,firm,기업 부담,생산성이 오르니 줄어든 시간의 비용을 기업이 흡수할 수 있다,상,국제,질문을 던지며 시작하는,ai
+work45-05,work45,boksi,firm,기업 부담,생산성이 오르니 줄어든 시간의 비용을 기업이 흡수할 수 있다,상,상경,단호하게 결론부터 말하는,ai
+work45-06,work45,boksi,firm,기업 부담,생산성이 오르니 줄어든 시간의 비용을 기업이 흡수할 수 있다,하,생명·의약,구어체가 조금 섞인,ai
+work45-07,work45,boksi,firm,기업 부담,근무 조건이 좋아야 인재를 붙잡을 수 있으니 기업에도 이익이다,중,인문,단호하게 결론부터 말하는,ai
+work45-08,work45,boksi,firm,기업 부담,근무 조건이 좋아야 인재를 붙잡을 수 있으니 기업에도 이익이다,중,자연과학,구어체가 조금 섞인,ai
+work45-09,work45,boksi,firm,기업 부담,근무 조건이 좋아야 인재를 붙잡을 수 있으니 기업에도 이익이다,중,예체능,담백하고 짧게 끊어 쓰는,ai
+work45-10,work45,boksi,firm,기업 부담,근무 조건이 좋아야 인재를 붙잡을 수 있으니 기업에도 이익이다,중,사회과학,조심스럽게 돌려 말하는,ai
+work45-11,work45,boksi,firm,기업 부담,여력 있는 대기업이 먼저 책임지는 것이 공정하다,중,공학,단호하게 결론부터 말하는,ai
+work45-12,work45,boksi,firm,기업 부담,여력 있는 대기업이 먼저 책임지는 것이 공정하다,중,국제,구어체가 조금 섞인,ai
+work45-13,work45,boksi,firm,기업 부담,여력 있는 대기업이 먼저 책임지는 것이 공정하다,하,상경,담백하고 짧게 끊어 쓰는,ai
+work45-14,work45,boksi,worker,임금 일부 감수,시간과 돈은 바꾸는 것이니 임금이 조금 줄어도 내가 고를 일이다,중,생명·의약,단호하게 결론부터 말하는,ai
+work45-15,work45,boksi,worker,임금 일부 감수,시간과 돈은 바꾸는 것이니 임금이 조금 줄어도 내가 고를 일이다,하,인문,구어체가 조금 섞인,ai
+work45-16,work45,boksi,worker,임금 일부 감수,시간과 돈은 바꾸는 것이니 임금이 조금 줄어도 내가 고를 일이다,중,자연과학,담백하고 짧게 끊어 쓰는,ai
+work45-17,work45,boksi,worker,임금 일부 감수,시간과 돈은 바꾸는 것이니 임금이 조금 줄어도 내가 고를 일이다,중,예체능,조심스럽게 돌려 말하는,ai
+work45-18,work45,boksi,worker,임금 일부 감수,시간과 돈은 바꾸는 것이니 임금이 조금 줄어도 내가 고를 일이다,중,사회과학,질문을 던지며 시작하는,ai
+work45-19,work45,boksi,worker,임금 일부 감수,노동자와 기업이 반씩 나눠야 오래 간다,하,공학,조심스럽게 돌려 말하는,ai
+work45-20,work45,boksi,worker,임금 일부 감수,노동자와 기업이 반씩 나눠야 오래 간다,중,국제,질문을 던지며 시작하는,ai
+work45-21,work45,boksi,worker,임금 일부 감수,노동자와 기업이 반씩 나눠야 오래 간다,하,상경,단호하게 결론부터 말하는,ai
+work45-22,work45,boksi,worker,임금 일부 감수,노동자와 기업이 반씩 나눠야 오래 간다,상,생명·의약,구어체가 조금 섞인,ai
+work45-23,work45,boksi,gov,정부 지원,처음에는 정부가 비용을 나눠 져야 다들 시도해 볼 수 있다,상,인문,단호하게 결론부터 말하는,ai
+work45-24,work45,boksi,gov,정부 지원,처음에는 정부가 비용을 나눠 져야 다들 시도해 볼 수 있다,하,자연과학,구어체가 조금 섞인,ai
+work45-25,work45,boksi,gov,정부 지원,처음에는 정부가 비용을 나눠 져야 다들 시도해 볼 수 있다,하,예체능,담백하고 짧게 끊어 쓰는,ai
+work45-26,work45,boksi,gov,정부 지원,처음에는 정부가 비용을 나눠 져야 다들 시도해 볼 수 있다,하,사회과학,조심스럽게 돌려 말하는,ai
+work45-27,work45,boksi,gov,정부 지원,세금은 여력 없는 작은 회사에만 써야 공정하다,중,공학,조심스럽게 돌려 말하는,ai
+work45-28,work45,boksi,gov,정부 지원,세금은 여력 없는 작은 회사에만 써야 공정하다,하,국제,질문을 던지며 시작하는,ai
+work45-29,work45,boksi,gov,정부 지원,세금은 여력 없는 작은 회사에만 써야 공정하다,하,상경,단호하게 결론부터 말하는,ai
+work45-30,work45,boksi,gov,정부 지원,세금은 여력 없는 작은 회사에만 써야 공정하다,중,생명·의약,구어체가 조금 섞인,ai
+work45-31,work45,boksi,gov,정부 지원,건강과 저출생 같은 사회적 비용이 줄어드니 세금을 쓸 만하다,상,인문,구어체가 조금 섞인,ai
+work45-32,work45,boksi,gov,정부 지원,건강과 저출생 같은 사회적 비용이 줄어드니 세금을 쓸 만하다,상,자연과학,담백하고 짧게 끊어 쓰는,ai
+work45-33,work45,boksi,other,기타,근무일을 줄이기 전에 있는 연차부터 쓰게 해야 한다,하,예체능,조심스럽게 돌려 말하는,ai
+work45-34,work45,boksi,other,기타,근무일을 줄이기 전에 있는 연차부터 쓰게 해야 한다,하,사회과학,질문을 던지며 시작하는,ai
+work45-35,work45,boksi,other,기타,교대 근무처럼 자리를 비울 수 없는 일터는 다른 해법이 필요하다,하,공학,구어체가 조금 섞인,ai
+work45-36,work45,boksi,other,기타,교대 근무처럼 자리를 비울 수 없는 일터는 다른 해법이 필요하다,중,국제,담백하고 짧게 끊어 쓰는,ai
+aiexam-01,aiexam,boksi,watch,감독 강화,사람 눈으로는 못 잡으니 탐지 장비를 시험장마다 둬야 한다,하,예체능,조심스럽게 돌려 말하는,ai
+aiexam-02,aiexam,boksi,watch,감독 강화,사람 눈으로는 못 잡으니 탐지 장비를 시험장마다 둬야 한다,하,사회과학,질문을 던지며 시작하는,ai
+aiexam-03,aiexam,boksi,watch,감독 강화,사람 눈으로는 못 잡으니 탐지 장비를 시험장마다 둬야 한다,상,공학,단호하게 결론부터 말하는,ai
+aiexam-04,aiexam,boksi,watch,감독 강화,사람 눈으로는 못 잡으니 탐지 장비를 시험장마다 둬야 한다,하,국제,구어체가 조금 섞인,ai
+aiexam-05,aiexam,boksi,watch,감독 강화,사람 눈으로는 못 잡으니 탐지 장비를 시험장마다 둬야 한다,상,상경,담백하고 짧게 끊어 쓰는,ai
+aiexam-06,aiexam,boksi,watch,감독 강화,사람 눈으로는 못 잡으니 탐지 장비를 시험장마다 둬야 한다,하,생명·의약,조심스럽게 돌려 말하는,ai
+aiexam-07,aiexam,boksi,watch,감독 강화,안경 쓴 사람만이 아니라 모두를 같은 방식으로 검사해야 의심도 공정하다,중,인문,단호하게 결론부터 말하는,ai
+aiexam-08,aiexam,boksi,watch,감독 강화,안경 쓴 사람만이 아니라 모두를 같은 방식으로 검사해야 의심도 공정하다,상,자연과학,구어체가 조금 섞인,ai
+aiexam-09,aiexam,boksi,watch,감독 강화,안경 쓴 사람만이 아니라 모두를 같은 방식으로 검사해야 의심도 공정하다,중,예체능,담백하고 짧게 끊어 쓰는,ai
+aiexam-10,aiexam,boksi,watch,감독 강화,안경 쓴 사람만이 아니라 모두를 같은 방식으로 검사해야 의심도 공정하다,중,사회과학,조심스럽게 돌려 말하는,ai
+aiexam-11,aiexam,boksi,watch,감독 강화,안경 쓴 사람만이 아니라 모두를 같은 방식으로 검사해야 의심도 공정하다,하,공학,질문을 던지며 시작하는,ai
+aiexam-12,aiexam,boksi,watch,감독 강화,시험 시간만이라도 전파를 막는 것이 가장 확실하다,하,국제,질문을 던지며 시작하는,ai
+aiexam-13,aiexam,boksi,watch,감독 강화,시험 시간만이라도 전파를 막는 것이 가장 확실하다,상,상경,단호하게 결론부터 말하는,ai
+aiexam-14,aiexam,boksi,watch,감독 강화,시험 시간만이라도 전파를 막는 것이 가장 확실하다,하,생명·의약,구어체가 조금 섞인,ai
+aiexam-15,aiexam,boksi,punish,처벌 강화,걸렸을 때의 대가를 크게 해서 시도 자체를 막아야 한다,하,인문,구어체가 조금 섞인,ai
+aiexam-16,aiexam,boksi,punish,처벌 강화,걸렸을 때의 대가를 크게 해서 시도 자체를 막아야 한다,하,자연과학,담백하고 짧게 끊어 쓰는,ai
+aiexam-17,aiexam,boksi,punish,처벌 강화,걸렸을 때의 대가를 크게 해서 시도 자체를 막아야 한다,중,예체능,조심스럽게 돌려 말하는,ai
+aiexam-18,aiexam,boksi,punish,처벌 강화,걸렸을 때의 대가를 크게 해서 시도 자체를 막아야 한다,하,사회과학,질문을 던지며 시작하는,ai
+aiexam-19,aiexam,boksi,punish,처벌 강화,걸렸을 때의 대가를 크게 해서 시도 자체를 막아야 한다,중,공학,단호하게 결론부터 말하는,ai
+aiexam-20,aiexam,boksi,punish,처벌 강화,시험이 끝난 뒤에도 끝까지 추적하고 조사해야 한다,중,국제,담백하고 짧게 끊어 쓰는,ai
+aiexam-21,aiexam,boksi,punish,처벌 강화,시험이 끝난 뒤에도 끝까지 추적하고 조사해야 한다,상,상경,조심스럽게 돌려 말하는,ai
+aiexam-22,aiexam,boksi,punish,처벌 강화,시험이 끝난 뒤에도 끝까지 추적하고 조사해야 한다,중,생명·의약,질문을 던지며 시작하는,ai
+aiexam-23,aiexam,boksi,redesign,시험 방식 전환,문제를 밖으로 보내도 소용없게 시험 설계를 바꿔야 한다,하,인문,질문을 던지며 시작하는,ai
+aiexam-24,aiexam,boksi,redesign,시험 방식 전환,문제를 밖으로 보내도 소용없게 시험 설계를 바꿔야 한다,상,자연과학,단호하게 결론부터 말하는,ai
+aiexam-25,aiexam,boksi,redesign,시험 방식 전환,문제를 밖으로 보내도 소용없게 시험 설계를 바꿔야 한다,중,예체능,구어체가 조금 섞인,ai
+aiexam-26,aiexam,boksi,redesign,시험 방식 전환,구술이나 과정 평가처럼 자기 말로 설명하게 해야 한다,하,사회과학,질문을 던지며 시작하는,ai
+aiexam-27,aiexam,boksi,redesign,시험 방식 전환,구술이나 과정 평가처럼 자기 말로 설명하게 해야 한다,중,공학,단호하게 결론부터 말하는,ai
+aiexam-28,aiexam,boksi,other,기타,감독 교사 한 명에게 맡길 일이 아니라 국가가 장비와 인력을 책임져야 한다,중,국제,담백하고 짧게 끊어 쓰는,ai
+aiexam-29,aiexam,boksi,other,기타,감독 교사 한 명에게 맡길 일이 아니라 국가가 장비와 인력을 책임져야 한다,하,상경,조심스럽게 돌려 말하는,ai
+aiexam-30,aiexam,boksi,other,기타,감독 교사 한 명에게 맡길 일이 아니라 국가가 장비와 인력을 책임져야 한다,하,생명·의약,질문을 던지며 시작하는,ai
+aiexam-31,aiexam,boksi,other,기타,감독 교사 한 명에게 맡길 일이 아니라 국가가 장비와 인력을 책임져야 한다,중,인문,단호하게 결론부터 말하는,ai
+aiexam-32,aiexam,boksi,other,기타,감독 교사 한 명에게 맡길 일이 아니라 국가가 장비와 인력을 책임져야 한다,중,자연과학,구어체가 조금 섞인,ai
+aiexam-33,aiexam,boksi,other,기타,정직한 수험생의 사생활과 존엄을 지키는 선에서만 제한해야 한다,중,예체능,구어체가 조금 섞인,ai
+aiexam-34,aiexam,boksi,other,기타,정직한 수험생의 사생활과 존엄을 지키는 선에서만 제한해야 한다,중,사회과학,담백하고 짧게 끊어 쓰는,ai
+aiexam-35,aiexam,boksi,other,기타,정직한 수험생의 사생활과 존엄을 지키는 선에서만 제한해야 한다,상,공학,조심스럽게 돌려 말하는,ai
+aiexam-36,aiexam,boksi,other,기타,정직한 수험생의 사생활과 존엄을 지키는 선에서만 제한해야 한다,중,국제,질문을 던지며 시작하는,ai
+robotaxi-01,robotaxi,boksi,maker,제조사·운영사 책임,기업이 책임져야 안전에 투자한다,하,인문,조심스럽게 돌려 말하는,ai
+robotaxi-02,robotaxi,boksi,maker,제조사·운영사 책임,기업이 책임져야 안전에 투자한다,하,자연과학,질문을 던지며 시작하는,ai
+robotaxi-03,robotaxi,boksi,maker,제조사·운영사 책임,기업이 책임져야 안전에 투자한다,중,예체능,단호하게 결론부터 말하는,ai
+robotaxi-04,robotaxi,boksi,maker,제조사·운영사 책임,기업이 책임져야 안전에 투자한다,중,사회과학,구어체가 조금 섞인,ai
+robotaxi-05,robotaxi,boksi,maker,제조사·운영사 책임,기업이 책임져야 안전에 투자한다,하,공학,담백하고 짧게 끊어 쓰는,ai
+robotaxi-06,robotaxi,boksi,maker,제조사·운영사 책임,기업이 책임져야 안전에 투자한다,하,국제,조심스럽게 돌려 말하는,ai
+robotaxi-07,robotaxi,boksi,maker,제조사·운영사 책임,차를 통제하는 쪽이 책임지는 것이 원칙이다,상,상경,담백하고 짧게 끊어 쓰는,ai
+robotaxi-08,robotaxi,boksi,maker,제조사·운영사 책임,차를 통제하는 쪽이 책임지는 것이 원칙이다,중,생명·의약,조심스럽게 돌려 말하는,ai
+robotaxi-09,robotaxi,boksi,maker,제조사·운영사 책임,차를 통제하는 쪽이 책임지는 것이 원칙이다,중,인문,질문을 던지며 시작하는,ai
+robotaxi-10,robotaxi,boksi,maker,제조사·운영사 책임,차를 통제하는 쪽이 책임지는 것이 원칙이다,중,자연과학,단호하게 결론부터 말하는,ai
+robotaxi-11,robotaxi,boksi,maker,제조사·운영사 책임,차를 통제하는 쪽이 책임지는 것이 원칙이다,중,예체능,구어체가 조금 섞인,ai
+robotaxi-12,robotaxi,boksi,maker,제조사·운영사 책임,결함 있는 제품을 판 쪽이 책임지는 다른 제품과 같다,중,사회과학,단호하게 결론부터 말하는,ai
+robotaxi-13,robotaxi,boksi,maker,제조사·운영사 책임,결함 있는 제품을 판 쪽이 책임지는 다른 제품과 같다,상,공학,구어체가 조금 섞인,ai
+robotaxi-14,robotaxi,boksi,maker,제조사·운영사 책임,결함 있는 제품을 판 쪽이 책임지는 다른 제품과 같다,하,국제,담백하고 짧게 끊어 쓰는,ai
+robotaxi-15,robotaxi,boksi,shared,보험·분담,누가 잘못했는지 가리기 전에 보험으로 먼저 보상해야 한다,중,상경,질문을 던지며 시작하는,ai
+robotaxi-16,robotaxi,boksi,shared,보험·분담,누가 잘못했는지 가리기 전에 보험으로 먼저 보상해야 한다,상,생명·의약,단호하게 결론부터 말하는,ai
+robotaxi-17,robotaxi,boksi,shared,보험·분담,누가 잘못했는지 가리기 전에 보험으로 먼저 보상해야 한다,하,인문,구어체가 조금 섞인,ai
+robotaxi-18,robotaxi,boksi,shared,보험·분담,누가 잘못했는지 가리기 전에 보험으로 먼저 보상해야 한다,중,자연과학,담백하고 짧게 끊어 쓰는,ai
+robotaxi-19,robotaxi,boksi,shared,보험·분담,누가 잘못했는지 가리기 전에 보험으로 먼저 보상해야 한다,하,예체능,조심스럽게 돌려 말하는,ai
+robotaxi-20,robotaxi,boksi,shared,보험·분담,누가 잘못했는지 가리기 전에 보험으로 먼저 보상해야 한다,중,사회과학,질문을 던지며 시작하는,ai
+robotaxi-21,robotaxi,boksi,shared,보험·분담,서비스를 고르지 않은 보행자가 가장 먼저 보호받아야 한다,하,공학,단호하게 결론부터 말하는,ai
+robotaxi-22,robotaxi,boksi,shared,보험·분담,서비스를 고르지 않은 보행자가 가장 먼저 보호받아야 한다,상,국제,구어체가 조금 섞인,ai
+robotaxi-23,robotaxi,boksi,shared,보험·분담,서비스를 고르지 않은 보행자가 가장 먼저 보호받아야 한다,하,상경,담백하고 짧게 끊어 쓰는,ai
+robotaxi-24,robotaxi,boksi,shared,보험·분담,서비스를 고르지 않은 보행자가 가장 먼저 보호받아야 한다,중,생명·의약,조심스럽게 돌려 말하는,ai
+robotaxi-25,robotaxi,boksi,shared,보험·분담,제조사와 운영사가 함께 기금을 만들어야 한다,중,인문,조심스럽게 돌려 말하는,ai
+robotaxi-26,robotaxi,boksi,shared,보험·분담,제조사와 운영사가 함께 기금을 만들어야 한다,중,자연과학,질문을 던지며 시작하는,ai
+robotaxi-27,robotaxi,boksi,other,기타,처음부터 책임을 너무 무겁게 하면 기술이 멈춘다,상,예체능,구어체가 조금 섞인,ai
+robotaxi-28,robotaxi,boksi,other,기타,처음부터 책임을 너무 무겁게 하면 기술이 멈춘다,하,사회과학,담백하고 짧게 끊어 쓰는,ai
+robotaxi-29,robotaxi,boksi,other,기타,처음부터 책임을 너무 무겁게 하면 기술이 멈춘다,하,공학,조심스럽게 돌려 말하는,ai
+robotaxi-30,robotaxi,boksi,other,기타,처음부터 책임을 너무 무겁게 하면 기술이 멈춘다,하,국제,질문을 던지며 시작하는,ai
+robotaxi-31,robotaxi,boksi,other,기타,처음부터 책임을 너무 무겁게 하면 기술이 멈춘다,중,상경,단호하게 결론부터 말하는,ai
+robotaxi-32,robotaxi,boksi,other,기타,책임을 정하려면 사고 직전 주행 기록부터 공개해야 한다,하,생명·의약,조심스럽게 돌려 말하는,ai
+robotaxi-33,robotaxi,boksi,other,기타,책임을 정하려면 사고 직전 주행 기록부터 공개해야 한다,하,인문,질문을 던지며 시작하는,ai
+robotaxi-34,robotaxi,boksi,other,기타,책임을 정하려면 사고 직전 주행 기록부터 공개해야 한다,상,자연과학,단호하게 결론부터 말하는,ai
+robotaxi-35,robotaxi,boksi,other,기타,약관에 동의하고 탄 승객도 일부 책임이 있다,상,예체능,조심스럽게 돌려 말하는,ai
+robotaxi-36,robotaxi,boksi,other,기타,약관에 동의하고 탄 승객도 일부 책임이 있다,중,사회과학,질문을 던지며 시작하는,ai
