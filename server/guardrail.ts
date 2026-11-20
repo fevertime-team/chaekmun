@@ -99,6 +99,7 @@ export async function guarded<T>(opts: {
     all.push(v);
     if (!v.length) return { output: out, attempts: i + 1, fallback: false, log, violations: all, latencyMs: Date.now() - t0 };
     for (const x of v.slice(0, 4)) push({ state: 'bad', text: `걸러냄 (${x.by === 'rule' ? '규칙' : x.by === 'similarity' ? '유사도' : '검증 모델'}): ${x.type}` });
+    console.warn('[guard]', opts.label.slice(0, 20), JSON.stringify(v.map((x) => ({ by: x.by, type: x.type, ev: String(x.evidence).slice(0, 120) }))));
     retryNote = v.map((x) => `- ${x.type}: "${x.evidence}"`).join('\n');
   }
   push({ state: 'bad', text: '검증을 통과한 출력이 없어 질문만 남긴 안전한 응답으로 바꿨습니다' });

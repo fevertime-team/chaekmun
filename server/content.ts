@@ -12,6 +12,7 @@ export type Article = {
   q: Record<Level, string>; stances: Stance[];
   choshiPremise: string; choshiQ: string; choshiBank: Bank[];
   samples: Record<string, string>; revised: Record<string, string>; clusters: Cluster[];
+  guard?: string | null; issue?: string | null;
 };
 export type Persona = { name: string; mark: string; desc: string; focus?: string; asks?: string[]; tone?: string; expert?: boolean };
 

@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI 사용량 · 오늘의 책문</title>
+<meta name="robots" content="noindex">
+<style>
+:root{--bg:#f6f1e7;--sheet:#fffdf8;--ink:#1f1b16;--ink2:#6b6257;--rule:#e2d9c8;--cel:#3f6a59;--amb:#b5651d;--red:#a23b2a;--bar:#e9e1d1}
+@media (prefers-color-scheme:dark){:root{--bg:#171512;--sheet:#211e1a;--ink:#f1ebe0;--ink2:#a89e90;--rule:#3a352e;--cel:#7fb59e;--amb:#e0a060;--red:#e07a66;--bar:#2e2a24}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "Noto Sans KR",system-ui,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif}
+main{max-width:720px;margin:0 auto;padding:28px 16px 48px}
+h1{font-size:1.35rem;margin:0 0 4px}
+.sub{color:var(--ink2);font-size:.9rem;margin:0 0 20px}
+.card{background:var(--sheet);border:1px solid var(--rule);border-radius:8px;padding:18px 20px;margin-bottom:14px}
+.big{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.big b{font-size:2.2rem;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.big span{color:var(--ink2)}
+.bar{height:10px;background:var(--bar);border-radius:6px;overflow:hidden;margin:12px 0 6px}
+.bar i{display:block;height:100%;background:var(--cel);border-radius:6px;transition:width .4s}
+.bar.warn i{background:var(--amb)}.bar.bad i{background:var(--red)}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media (max-width:520px){.kpis{grid-template-columns:1fr 1fr}}
+.kpi{background:var(--sheet);border:1px solid var(--rule);border-radius:8px;padding:12px 14px}
+.kpi b{display:block;font-size:1.25rem;font-variant-numeric:tabular-nums}
+.kpi span{color:var(--ink2);font-size:.85rem}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:.92rem}
+th,td{padding:8px 6px;border-bottom:1px solid var(--rule);text-align:right}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--ink2);font-weight:500}
+.note{color:var(--ink2);font-size:.85rem;margin:6px 0 0}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:8px}
+button{font:inherit;font-size:.9rem;padding:6px 12px;border:1px solid var(--rule);background:var(--sheet);color:var(--ink);border-radius:6px;cursor:pointer}
+.err{color:var(--red)}
+a{color:var(--cel)}
+</style>
+</head>
+<body>
+<main>
+  <h1>AI 사용량</h1>
+  <p class="sub">오늘의 책문이 대회 Claude 키로 부른 호출을 Supabase에 기록해 셈한 <b>추정값</b>입니다. 30초마다 새로 고칩니다.</p>
+
+  <section class="card" aria-live="polite">
+    <div class="big"><b id="remain">-</b><span>남은 예산 (추정)</span></div>
+    <div class="bar" id="bar"><i id="barFill" style="width:0"></i></div>
+    <div class="row"><span class="note" id="pct">-</span><span class="note" id="budget"></span></div>
+  </section>
+
+  <div class="kpis">
+    <div class="kpi"><b id="today">-</b><span>오늘 쓴 금액</span></div>
+    <div class="kpi"><b id="used">-</b><span>누적 사용</span></div>
+    <div class="kpi"><b id="calls">-</b><span>AI 호출 수 (오늘 / 누적)</span></div>
+  </div>
+
+  <section class="card" style="margin-top:14px">
+    <table>
+      <thead><tr><th>모델</th><th>호출</th><th>입력 토큰</th><th>출력 토큰</th><th>오늘</th><th>누적</th></tr></thead>
+      <tbody id="rows"><tr><td colspan="6">불러오는 중</td></tr></tbody>
+    </table>
+    <p class="note" id="note"></p>
+    <div class="row"><span class="note" id="updated"></span><button id="reload" type="button">지금 새로 고침</button></div>
+  </section>
+
+  <p class="note">정확한 잔액은 키를 발급한 DACON 쪽에서만 볼 수 있습니다. <a href="/">오늘의 책문으로 돌아가기</a></p>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+const won = (n) => (Math.round(n) || 0).toLocaleString('ko-KR') + '원';
+const num = (n) => (n || 0).toLocaleString('ko-KR');
+const when = (t) => t ? new Date(t).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '-';
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+async function load() {
+  try {
+    const r = await fetch('/api/usage', { cache: 'no-store' });
+    const j = await r.json();
+    if (!r.ok) throw new Error(j.error || r.status);
+    if (!j.on) { $('rows').innerHTML = '<tr><td colspan="6">저장소(Supabase)가 연결되지 않아 기록이 없습니다.</td></tr>'; return; }
+    $('remain').textContent = won(j.remainingKrw);
+    $('barFill').style.width = Math.min(100, j.usedPct) + '%';
+    $('bar').className = 'bar' + (j.usedPct >= 90 ? ' bad' : j.usedPct >= 70 ? ' warn' : '');
+    $('pct').textContent = `예산의 ${j.usedPct}% 사용`;
+    $('budget').textContent = `예산 ${won(j.budgetKrw)} · 1달러 ${num(j.usdToKrw)}원으로 계산`;
+    $('today').textContent = won(j.todayKrw);
+    $('used').textContent = won(j.usedKrw);
+    $('calls').textContent = `${num(j.todayCalls)} / ${num(j.calls)}`;
+    $('rows').innerHTML = j.byModel.length
+      ? j.byModel.map((m) => `<tr><td>${esc(m.model)}</td><td>${num(m.calls)}</td><td>${num(m.inTok)}</td><td>${num(m.outTok)}</td><td>${won(m.todayKrw)}</td><td>${won(m.krw)}</td></tr>`).join('')
+      : '<tr><td colspan="6">아직 기록된 호출이 없습니다.</td></tr>';
+    $('note').textContent = `누적에는 기록을 시작하기 전 테스트분 ${won(j.baselineKrw)}이 포함되어 있습니다. ${j.note}`;
+    $('updated').textContent = `마지막 호출 ${when(j.lastAt)} · 확인 ${when(Date.now())}`;
+  } catch (e) {
+    $('rows').innerHTML = `<tr><td colspan="6" class="err">불러오지 못했습니다: ${esc(e.message || e)}</td></tr>`;
+  }
+}
+$('reload').onclick = load;
+load();
+setInterval(load, 30000);
+</script>
+</body>
+</html>

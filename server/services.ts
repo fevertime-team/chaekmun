@@ -79,7 +79,7 @@ export async function analyze(args: { articleId: string; level: string; text: st
     generate: async (retryNote) => toV3(await callJSON({
       system: SIGWAN_SYSTEM,
       user: sigwanUser({
-        title: a.title, lines: ev.lines, question: a.q[level], levelName: lv.name, weak: lv.weak, stances,
+        title: a.title, lines: ev.lines, guard: a.guard, question: a.q[level], levelName: lv.name, weak: lv.weak, stances,
         personas: cand.map((id) => ({ id, ...PERSONAS[id] })), sents, retryNote,
       }),
       schema: SigwanSchema, temperature: 0.5, maxTokens: 1400,
@@ -93,7 +93,7 @@ export async function analyze(args: { articleId: string; level: string; text: st
       log({ state: lvv.length ? 'bad' : 'ok', text: `검증 모델: ${lvv.length ? `위반 ${lvv.length}건` : '통과'}` });
       return lvv;
     },
-    fallback: (last) => last ? safeFeedback(last) : (null as any),
+    fallback: (last) => last ? safeFromBank(last, ruleAnalyze(a, level, text, pi, last.stance)) : (null as any),
   });
   if (res.fallback && !res.violations.flat().some((x) => x.type !== '생성 오류' && x.type !== '검증 불가')) {
     // 생성 자체가 실패(네트워크, 키, 시간 초과) → 저장된 응답 또는 규칙 기반
@@ -109,13 +109,16 @@ function readable(f: { structure: { premise: string }; weaknesses: { type: strin
     `[반론] ${f.rebuttal.text} / 질문: ${f.rebuttal.question}${f.rebuttal.source ? ` / 근거로 삼은 기사 줄: ${f.rebuttal.source.text}` : ''}`,
   ].join('\n');
 }
-/** 검증을 끝내 통과하지 못하면 문장은 모두 지우고 질문만 남깁니다 */
-function safeFeedback<T extends { structure: any; weaknesses: any[]; rebuttal: any }>(f: T): T {
+/** 검증을 끝내 통과하지 못하면: AI가 나눈 글의 구조(사용자 문장 그대로)와 입장 판별은 살리고,
+ *  숨은 전제·짚어 볼 곳·반론은 미리 검토해 둔 기사별 예비 문장(입장별 bank)으로 바꿉니다.
+ *  (11/20 이전에는 "~의 자리에서 다시 보면 어떻습니까?" 같은 빈 질문만 남겨 너무 막연했음) */
+function safeFromBank<T extends { stance: any; structure: any; weaknesses: any[]; rebuttal: any }>(f: T, r: ReturnType<typeof ruleAnalyze>): T {
   return {
     ...f,
-    structure: { ...f.structure, premise: '이 글에는 근거에서 주장으로 넘어가는 전제가 드러나 있지 않습니다.' },
-    weaknesses: f.weaknesses.map((w) => ({ ...w, detail: '이 부분은 스스로 점검해 보세요.' })),
-    rebuttal: { ...f.rebuttal, text: `${PERSONAS[f.rebuttal.persona]?.name || '다른 사람'}의 자리에서 이 주장을 다시 보면 어떻습니까?`, source: null },
+    stance: f.stance ?? r.stance,
+    structure: { ...f.structure, premise: r.structure.premise },
+    weaknesses: r.weaknesses,
+    rebuttal: { ...r.rebuttal, source: r.rebuttal.source ? { ...r.rebuttal.source, kind: 'summary' } : null },
   };
 }
 
@@ -251,7 +254,7 @@ export async function ask(args: { articleId: string; level: string; draft: strin
     label: '질문에 답을 씁니다',
     generate: (retryNote) => callJSON({
       system: ASK_SYSTEM,
-      user: askUser({ title: a.title, lines: ev.lines, question: a.q[level], sents: sentences(draft), feedbackText, history: (args.chat || []).map((c) => ({ me: !!c.me, t: String(c.t || '') })), message: msg, retryNote }),
+      user: askUser({ title: a.title, lines: ev.lines, guard: a.guard, question: a.q[level], sents: sentences(draft), feedbackText, history: (args.chat || []).map((c) => ({ me: !!c.me, t: String(c.t || '') })), message: msg, retryNote }),
       schema: AskSchema, temperature: 0.4, maxTokens: 500,
     }),
     check: async (o, log) => {
@@ -279,7 +282,7 @@ export async function prewrite(args: { articleId: string; level: string }) {
   const res = await guarded<string[]>({
     label: '생각할 거리를 고릅니다',
     maxAttempts: 2,
-    generate: async (retryNote) => (await callJSON({ system: PREWRITE_SYSTEM, user: prewriteUser({ title: a.title, lines: ev.lines, question: a.q[level], levelName: LEVELS[level].name, retryNote }), schema: PrewriteSchema, temperature: 0.6, maxTokens: 400 })).questions.slice(0, 3),
+    generate: async (retryNote) => (await callJSON({ system: PREWRITE_SYSTEM, user: prewriteUser({ title: a.title, lines: ev.lines, guard: a.guard, question: a.q[level], levelName: LEVELS[level].name, retryNote }), schema: PrewriteSchema, temperature: 0.6, maxTokens: 400 })).questions.slice(0, 3),
     check: async (qs, log) => { const v = ruleCheck(qs, true); log({ state: v.length ? 'bad' : 'ok', text: `규칙 검사 ${v.length ? `${v.length}건` : '통과'}` }); return v; },
     fallback: () => base,
   });

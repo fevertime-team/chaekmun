@@ -18,6 +18,18 @@ export const MODEL_FAST = () => env('LLM_MODEL_FAST', 'claude-haiku-5-5');
 export type Usage = { calls: number; inTok: number; outTok: number };
 export const usage: Usage = { calls: 0, inTok: 0, outTok: 0 };
 
+/** 호출 한 번의 토큰을 Supabase llm_usage 에 기록 (설정이 없으면 건너뜀). 기록 실패가 AI 응답을 막지 않게 1.5초만 기다림 */
+async function logUsage(model: string, u: any) {
+  try {
+    const { recordUsage } = await import('./store');
+    const { currentRoute } = await import('./ctx');
+    await Promise.race([
+      recordUsage({ model, route: currentRoute(), inTok: u?.input_tokens || 0, outTok: u?.output_tokens || 0, cacheRead: u?.cache_read_input_tokens || 0 }),
+      new Promise((r) => setTimeout(r, 1500)),
+    ]);
+  } catch (e) { console.warn('[usage]', String(e).slice(0, 120)); }
+}
+
 async function rawCall(o: { system: string; user: string; fast?: boolean; temperature: number; maxTokens: number }): Promise<string> {
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), Number(env('LLM_TIMEOUT_MS', '40000')));
@@ -29,11 +41,22 @@ async function rawCall(o: { system: string; user: string; fast?: boolean; temper
         method: 'POST',
         signal: ctrl.signal,
         headers: { 'content-type': 'application/json', 'x-api-key': KEY(), 'anthropic-version': '2023-06-01' },
-        body: JSON.stringify({ model, max_tokens: o.maxTokens, temperature: o.temperature, system: o.system, messages: [{ role: 'user', content: o.user }] }),
+        // Claude 5.5 계열은 temperature 를 받지 않음 ("`temperature` is deprecated for this model", 400 오류) → 보내지 않음.
+        // 옛 모델로 바꿔 쓰면서 temperature 가 필요하면 LLM_SEND_TEMPERATURE=1
+        // 5.5 계열은 기본으로 생각(thinking)을 켜고, 그 토큰이 max_tokens 를 먼저 다 써 버려 JSON 이 비어 나옴.
+        // 우리 호출은 짧은 JSON 하나라 생각을 끔: Sonnet 5.5 는 between_tools(도구가 없으면 생각 없음), Haiku 5.5 는 disabled.
+        // 다른 모델로 바꿔 400 이 나면 LLM_THINKING=omit 으로 이 칸을 빼고 보냄
+        body: JSON.stringify({
+          model, max_tokens: o.maxTokens,
+          ...(env('LLM_SEND_TEMPERATURE') === '1' ? { temperature: o.temperature } : {}),
+          ...(env('LLM_THINKING') === 'omit' ? {} : { thinking: { type: /haiku/.test(model) ? 'disabled' : 'between_tools' } }),
+          system: o.system, messages: [{ role: 'user', content: o.user }],
+        }),
       });
       const j: any = await r.json().catch(() => ({}));
       if (!r.ok) throw new Error(`LLM ${r.status}: ${JSON.stringify(j).slice(0, 300)}`);
       usage.calls++; usage.inTok += j.usage?.input_tokens || 0; usage.outTok += j.usage?.output_tokens || 0;
+      await logUsage(model, j.usage);
       return (j.content || []).map((b: any) => (b.type === 'text' ? b.text : '')).join('');
     }
     const base = env('LLM_BASE_URL', 'https://api.openai.com/v1').replace(/\/$/, '');
