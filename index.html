@@ -226,6 +226,7 @@ nav[hidden]+main{padding-top:28px}
 .sum{margin:0;padding:18px 22px 18px 40px;background:var(--sheet);border:1px solid var(--rule);border-radius:var(--r-card);font-size:1.02rem;line-height:1.8}
 .sum li+li{margin-top:8px}
 .sum li::marker{color:var(--seal);font-weight:700}
+.sum li:nth-child(1)::marker{content:"① "}.sum li:nth-child(2)::marker{content:"② "}.sum li:nth-child(3)::marker{content:"③ "}
 .srcline{display:flex;flex-wrap:wrap;align-items:center;gap:4px 16px;margin-top:12px;font-size:.86rem;color:var(--ink3)}
 .srcline a{color:var(--seal);font-weight:600;text-underline-offset:4px}
 .lvbig{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
@@ -895,7 +896,7 @@ const lowest = scores => Object.entries(scores).reduce((m,x)=>x[1]<m[1]?x:m)[0];
 const AXIS_ORDER=['맥락과 전제','근거 활용','자기 입장','결론과 함의','쟁점 설명'];
 /* 받침에 따라 이/가 */
 const iga=w=>{const c=w.charCodeAt(w.length-1)-0xAC00;return w+(c>=0&&c<=11171&&c%28?'이':'가')};
-const EX_TOPIC='다른 주제 예시 (대학 수업의 출석을 성적에 넣어야 하는가)';
+const EX_TOPIC='주제: 대학 수업의 출석을 성적에 넣어야 하는가';
 const VALUES=['공정','효율','안전','자유','권리','책임','형평','비용','생계','존엄','건강','환경','신뢰','편의','경쟁력','사생활','기술 발전','성장','부담','물가'];
 const TASKS={
  '쟁점 설명':{id:'iss2',title:"부딪히는 두 가치에 이름 붙이기",
@@ -986,7 +987,7 @@ async function getTodayTask({profile,classFocus}){
       return makeTask(w.k,why);
     }
     if(classFocus){
-      return makeTask(classFocus.axis,`${classFocus.by==='prof'?'교수님이 이번 주 우리 반 초점으로 정한 기준':'우리 반 전체에서 가장 약한 기준'}입니다(반 평균 ${classFocus.score.toFixed(1)}점). 내 글이 쌓이면 내 기록으로 바뀝니다.`);
+      return makeTask(classFocus.axis,`${classFocus.by==='prof'?'교수님이 우리 반 초점으로 정한 기준':'우리 반 전체에서 가장 약한 기준'}입니다(반 평균 ${classFocus.score.toFixed(1)}점). 내 글이 쌓이면 내 기록으로 바뀝니다.`);
     }
     return null;
   }
@@ -1971,7 +1972,7 @@ function vTeacher(){
     ${ks.map(k=>`<tr><th>${k}</th><td class="n">${C.before[k].toFixed(1)}</td><td class="n up">${C.after[k].toFixed(1)}</td><td class="bars"><span class="bar" style="--w:${C.before[k]*10}%"></span><span class="bar" style="--w:${C.after[k]*10}%"></span></td></tr>`).join('')}
     </tbody></table>
     <p class="note">반 전체가 가장 약한 기준은 <b>맥락과 전제</b>입니다. 다음 수업에서 "내 주장이 통하지 않는 상황"을 함께 다뤄 보세요.</p></section>
-  <section class="block"><h3 class="h">이번 주 우리 반 초점 기준</h3>
+  <section class="block"><h3 class="h">우리 반 초점 기준</h3>
     <p class="note" style="margin:0 0 10px">아직 기록이 없는 학생의 오늘의 과제를 이 기준으로 정합니다. 자동이면 반 처음 글 평균이 가장 낮은 기준을 씁니다. 지금: <b>${esc(classFocusOf(cls).axis)}</b>${cls.focus?' (교수 지정)':' (자동)'}</p>
     <div class="askf"><select id="focusSel" style="flex:1;font:inherit;padding:9px;border:1px solid var(--rule);border-radius:4px;background:var(--sheet)"><option value="">자동 (반 평균이 가장 낮은 기준)</option>${ks.map(k=>`<option value="${k}" ${cls.focus===k?'selected':''}>${k}</option>`).join('')}</select>
       <button class="btn ghost" id="focusBtn">초점 저장</button></div></section>
