@@ -1128,6 +1128,29 @@ const CLASSES={
     assigned:{articleId:'aiexam',level:'boksi',due:'11월 23일(일)'}}
 };
 const DEMO_PW='demo1234';
+/* (Supabase) 서버 함수 /api/db 를 거쳐 저장합니다. 키는 서버에만 있고 브라우저에는 오지 않습니다.
+   - 서버에 Supabase 설정이 없거나 파일로 열면 on:false → 지금처럼 브라우저 메모리만 씁니다.
+   - 시연 계정(demo, student, professor)과 예시 답안은 화면 안에만 있고 저장하지 않습니다 (시연을 몇 번 해도 깨끗하게).
+   - 실제 가입자의 계정, 글, 투표, 교수 설정은 Supabase에 남아 다른 기기에서도 보입니다. */
+const REMOTE={on:false,token:null,last:0,
+  async call(op,body={}){
+    const r=await fetch('/api/db',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({op,token:this.token,...body})});
+    const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||('저장소 오류 '+r.status));return j;
+  },
+  async init(){if(location.protocol==='file:')return;try{await this.pull(true)}catch(e){console.warn('[저장소]',e)}},
+  /* 서버의 글, 투표, 반 설정을 메모리에 합칩니다 (3초 안에 다시 부르면 건너뜀) */
+  async pull(force){
+    if(!force&&(!this.on||Date.now()-this.last<3000))return;
+    const j=await this.call('load');this.last=Date.now();
+    if(!j.on)return;this.on=true;
+    const have=new Set(DB.essays.map(e=>e.id));
+    (j.essays||[]).forEach(e=>{if(e&&e.id&&!have.has(e.id)){DB.essays.push(e);have.add(e.id)}});
+    const local=[...DB.votes.keys()].filter(k=>k.startsWith('u'));/* 시연 계정의 투표는 메모리에만 */
+    DB.votes=new Map(local.map(k=>[k,1]));(j.votes||[]).forEach(([u,e,t])=>DB.votes.set(`${u}|${e}|${t}`,1));
+    Object.entries(j.classes||{}).forEach(([id,c])=>{if(CLASSES[id])['rubric','focus','assigned'].forEach(k=>{if(c[k]!==undefined&&c[k]!==null)CLASSES[id][k]=c[k]})});
+  },
+  mine(userId){return this.on&&this.token&&String(userId).startsWith('r')}
+};
 const DB={
   users:{}, essays:[], votes:new Map(), seq:1,
   key:(scope,u)=>`${scope}:${u.toLowerCase()}`,
@@ -1139,13 +1162,18 @@ const DB={
     if(nickname.length>12)throw new Error('닉네임은 12자 이내로 적어 주세요.');
     const k=this.key(scope,username);
     if(this.users[k])throw new Error('이미 쓰이는 아이디입니다.');
+    if(REMOTE.on){
+      const j=await REMOTE.call('signUp',{scope,username,password,nickname,role,classId,org:classId?CLASSES[classId].org:null});
+      REMOTE.token=j.token;return j.user;
+    }
     const u={id:'u'+(this.seq++),scope,username,password,nickname,role,classId,org:classId?CLASSES[classId].org:null,profile:null};
     this.users[k]=u;return this.pub(u);
   },
   async signIn({scope,username,password}){
     const u=this.users[this.key(scope,username||'')];
-    if(!u||u.password!==password)throw new Error('아이디나 비밀번호가 맞지 않습니다.');
-    return this.pub(u);
+    if(u){if(u.password!==password)throw new Error('아이디나 비밀번호가 맞지 않습니다.');REMOTE.token=null;return this.pub(u)}
+    if(REMOTE.on){const j=await REMOTE.call('signIn',{scope,username,password});REMOTE.token=j.token;return j.user}
+    throw new Error('아이디나 비밀번호가 맞지 않습니다.');
   },
   pub:u=>({id:u.id,scope:u.scope,username:u.username,nickname:u.nickname,role:u.role,classId:u.classId,org:u.org,profile:u.profile}),
   async classByCode(orgId,code){
@@ -1157,23 +1185,35 @@ const DB={
     }
     throw new Error('코드가 맞지 않습니다. 수업에서 받은 코드를 확인해 주세요.');
   },
-  async saveEssay(e){const x={...e,id:'e'+(this.seq++),createdAt:Date.now()};this.essays.push(x);return x},
+  async saveEssay(e){
+    const remote=REMOTE.mine(e.userId);
+    const id=remote?'r'+(crypto.randomUUID?crypto.randomUUID().replace(/-/g,''):Date.now().toString(36)+Math.random().toString(36).slice(2)):'e'+(this.seq++);
+    const x={...e,id,createdAt:Date.now()};
+    if(remote)await REMOTE.call('saveEssay',{essay:x});
+    this.essays.push(x);return x;
+  },
   /* 광장 글: 같은 기사, 같은 난이도. 기관 학생은 우리 반 글만, 개인은 기관 밖 글만 */
   async listEssays({articleId,level,classId=null}){
+    try{await REMOTE.pull()}catch(e){console.warn('[저장소]',e)}
     return this.essays.filter(e=>e.published&&e.articleId===articleId&&e.level===level&&(e.classId||null)===(classId||null));
   },
   async classEssays(classId){return this.essays.filter(e=>e.classId===classId&&!e.isExample)},
   /* 투표: 같은 사람, 같은 글, 같은 종류는 한 번. 다시 누르면 취소 */
   async toggleVote(userId,essayId,kind){
     const k=`${userId}|${essayId}|${kind}`;
+    if(REMOTE.mine(userId)){
+      const j=await REMOTE.call('toggleVote',{essayId,kind});
+      if(j.voted)this.votes.set(k,1);else this.votes.delete(k);return j.voted;
+    }
     if(this.votes.has(k)){this.votes.delete(k);return false}
     this.votes.set(k,1);return true;
   },
   voted(userId,essayId,kind){return this.votes.has(`${userId}|${essayId}|${kind}`)},
   count(essay,kind){let n=essay.base?.[kind]||0;this.votes.forEach((_,k)=>{const[,e,t]=k.split('|');if(e===essay.id&&t===kind)n++});return n},
-  async saveRubric(classId,rubric){CLASSES[classId].rubric=rubric},
-  async saveFocus(classId,axis){CLASSES[classId].focus=axis||null},
-  async assign(classId,articleId,level){CLASSES[classId].assigned={articleId,level,due:'이번 주 일요일'}}
+  async saveClass(classId,patch){if(REMOTE.mine(S.user?.id))await REMOTE.call('saveClass',{classId,patch});Object.assign(CLASSES[classId],patch)},
+  async saveRubric(classId,rubric){await this.saveClass(classId,{rubric})},
+  async saveFocus(classId,axis){await this.saveClass(classId,{focus:axis||null})},
+  async assign(classId,articleId,level){await this.saveClass(classId,{assigned:{articleId,level,due:'이번 주 일요일'}})}
 };
 /* 시연 계정 3개 + 예시 답안 계정 */
 (function seed(){
@@ -2100,7 +2140,7 @@ function bind(){
   const now=new Date();
   $('#today').textContent=`${now.getMonth()+1}월 ${now.getDate()}일 ${'일월화수목금토'[now.getDay()]}요일`;
   render();
-  await API.init();
+  await Promise.all([API.init(),REMOTE.init()]);
   drawTop();
 })();
 
