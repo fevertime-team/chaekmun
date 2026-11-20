@@ -79,7 +79,7 @@ export async function analyze(args: { articleId: string; level: string; text: st
     generate: async (retryNote) => toV3(await callJSON({
       system: SIGWAN_SYSTEM,
       user: sigwanUser({
-        title: a.title, lines: ev.lines, question: a.q[level], levelName: lv.name, weak: lv.weak, stances,
+        title: a.title, lines: ev.lines, guard: a.guard, question: a.q[level], levelName: lv.name, weak: lv.weak, stances,
         personas: cand.map((id) => ({ id, ...PERSONAS[id] })), sents, retryNote,
       }),
       schema: SigwanSchema, temperature: 0.5, maxTokens: 1400,
@@ -251,7 +251,7 @@ export async function ask(args: { articleId: string; level: string; draft: strin
     label: '질문에 답을 씁니다',
     generate: (retryNote) => callJSON({
       system: ASK_SYSTEM,
-      user: askUser({ title: a.title, lines: ev.lines, question: a.q[level], sents: sentences(draft), feedbackText, history: (args.chat || []).map((c) => ({ me: !!c.me, t: String(c.t || '') })), message: msg, retryNote }),
+      user: askUser({ title: a.title, lines: ev.lines, guard: a.guard, question: a.q[level], sents: sentences(draft), feedbackText, history: (args.chat || []).map((c) => ({ me: !!c.me, t: String(c.t || '') })), message: msg, retryNote }),
       schema: AskSchema, temperature: 0.4, maxTokens: 500,
     }),
     check: async (o, log) => {
@@ -279,7 +279,7 @@ export async function prewrite(args: { articleId: string; level: string }) {
   const res = await guarded<string[]>({
     label: '생각할 거리를 고릅니다',
     maxAttempts: 2,
-    generate: async (retryNote) => (await callJSON({ system: PREWRITE_SYSTEM, user: prewriteUser({ title: a.title, lines: ev.lines, question: a.q[level], levelName: LEVELS[level].name, retryNote }), schema: PrewriteSchema, temperature: 0.6, maxTokens: 400 })).questions.slice(0, 3),
+    generate: async (retryNote) => (await callJSON({ system: PREWRITE_SYSTEM, user: prewriteUser({ title: a.title, lines: ev.lines, guard: a.guard, question: a.q[level], levelName: LEVELS[level].name, retryNote }), schema: PrewriteSchema, temperature: 0.6, maxTokens: 400 })).questions.slice(0, 3),
     check: async (qs, log) => { const v = ruleCheck(qs, true); log({ state: v.length ? 'bad' : 'ok', text: `규칙 검사 ${v.length ? `${v.length}건` : '통과'}` }); return v; },
     fallback: () => base,
   });

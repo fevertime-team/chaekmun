@@ -28,7 +28,7 @@ const articles = ARTICLES.map((a) => ({
   personas: a.personas, q: a.q,
   stances: a.stances.map((s) => ({ id: s.id, label: s.label, kw: s.kw, premise: s.premise, premiseQ: s.premiseQ, bank: s.bank })),
   choshiPremise: a.choshiPremise, choshiQ: a.choshiQ, choshiBank: a.choshiBank,
-  samples: a.samples, revised: a.revised,
+  samples: a.samples, revised: a.revised, guard: a.guard || null, issue: a.issue || null,
   clusters: a.clusters.map((c, i) => ({ i, label: c.label, stance: c.stance, tam: !!c.tam, text: c.s.text })),
 }));
 const out = { generatedAt: new Date().toISOString(), personas: PERSONAS, levels: LEVELS, rubric: RUBRIC, articles };
