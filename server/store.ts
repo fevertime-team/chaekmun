@@ -45,9 +45,9 @@ const checkPw = (pw: string, stored: string) => {
   return a.length === b.length && timingSafeEqual(a, b);
 };
 
-const RESERVED = new Set(['demo', 'student', 'professor', 'example', 'admin']); // 화면의 시연 계정 이름
+const RESERVED = new Set(['demo', 'student', 'professor', 'center', 'example', 'admin']); // 화면의 시연 계정 이름
 const SCOPES = new Set(['p', 'o']);
-const ROLES = new Set(['personal', 'student', 'professor']);
+const ROLES = new Set(['personal', 'student', 'professor', 'center']); // center: 교수학습개발센터 담당자 (글은 쓰지 않음)
 const KINDS = new Set(['ag', 'pn']);
 const enc = encodeURIComponent;
 

@@ -479,6 +479,40 @@ main.in .qmark,main.in .jang .seal,main.in .hero .stamp{animation:stamp .55s var
 .proc{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.86rem;color:var(--ink3);margin:6px 0 12px}
 .proc b{color:var(--ink)}
 
+/* ---------- (v4.4) 기관용: 비교과 진행, 수업 화면, 센터 리포트 ---------- */
+.prog{background:var(--sheet);border:1px solid var(--rule);border-radius:var(--r-card);padding:14px 18px;margin:0 0 14px;box-shadow:var(--shadow)}
+.prog-hd{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.prog-hd span{font-size:.86rem;color:var(--ink2)}
+.prog-hd em{font-style:normal;font-weight:800;font-size:1.05rem;color:var(--ink);font-variant-numeric:tabular-nums}
+.prog-bar{height:8px;border-radius:999px;background:var(--paper-2);margin:10px 0 8px;overflow:hidden}
+.prog-bar span{display:block;height:100%;width:var(--w);background:var(--dc-green);border-radius:999px}
+.prog small{font-size:.8rem;color:var(--ink3)}
+.task.assigned .as-note{flex:1 1 100%;margin:8px 0 0;padding-top:8px;border-top:1px dashed var(--rule-2);font-size:.82rem;color:var(--ink2);line-height:1.55}
+.board-cta{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:var(--sheet);border:1px solid var(--rule-2);border-radius:var(--r-card);padding:16px 20px;box-shadow:var(--shadow)}
+.board-cta b{display:block;font-size:1.02rem}
+.board-cta small{font-size:.84rem;color:var(--ink3)}
+.board{padding:8px 0 24px}
+.bd-k{font-size:.9rem;color:var(--ink3);margin:0}
+.bd-q{font-family:var(--brush);font-size:clamp(1.5rem,3.4vw,2.3rem);line-height:1.4;margin:8px 0 6px}
+.bd-sub{color:var(--ink2);margin:0 0 18px}
+.bd-map{display:grid;gap:10px;margin:0 0 22px}
+.bd-row{display:grid;grid-template-columns:minmax(8em,15em) minmax(0,1fr) 3.4em;gap:12px;align-items:center;font-size:1.05rem}
+.bd-row .bl{font-weight:700}
+.bd-row .bl .so{color:#7A5A0E;margin-right:4px}
+.bd-row .bb{height:22px;border-radius:4px;background:var(--paper-2);overflow:hidden}
+.bd-row .bb span{display:block;height:100%;width:var(--w);background:var(--ink)}
+.bd-row.tam .bb span{background:#7A5A0E}
+.bd-row .bn{text-align:right;font-variant-numeric:tabular-nums;font-weight:700}
+.bd-talk{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.bd-talk li{background:var(--sheet);border:1px solid var(--rule);border-radius:var(--r-card);padding:16px 20px}
+.bd-talk .k{display:block;font-size:.82rem;font-weight:700;color:var(--ink3);margin-bottom:4px}
+.bd-talk p{margin:4px 0 0;line-height:1.7;font-size:1.02rem}
+.hb.wide{grid-template-columns:minmax(9em,15em) minmax(0,1fr) 4em}
+.ctr-kpi{grid-template-columns:repeat(4,minmax(0,1fr))}
+.axes td.d{color:var(--dc-green);font-weight:700;text-align:center;width:3.6em}
+@media (max-width:600px){.bd-row{grid-template-columns:1fr 3em}.bd-row .bb{grid-column:1/-1;order:3}.hb.wide{grid-template-columns:minmax(9em,15em) minmax(0,1fr) 4em}
+.ctr-kpi{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
 /* ---------- 하단 탭 바 ---------- */
 .tabbar{position:fixed;left:0;right:0;bottom:0;z-index:14;
   background:rgba(243,237,224,.92);-webkit-backdrop-filter:saturate(1.3) blur(18px);backdrop-filter:saturate(1.3) blur(18px);
@@ -571,17 +605,6 @@ nav[aria-label="진행 단계"]{margin-top:16px}
 .task{padding:18px 20px 18px}
 .task .t-lab,.task>b{font-size:1.12rem;letter-spacing:-.02em}
 .task.today{border-color:var(--rule-2)}
-.pmini{display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px;margin-top:14px;padding-top:12px;border-top:1px solid var(--rule)}
-.pmini .nx{font-size:.84rem;font-weight:600;color:var(--ink2)}
-.pmini .nx b{color:var(--ink);font-weight:800;font-size:inherit;margin:0}
-/* 급제 길 칸 */
-.path3{list-style:none;margin:0;padding:0;display:flex;align-items:center;gap:0}
-.path3 li{display:flex;align-items:center}
-.path3 li+li::before{content:"";width:12px;height:1.5px;background:var(--rule-2)}
-.path3 .c{display:grid;place-items:center;width:46px;height:30px;border-radius:5px;border:1.5px dashed var(--rule-2);font-size:.72rem;font-weight:700;color:var(--ink3);white-space:nowrap}
-.path3 .c.on{border:0;background:var(--seal);color:var(--sheet);transform:rotate(-3deg)}
-.path3 .c.goal{border-color:var(--seal);color:var(--seal)}
-.path3 li.done+li::before{background:var(--seal)}
 
 /* ---------- 다음 책문의 과제: 먹색 큰 카드 ---------- */
 .nextcard{position:relative;margin:36px 0 0;padding:26px 24px 24px;border-radius:var(--r-card);background-color:var(--ink);color:var(--paper);box-shadow:0 2px 4px rgba(30,20,10,.12),0 18px 34px -16px rgba(30,20,10,.55)}
@@ -590,13 +613,6 @@ nav[aria-label="진행 단계"]{margin-top:16px}
 .nextcard .tchip{background:rgba(243,237,224,.14);color:var(--paper)}
 .nextcard .tt{font-size:clamp(1.3rem,4.8vw,1.55rem);font-weight:800;letter-spacing:-.03em;line-height:1.35;margin:12px 0 6px;color:var(--sheet);text-wrap:balance}
 .nextcard .why{font-size:.9rem;color:rgba(243,237,224,.78);line-height:1.65}
-.nextcard .pmini{border-top-color:rgba(243,237,224,.16)}
-.nextcard .pmini .nx{color:rgba(243,237,224,.8)}.nextcard .pmini .nx b{color:var(--sheet)}
-.nextcard .path3 .c{border-color:rgba(243,237,224,.35);color:rgba(243,237,224,.7)}
-.nextcard .path3 .c.on{background:var(--seal);color:var(--sheet)}
-.nextcard .path3 .c.goal{border-color:#F2B8A6;color:#F2B8A6}
-.nextcard .path3 li+li::before{background:rgba(243,237,224,.3)}
-.nextcard .path3 li.done+li::before{background:var(--seal)}
 .nextcard .tmr{margin-top:16px;font-family:var(--brush);font-size:1.28rem;line-height:1.4;color:var(--sheet)}
 .nextcard+.actions{margin-top:18px}
 
@@ -624,13 +640,6 @@ nav[aria-label="진행 단계"]{margin-top:16px}
 .month .fut .dd{opacity:.45}
 .month .blank{visibility:hidden}
 
-/* ---------- 급제 길 15칸 (나의 기록) ---------- */
-.road{background:var(--sheet);border:1px solid var(--rule);border-radius:var(--r-card);padding:6px 16px}
-.road li.rw{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--rule)}
-.road li.rw:last-child{border-bottom:0}
-.road ol.rows{list-style:none;margin:0;padding:0}
-.road .ax{font-weight:700;font-size:.95rem}
-.road .ax small{display:block;font-size:.76rem;font-weight:500;color:var(--ink3)}
 
 /* ---------- 기사 다섯: 같은 크기 카드 ---------- */
 .arts5{list-style:none;margin:20px 0 0;padding:0;display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
@@ -674,7 +683,7 @@ nav[aria-label="진행 단계"]{margin-top:16px}
 .col .cnt{font-size:.78rem;font-weight:700;color:var(--ink2);font-variant-numeric:tabular-nums;line-height:1.2}
 .col .melab{font-size:.7rem;font-weight:800;color:var(--seal);line-height:1}
 .col.mine .cl-name{color:var(--ink)}
-.bang .dots i,.ac-han,.path3 .c.on,.dd.on{-webkit-mask:var(--stamp) 0 0/140px 140px;mask:var(--stamp) 0 0/140px 140px}
+.bang .dots i,.ac-han,.dd.on{-webkit-mask:var(--stamp) 0 0/140px 140px;mask:var(--stamp) 0 0/140px 140px}
 @media (max-width:600px){
   .bang{margin:20px 6px 16px;padding:20px 4px 18px}
   .bang-in{min-height:260px}
@@ -682,11 +691,10 @@ nav[aria-label="진행 단계"]{margin-top:16px}
   .dots i{width:10px;height:10px}
   .week{grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;width:100%}
   .dd{width:100%;max-width:36px;height:auto;aspect-ratio:1}
-  .path3 .c{width:42px}
 }
 
 /* =========================================================
-   (v4.3.1) 주홍은 인장에만: 진행 단계 현재 칸, 달력의 쓴 날, 급제 길의 채운 칸, 오늘의 과제 라벨
+   (v4.3.1) 주홍은 인장에만: 진행 단계 현재 칸, 달력의 쓴 날, 오늘의 과제 라벨
    + 도장 자체인 것(策 로고, 問, 첫 화면 策問, 광장의 내 글). 글자 강조는 먹으로
    ========================================================= */
 .toplink{color:var(--ink)}
@@ -705,9 +713,7 @@ nav[aria-label="진행 단계"]{margin-top:16px}
 .flag{color:var(--ink)}
 .grp>summary .hd::after{color:var(--ink2)}
 .tabbar button[aria-current="page"]{color:var(--ink)}
-.path3 .c.goal{border-color:var(--ink);color:var(--ink)}
 .nextcard .nk{color:var(--paper)}
-.nextcard .path3 .c.goal{border-color:var(--paper);color:var(--paper)}
 /* 기사 카드 분야 낙관: 먹색 테두리 인장 */
 .ac-han{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 2px var(--ink);opacity:.85}
 
@@ -736,7 +742,6 @@ nav[aria-label="진행 단계"]{margin-top:16px}
   nav[aria-label="진행 단계"]{margin:12px 0 20px}
   .lattice{height:14px;background-size:14px 14px;margin-top:8px}
   .task{padding:16px 18px 16px}
-  .pmini{margin-top:12px;padding-top:10px}
 }
 </style>
 </head>
@@ -825,9 +830,7 @@ const PROFILE = {
   words:[['기업',14],['필요하다',11],['결국',9],['문제',9],['생각한다',8],['정당하다',6],['사람들',6],['현실',5]],
   hedge:[31,30,27,25,22,20,19,17,15,14,13,12],
   /* (v4.3) 쓴 날: 오늘에서 며칠 전인지. 1~5는 어제부터 닷새 연속, 오늘 칸은 비어 있음. 12편과 맞춤 */
-  days:[1,2,3,4,5,7,9,10,13,16,20,24],
-  /* (v4.3) 해낸 과제 id (급제 길에 인장으로 채워지는 칸) */
-  cleared:['iss2','evi2','pos2']
+  days:[1,2,3,4,5,7,9,10,13,16,20,24]
 };
 
 /* ---------- 유틸 ---------- */
@@ -1022,8 +1025,11 @@ const SEEDS = {"filibuster":{"boksi":[{"n":"01","g":0,"t":"필리버스터는 �
 const ORGS=[{id:'yonsei',name:'연세대학교 (예시)'}];
 const CLASSES={
   'yonsei-writing':{id:'yonsei-writing',org:'yonsei',name:'글쓰기와 토론 (예시)',term:'2026-2학기, 11주차',
-    studentCode:'YONSEI-STU',professorCode:'YONSEI-PROF',rubric:null,focus:null,
-    assigned:{articleId:'examwatch',level:'boksi',due:'11월 23일(일)'}}
+    studentCode:'YONSEI-STU',professorCode:'YONSEI-PROF',centerCode:'YONSEI-CTL',rubric:null,focus:null,
+    /* (v4.4) 과제가 아니라 "다음 수업 토론 시제": 수업 전날 자정까지 처음 생각을 남기고, 수업은 우리 반 관점 지도로 시작 */
+    assigned:{articleId:'examwatch',level:'boksi',classAt:'11월 24일(월) 3교시',due:'11월 23일(일) 자정'},
+    /* (v4.4) 비교과 '매일 책문': 학기 목표 편수를 채우면 이수 인정. 점수는 성적에 쓰지 않음 */
+    program:{name:'매일 책문',goal:20}}
 };
 const DEMO_PW='demo1234';
 /* (Supabase) 서버 함수 /api/db 를 거쳐 저장합니다. 키는 서버에만 있고 브라우저에는 오지 않습니다.
@@ -1080,6 +1086,7 @@ const DB={
       if(c.org!==orgId)continue;
       if(c.studentCode===code)return {cls:c,role:'student'};
       if(c.professorCode===code)return {cls:c,role:'professor'};
+      if(c.centerCode===code)return {cls:c,role:'center'};
     }
     throw new Error('코드가 맞지 않습니다. 수업에서 받은 코드를 확인해 주세요.');
   },
@@ -1111,16 +1118,18 @@ const DB={
   async saveClass(classId,patch){if(REMOTE.mine(S.user?.id))await REMOTE.call('saveClass',{classId,patch});Object.assign(CLASSES[classId],patch)},
   async saveRubric(classId,rubric){await this.saveClass(classId,{rubric})},
   async saveFocus(classId,axis){await this.saveClass(classId,{focus:axis||null})},
-  async assign(classId,articleId,level){await this.saveClass(classId,{assigned:{articleId,level,due:'이번 주 일요일'}})}
+  async assign(classId,articleId,level){await this.saveClass(classId,{assigned:{articleId,level,classAt:'다음 수업',due:'수업 전날 자정'}})}
 };
 /* 시연 계정 3개 + 예시 답안 계정 */
 (function seed(){
   const mk=(scope,username,nickname,role,classId,profile)=>{DB.users[DB.key(scope,username)]={id:'u'+(DB.seq++),scope,username,password:DEMO_PW,nickname,role,classId,org:classId?'yonsei':null,profile}};
   mk('p','demo','데모 응시자','personal',null,'demo');
   mk('o','student','김연세','student','yonsei-writing',null);
-  /* (v4.3) 기관 학생 데모의 예시 기록: 어제부터 사흘 연속 + 띄엄띄엄 이틀, 급제 길 세 칸 */
-  DB.users[DB.key('o','student')].history={days:[1,2,3,6,9],cleared:['iss2','evi2']};
+  /* (v4.3) 기관 학생 데모의 예시 기록: 어제부터 사흘 연속 + 띄엄띄엄 이틀, 비교과 11편 */
+  DB.users[DB.key('o','student')].history={days:[1,2,3,6,9],term:11};
   mk('o','professor','박교수','professor','yonsei-writing',null);
+  /* (v4.4) 교수학습개발센터 담당자: 개인 글은 못 보고 학기 집계만 봄 */
+  mk('o','center','센터 담당자','center','yonsei-writing',null);
   /* 광장 예시 답안: "예시 답안" 시스템 계정으로 묶고 예시 배지 */
   ARTICLES.forEach(a=>{
     const repN=new Set(a.clusters.map(c=>(c.s.who.match(/\d+/)||[''])[0]));
@@ -1326,7 +1335,7 @@ const S={view:'start',step:0,articleId:'examwatch',picked:false,levelChosen:fals
   submitted:false,myEssay:null,plaza:null};
 function resetWriting(){Object.assign(S,{draft:'',log:{start:null,paste:0,revisions:0,refused:0},prewrite:null,running:false,pipe:[],verify:null,attempts:0,feedback:null,personaIndex:0,pastRebuttals:[],otherLoading:false,chat:[],revised:'',blocked:null,compare:null,next:null,taskResult:null,submitted:false,myEssay:null,plaza:null})}
 function clearAfterDraft(){Object.assign(S,{feedback:null,pastRebuttals:[],otherLoading:false,verify:null,pipe:[],chat:[],revised:'',blocked:null,compare:null,next:null,taskResult:null,submitted:false,myEssay:null,plaza:null})}
-const isStudent=()=>S.user?.role==='student', isProf=()=>S.user?.role==='professor', isOrg=()=>S.user&&S.user.scope==='o';
+const isStudent=()=>S.user?.role==='student', isProf=()=>S.user?.role==='professor', isCenter=()=>S.user?.role==='center', isOrg=()=>S.user&&S.user.scope==='o';
 const myClass=()=>S.user?.classId?CLASSES[S.user.classId]:null;
 const rubricFor=()=>{const r=myClass()?.rubric;return r||null};
 const ruleDef=k=>rubricFor()?.[k]?.def||RUBRIC[k].def;
@@ -1375,11 +1384,11 @@ const ICON={
   chev:'<svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3.5L10.5 8 6 12.5"/></svg>'
 };
 function drawTabs(){
-  const el=$('#tabbar'), hide=['start','auth','org'].includes(S.view);
+  const el=$('#tabbar'), hide=['start','auth','org','board'].includes(S.view);
   el.hidden=hide;document.body.classList.toggle('has-tabs',!hide);
   if(hide){el.innerHTML='';return}
-  const cur=S.view==='profile'||S.view==='teacher'?'me':S.view==='peek'||(S.view==='flow'&&S.step===STEP.PLAZA)?'plaza':'flow';
-  const T=[['flow','책문',ICON.flow],['plaza','광장',ICON.plaza],isProf()?['me','우리 반',ICON.cls]:['me','나의 기록',ICON.rec]];
+  const cur=S.view==='profile'||S.view==='teacher'||S.view==='center'?'me':S.view==='peek'||(S.view==='flow'&&S.step===STEP.PLAZA)?'plaza':'flow';
+  const T=[['flow','책문',ICON.flow],['plaza','광장',ICON.plaza],isProf()?['me','우리 반',ICON.cls]:isCenter()?['me','학기 리포트',ICON.rec]:['me','나의 기록',ICON.rec]];
   el.innerHTML=`<ul>${T.map(([k,l,i])=>`<li><button data-tabbar="${k}" ${k===cur?'aria-current="page"':''}>${i}<span>${l}</span></button></li>`).join('')}</ul>`;
   $$('[data-tabbar]').forEach(b=>b.onclick=async()=>{
     const t=b.dataset.tabbar;
@@ -1392,7 +1401,7 @@ function drawTabs(){
       if(S.picked&&S.levelChosen){S.plaza=null;view('peek');await loadPlaza();render();return}
       toast('기사와 난이도를 고르면 그 질문의 광장을 볼 수 있습니다.');S.view='flow';go(S.picked?STEP.QUESTION:STEP.PICK);return}
     if(!S.user){S.auth={...S.auth,scope:'p',tab:'login',err:'',after:{view:S.view,step:S.step}};view('auth');return}
-    view(isProf()?'teacher':'profile');
+    view(isProf()?'teacher':isCenter()?'center':'profile');
   });
 }
 
@@ -1408,7 +1417,7 @@ const metaOf=a=>`<p class="meta"><span class="field">${esc(a.field)}</span><span
 function render(anim){
   drawTrack();drawTop();drawTabs();
   const m=$('#main');
-  const V={start:vStart,auth:vAuth,org:vOrg,profile:vProfile,teacher:vTeacher,peek:vPeek};
+  const V={start:vStart,auth:vAuth,org:vOrg,profile:vProfile,teacher:vTeacher,peek:vPeek,board:vBoard,center:vCenter};
   m.innerHTML = V[S.view] ? V[S.view]() : S.step===STEP.QUESTION&&!S.levelChosen ? vLevel() : [vPick,vQuestion,vWrite,vRebut,vRevise,vPlaza][S.step]();
   if(anim){m.classList.remove('in');void m.offsetWidth;m.classList.add('in')}
   bind();
@@ -1425,7 +1434,7 @@ function vStart(){
   </section>
   <div class="paths">
     <button class="path corner" data-start="p"><b>개인으로 시작</b><span>매일 한 편, 오늘의 책문에 답합니다</span></button>
-    <button class="path corner" data-start="o"><b>학교·기관으로 시작</b><span>수업에서 받은 코드로 들어갑니다</span></button>
+    <button class="path corner" data-start="o"><b>학교·기관으로 시작</b><span>비교과, 수업, 센터에서 받은 코드로 들어갑니다</span></button>
   </div>
   <p class="ctr"><button class="link" data-start="guest">로그인 없이 기사와 광장 둘러보기</button></p>`;
 }
@@ -1433,11 +1442,12 @@ function vStart(){
 /* (v4) 로그인과 가입. scope p=개인, o=기관 (계정이 섞이지 않게 따로) */
 function vAuth(){
   const A=S.auth, login=A.tab==='login', org=A.scope==='o';
-  const demo = org ? (A.role==='professor'?'professor':'student') : 'demo';
+  const demo = org ? (A.role||'student') : 'demo';
+  const roleName = {professor:'교수',center:'센터 담당자',student:'학생'}[A.role]||'학생';
   return `
   <section class="block ctr">
-    <h2 class="ptitle">${org?esc(A.cls?.name||'')+' '+(A.role==='professor'?'교수':'학생'):'개인'} ${login?'로그인':'가입'}</h2>
-    ${org?`<p class="note">${esc(ORGS.find(o=>o.id===A.org)?.name||'')}, ${A.role==='professor'?'교수 코드':'학생 코드'}로 들어왔습니다.</p>`:''}
+    <h2 class="ptitle">${org?(A.role==='center'?'':esc(A.cls?.name||'')+' ')+roleName:'개인'} ${login?'로그인':'가입'}</h2>
+    ${org?`<p class="note">${esc(ORGS.find(o=>o.id===A.org)?.name||'')}, ${roleName} 코드로 들어왔습니다.</p>`:''}
   </section>
   <form class="form" id="authForm" autocomplete="off">
     <div class="tabs" role="tablist" style="margin:0 0 6px">
@@ -1459,7 +1469,7 @@ function vAuth(){
 function vOrg(){
   const A=S.auth;
   return `
-  <section class="block ctr"><h2 class="ptitle">학교·기관으로 시작</h2><p class="note">기관을 고르고, 수업에서 받은 코드를 넣어 주세요.</p></section>
+  <section class="block ctr"><h2 class="ptitle">학교·기관으로 시작</h2><p class="note">기관을 고르고, 비교과나 수업에서 받은 코드를 넣어 주세요.</p></section>
   <form class="form" id="orgForm" autocomplete="off">
     <label for="og">기관</label><select id="og">${ORGS.map(o=>`<option value="${o.id}">${esc(o.name)}</option>`).join('')}</select>
     <label for="oc">코드</label><input id="oc" placeholder="예: YONSEI-STU" required>
@@ -1474,7 +1484,7 @@ function vOrg(){
 const axisChip=t=>`<span class="tchip">${esc(t.axis)}</span>`;
 function taskPickHTML(){
   const t=S.todayTask;
-  if(t) return `<div class="task today corner">${streakHTML()}<b>오늘의 과제</b>${axisChip(t)}<p class="tt">${esc(t.title)}</p><small>${esc(t.why)}</small>${pathMini(t)}</div>`;
+  if(t) return `<div class="task today corner">${streakHTML()}<b>오늘의 과제</b>${axisChip(t)}<p class="tt">${esc(t.title)}</p><small>${esc(t.why)}</small></div>`;
   if(S.user&&!isProf()) return `<div class="task tnone">${streakHTML()}<b>오늘의 과제</b><small>첫 책문입니다. 오늘 글의 채점이 끝나면 다음 과제가 정해집니다.</small></div>`;
   return '';
 }
@@ -1496,13 +1506,12 @@ function taskCheckHTML(){
 }
 function taskNextHTML(){
   const n=S.next;if(!n)return '';
-  return `<section class="nextcard corner" aria-label="다음 책문의 과제"><b class="nk">다음 책문의 과제</b>${axisChip(n)}<p class="tt">${esc(n.title)}</p><p class="why">${esc(n.why)}</p>${pathMini(n)}<p class="tmr">내일 이 과제로 다시 오세요</p></section>`;
+  return `<section class="nextcard corner" aria-label="다음 책문의 과제"><b class="nk">다음 책문의 과제</b>${axisChip(n)}<p class="tt">${esc(n.title)}</p><p class="why">${esc(n.why)}</p><p class="tmr">내일 이 과제로 다시 오세요</p></section>`;
 }
 
-/* ---------- (v4.3) 연속 응시와 급제 길: 기록에서 계산 ----------
+/* ---------- (v4.3) 연속 응시와 응시 달력: 기록에서 계산 ----------
    쓴 날 = 데모 계정의 PROFILE.days + 이 브라우저에서 제출한 글(DB.essays의 createdAt)
-   해낸 과제 = 데모 계정의 PROFILE.cleared + 제출한 글의 task.done + 지금 채점에서 해낸 오늘의 과제
-   서버 기록으로 바꿀 때도 같은 두 가지(제출 날짜, 과제 id와 해냄 여부)만 있으면 됨 */
+   서버 기록으로 바꿀 때도 제출 날짜만 있으면 됨 */
 const WD=['일','월','화','수','목','금','토'];
 const dayKey=d=>d.getFullYear()*10000+(d.getMonth()+1)*100+d.getDate();
 const daysAgo=o=>{const d=new Date();d.setHours(12,0,0,0);d.setDate(d.getDate()-o);return d};
@@ -1516,24 +1525,6 @@ function writtenDays(){
   return W;
 }
 function streakOf(W){const todayDone=W.has(dayKey(daysAgo(0)));let n=0,o=todayDone?0:1;while(W.has(dayKey(daysAgo(o)))){n++;o++}return{n,todayDone}}
-function clearedSet(){
-  const C=new Set();if(!S.user)return C;
-  (demoHistory()?.cleared||[]).forEach(x=>C.add(x));
-  myEssays().forEach(e=>{if(e.task&&e.task.done)C.add(e.task.id)});
-  if(S.todayTask&&S.taskResult?.revised?.done)C.add(S.todayTask.id);
-  return C;
-}
-/* 급제 길: 기준마다 한 칸(5칸). 해낸 칸은 인장, 이번 과제 칸은 먹 점선 (main 11/20: 과제 단계 없음) */
-const AX_SHORT={'쟁점 설명':'쟁점','근거 활용':'근거','맥락과 전제':'맥락','자기 입장':'입장','결론과 함의':'결론'};
-const clearedCount=C=>Object.values(TASKS).filter(x=>C.has(x.id)).length;
-function path5(goalAxis,C){
-  return `<ol class="path3">${Object.keys(TASKS).map(k=>{const on=C.has(TASKS[k].id),goal=!on&&k===goalAxis;
-    return `<li class="${on?'done':''}"><span class="c${on?' on':''}${goal?' goal':''}" title="${esc(k)}${on?', 해냄':''}">${AX_SHORT[k]||k}</span></li>`}).join('')}</ol>`;
-}
-function pathMini(t){
-  if(!t||!TASKS[t.axis])return '';const C=clearedSet(),n=clearedCount(C);
-  return `<div class="pmini" aria-label="급제 길 5칸 중 ${n}칸 채움">${path5(t.axis,C)}<span class="nx">급제 길 <b>${n}</b>/5</span></div>`;
-}
 function streakHTML(){
   if(!S.user||isProf())return '';
   const W=writtenDays(),{n,todayDone}=streakOf(W);
@@ -1554,20 +1545,24 @@ function monthHTML(){
     <div class="month-hd"><b>${m+1}월</b><span>이번 달 ${cnt}일 응시, 연속 ${n}일째</span></div>
     <ol class="month" aria-label="${m+1}월 응시 기록">${WD.map(w=>`<li aria-hidden="true"><span class="wd">${w}</span></li>`).join('')}${cells.join('')}</ol></div></section>`;
 }
-function roadHTML(){
-  const C=clearedSet(),axes=Object.keys(TASKS),goal=S.todayTask;
-  return `<section class="block"><h3 class="h">급제 길: 5칸 중 ${clearedCount(C)}칸</h3><div class="road"><ol class="rows">${axes.map(k=>{const on=C.has(TASKS[k].id),g=!on&&goal&&goal.axis===k;
-    return `<li class="rw"><span class="ax">${k}<small>${esc(TASKS[k].title)}</small></span><ol class="path3"><li class="${on?'done':''}"><span class="c${on?' on':''}${g?' goal':''}">${on?'해냄':g?'오늘':'빈칸'}</span></li></ol></li>`}).join('')}</ol></div>
-    <p class="note">오늘의 과제를 해낼 때마다 그 기준 칸에 인장이 찍힙니다.</p></section>`;
-}
 
-/* 1. 기사 고르기: (기관 학생) 이번 주 과제 + 오늘의 과제 + 분야별 기사 5개 */
+/* (v4.4) 기관 학생: 비교과 '매일 책문' 학기 진행. 이수 여부만 쓰고 점수는 성적에 쓰지 않음 */
+function progHTML(cls){
+  const P=cls?.program;if(!P)return '';
+  const n=(S.user?.history?.term||0)+DB.essays.filter(e=>e.userId===S.user?.id&&!e.isExample).length, pct=Math.min(100,Math.round(n/P.goal*100));
+  return `<div class="prog corner"><div class="prog-hd"><b>비교과 「${esc(P.name)}」</b><span>이번 학기 <em>${n}</em>/${P.goal}편</span></div>
+    <div class="prog-bar" role="img" aria-label="이번 학기 ${n}편, 목표 ${P.goal}편"><span style="--w:${pct}%"></span></div>
+    <small>${n>=P.goal?'이번 학기 이수 기준을 채웠습니다.':`${P.goal-n}편 더 쓰면 비교과 이수로 인정됩니다.`} 점수는 성적에 들어가지 않습니다.</small></div>`;
+}
+/* 1. 기사 고르기: (기관 학생) 비교과 진행 + 다음 수업 토론 시제 + 오늘의 과제 + 분야별 기사 5개 */
 function vPick(){
   const cls=isStudent()?myClass():null, as=cls?.assigned, aa=as&&ARTICLES.find(x=>x.id===as.articleId);
   return `
-  ${aa?`<div class="task assigned corner"><b>이번 주 과제</b><span class="tchip">${LEVELS[as.level].name}</span><p class="tt">${esc(aa.title)}</p>
-     <small>${esc(cls.name)}, 마감 ${esc(as.due)}</small>
-     <button class="link" id="doAssigned">이 과제 하러 가기</button></div>`:''}
+  ${cls?progHTML(cls):''}
+  ${aa?`<div class="task assigned corner"><b>다음 수업 토론 시제</b><span class="tchip">${LEVELS[as.level].name}</span><p class="tt">${esc(aa.title)}</p>
+     <small>${esc(cls.name)}, ${esc(as.classAt||'다음 수업')}. ${esc(as.due||'수업 전날 자정')}까지 처음 생각을 남겨 주세요.</small>
+     <button class="link" id="doAssigned">수업 전 책문 쓰기</button>
+     <p class="as-note">수업은 우리 반이 쓴 생각의 관점 지도로 시작합니다. 점수는 성적에 들어가지 않고, 교수님은 반 전체의 분포와 내가 동의한 글만 봅니다.</p></div>`:''}
   ${taskPickHTML()}
   <section class="block">
     <h2 class="pick-h">시관이 고른 오늘의 시제(試題) 다섯</h2>
@@ -1808,7 +1803,7 @@ function vRevise(){
   </section>
   ${taskCheckHTML()}
   ${taskNextHTML()}
-  <div class="actions"><button class="btn" id="submitBtn">광장에 제출하기</button><span class="note" style="margin:0">처음 글과 고친 글이 함께 공개됩니다${isStudent()?'. 우리 반 광장과 교수님에게만 보입니다':''}.</span></div>`:''}`;
+  <div class="actions"><button class="btn" id="submitBtn">광장에 제출하기</button><span class="note" style="margin:0">처음 글과 고친 글이 함께 공개됩니다${isStudent()?'. 우리 반 광장과 교수님에게만 보이고, 점수는 성적에 들어가지 않습니다':''}.</span></div>`:''}`;
 }
 const RUBRIC_LICENSE='https://creativecommons.org/licenses/by-nc-sa/4.0/';
 function totalOf(score,side){
@@ -1910,14 +1905,14 @@ function vProfile(){
   const list=mine.length?`<section class="block"><h3 class="h">이번에 쓴 답안</h3><ul class="cls">${mine.map(e=>{const a=ARTICLES.find(x=>x.id===e.articleId);return `<li><div class="hd"><b>${esc(a.title)}</b><span>${LEVELS[e.level].name}${e.scores?`, ${totalOf(e.scores,'before')} → ${totalOf(e.scores,'after')}점`:''}</span></div><blockquote>${esc(e.revised)}</blockquote></li>`}).join('')}</ul></section>`:'';
   if(!P) return `
   <section class="block"><h2 class="ptitle">나의 기록</h2>
-    <p class="note">아직 기록이 없습니다. 답안을 쓰고 채점을 받을 때마다 다섯 기준의 변화와 글 습관이 여기에 쌓입니다.</p></section>${monthHTML()}${roadHTML()}${list}`;
+    <p class="note">아직 기록이 없습니다. 답안을 쓰고 채점을 받을 때마다 다섯 기준의 변화와 글 습관이 여기에 쌓입니다.</p></section>${monthHTML()}${list}`;
   const mw=Math.max(...P.weak.map(f=>f.v)),mf=Math.max(...P.flow.map(f=>f.v));
   return `
   <section class="block">
     <h2 class="ptitle">나의 기록</h2>
     <p class="note">지금까지 쓴 답안 ${P.count}편을 바탕으로 했습니다. <span class="badge ex">예시</span>시연용 데모 계정의 기록입니다. 어떤 문체가 정답인지 알려주지 않고, 습관을 있는 그대로 보여줍니다.</p>
   </section>
-  ${monthHTML()}${roadHTML()}<div class="lattice sec" aria-hidden="true"></div>
+  ${monthHTML()}<div class="lattice sec" aria-hidden="true"></div>
   <section class="block"><h3 class="h">다섯 기준의 변화 (기준마다 10점)</h3>
     <div class="sparks">${Object.entries(P.axes).map(([k,v])=>`<div class="sp"><div class="hd"><b>${k}</b><span>${v[0]}점에서 ${v.at(-1)}점</span></div>${spark(v)}</div>`).join('')}</div></section>
   <section class="block"><h3 class="h">자주 반복된 약점</h3>
@@ -1956,14 +1951,17 @@ function vTeacher(){
               ...C.students.map((s,i)=>({...s,key:'x'+i}))];
   const sel=rows.find(r=>r.key===S.teacher.sel);
   const detail=sel?studentDetail(sel):'';
-  const as=cls.assigned;
+  const as=cls.assigned, aaT=as&&ARTICLES.find(a=>a.id===as.articleId);
   return `
   <section class="block">
     <h2 class="ptitle">교수용 화면</h2>
-    <p class="note">${esc(cls.name)}, ${esc(cls.term)}, 수강생 ${C.size}명. 숫자와 학생 목록은 <span class="badge ex">예시</span>시연용 예시 데이터이고, 이 반 학생 계정으로 실제 제출한 글은 맨 위에 함께 보입니다. 교수는 학생의 글을 대신 고치지 않고, 반 전체가 어디서 막히는지를 봅니다.</p>
+    <p class="note">${esc(cls.name)}, ${esc(cls.term)}, 수강생 ${C.size}명. 숫자와 학생 목록은 <span class="badge ex">예시</span>시연용 예시 데이터이고, 이 반 학생 계정으로 실제 제출한 글은 맨 위에 함께 보입니다. 교수는 학생의 글을 대신 고치지 않고, 학생이 수업 전에 혼자 쓴 생각을 모아 토론을 준비합니다. 점수는 성적용이 아닙니다.</p>
   </section>
+  ${aaT?`<section class="block board-cta"><div><b>다음 수업: ${esc(aaT.title)} (${LEVELS[as.level].name})</b>
+    <small>${esc(as.classAt||'다음 수업')}, 수업 전 제출 ${C.submitted+real.length}/${C.size}명</small></div>
+    <button class="btn" id="boardBtn">수업 화면으로 띄우기</button></section>`:''}
   <section class="block"><div class="kpis">
-    <div class="kpi"><b>${C.submitted+real.length}/${C.size}</b><span>이번 주 제출</span></div>
+    <div class="kpi"><b>${C.submitted+real.length}/${C.size}</b><span>수업 전 제출</span></div>
     <div class="kpi"><b>${C.avgRevise}회</b><span>1인당 평균 고쳐 쓰기</span></div>
     <div class="kpi"><b>${C.blockedAsk}건</b><span>대필 요청 거절</span></div>
     <div class="kpi"><b>${C.blockedPaste}건</b><span>붙여넣기 차단</span></div>
@@ -1978,9 +1976,9 @@ function vTeacher(){
     <div class="askf"><select id="focusSel" style="flex:1;font:inherit;padding:9px;border:1px solid var(--rule);border-radius:4px;background:var(--sheet)"><option value="">자동 (반 평균이 가장 낮은 기준)</option>${ks.map(k=>`<option value="${k}" ${cls.focus===k?'selected':''}>${k}</option>`).join('')}</select>
       <button class="btn ghost" id="focusBtn">초점 저장</button></div></section>
   <section class="block"><h3 class="h">학생별 현황</h3>
-    <p class="note" style="margin:0 0 8px">학생을 누르면 글 원문과 쓰는 과정의 기록(작성 시간, 붙여넣기 차단, 고쳐 쓰기 횟수)을 볼 수 있습니다. 탐지 대신 과정으로 직접 쓴 글임을 확인합니다.</p>
-    <table class="tbl"><thead><tr><th>학생</th><th>기사</th><th class="c">처음 → 고친 뒤 (50점)</th><th class="c">고쳐 쓰기</th><th>가장 약한 기준</th><th class="c">대필 시도</th></tr></thead><tbody>
-    ${rows.map(s=>`<tr class="clk" data-stud="${s.key}"><td>${s.real?'':'<span class="badge ex">예시</span>'}${esc(s.n)}</td><td>${esc(ARTICLES.find(a=>a.id===s.art)?.field||'')}</td><td class="c">${s.b} → ${s.a}</td><td class="c">${s.rev}회</td><td>${esc(s.weak)}</td><td class="c ${s.flag?'flag':''}">${s.flag?s.flag+'건':'-'}</td></tr>`).join('')}
+    <p class="note" style="margin:0 0 8px">학생을 누르면 글 원문과 쓰는 과정의 기록(작성 시간, 붙여넣기 차단, 고쳐 쓰기 횟수)을 볼 수 있습니다. 학생이 동의한 경우에만 보이며, 누구를 잡아내려는 기록이 아니라 직접 생각하고 고친 과정을 보여 주는 기록입니다.</p>
+    <table class="tbl"><thead><tr><th>학생</th><th>기사</th><th class="c">처음 → 고친 뒤 (50점)</th><th class="c">고쳐 쓰기</th><th>가장 약한 기준</th></tr></thead><tbody>
+    ${rows.map(s=>`<tr class="clk" data-stud="${s.key}"><td>${s.real?'':'<span class="badge ex">예시</span>'}${esc(s.n)}</td><td>${esc(ARTICLES.find(a=>a.id===s.art)?.field||'')}</td><td class="c">${s.b} → ${s.a}</td><td class="c">${s.rev}회</td><td>${esc(s.weak)}</td></tr>`).join('')}
     </tbody></table>
     ${detail}
     <p class="note">예시 학생 이름은 가명입니다. 학생이 동의한 범위만 교수에게 보입니다.</p></section>
@@ -1991,11 +1989,67 @@ function vTeacher(){
         <select name="w:${k}" aria-label="${k} 가중치">${[0.5,1,1.5,2].map(w=>`<option value="${w}" ${(cr[k]?.weight??1)===w?'selected':''}>가중치 ${w}</option>`).join('')}</select>`).join('')}
       <span></span><div class="actions" style="margin-top:4px"><button class="btn ghost">기준 저장</button><button type="button" class="link" id="rubReset">원래 기준으로</button></div><span></span>
     </form></section>
-  <section class="block"><h3 class="h">이번 주 시제 배정</h3>
-    <p class="note" style="margin:0 0 10px">지금 배정: ${esc(ARTICLES.find(a=>a.id===as.articleId)?.title||'')} (${LEVELS[as.level].name}), 마감 ${esc(as.due)}</p>
+  <section class="block"><h3 class="h">다음 수업 토론 시제</h3>
+    <p class="note" style="margin:0 0 10px">매일 고르는 시제 다섯 중 하나를 고르면 학생 첫 화면에 보입니다. 지금: ${esc(aaT?.title||'')} (${LEVELS[as.level].name}), ${esc(as.classAt||'다음 수업')}</p>
     <div class="askf"><select id="asArt" style="flex:1;font:inherit;padding:9px;border:1px solid var(--rule);border-radius:4px;background:var(--sheet)">${ARTICLES.map(a=>`<option value="${a.id}" ${a.id===as.articleId?'selected':''}>${esc(a.field)}: ${esc(a.title)}</option>`).join('')}</select>
       <select id="asLv" style="font:inherit;padding:9px;border:1px solid var(--rule);border-radius:4px;background:var(--sheet)"><option value="choshi" ${as.level==='choshi'?'selected':''}>초시</option><option value="boksi" ${as.level==='boksi'?'selected':''}>복시</option></select>
-      <button class="btn" id="assignBtn">배정하기</button></div></section>`;
+      <button class="btn" id="assignBtn">배정하기</button></div></section>
+  <p class="ctr note"><button class="link" id="centerBtn">센터 담당자가 보는 학기 리포트 미리 보기</button></p>`;
+}
+
+/* (v4.4) 수업 화면으로 띄우기: 교수가 강의실 화면에 띄우는 한 장. 이름 없이 우리 반 관점 지도 + 이야기거리 셋 */
+function vBoard(){
+  if(!isProf()) return `<p class="note">교수 계정으로 들어와야 볼 수 있는 화면입니다.</p>`;
+  const cls=myClass(), as=cls.assigned, a=ARTICLES.find(x=>x.id===as.articleId), cl=a.clusters;
+  const E=DB.essays.filter(e=>e.classId===cls.id&&e.articleId===a.id&&e.level===as.level&&e.published);
+  const G=cl.map((c,i)=>({c,i,list:E.filter(e=>e.group===i)})).filter(x=>x.list.length).sort((x,y)=>y.list.length-x.list.length);
+  const total=E.length, max=G.length?G[0].list.length:1;
+  const pick=x=>(x.list.find(e=>e.rep)||x.list[0]).revised;
+  const cut=s=>s.length>140?s.slice(0,140)+'…':s;
+  const big=G[0], tam=G.find(x=>x.c.tam&&x!==big);
+  const ks=Object.keys(CLASSROOM.before), weak=ks.reduce((x,y)=>CLASSROOM.before[y]<CLASSROOM.before[x]?y:x);
+  return `
+  <section class="board">
+    <p class="bd-k">${esc(cls.name)}, ${esc(as.classAt||'오늘 수업')}, ${LEVELS[as.level].name}</p>
+    <h2 class="bd-q">${esc(a.q[as.level])}</h2>
+    <p class="bd-sub">우리 반이 수업 전에 혼자 쓴 처음 생각 ${total}편을, 찬반이 아니라 어떤 논거를 들었는지로 묶었습니다. 이름은 보이지 않습니다.${E.some(e=>e.isExample)?' <span class="badge ex">예시</span>시연판에는 예시 답안이 섞여 있습니다.':''}</p>
+    ${total?`<div class="bd-map">${G.map(x=>`<div class="bd-row${x.c.tam?' tam':''}"><span class="bl">${x.c.tam?'<span class="so">少</span>':''}${esc(x.c.label)}</span><span class="bb"><span style="--w:${Math.round(x.list.length/max*100)}%"></span></span><span class="bn">${x.list.length}명</span></div>`).join('')}</div>
+    <ol class="bd-talk">
+      <li><span class="k">이야기거리 1. 우리 반에서 가장 많은 생각</span><b>${esc(big.c.label)}</b> (${big.list.length}명)<p>${esc(cut(pick(big)))}</p></li>
+      ${tam?`<li><span class="k">이야기거리 2. 적지만 논리가 단단한 소수의견 (어람작 후보)</span><b>${esc(tam.c.label)}</b> (${tam.list.length}명)<p>${esc(cut(pick(tam)))}</p></li>`:''}
+      <li><span class="k">이야기거리 ${tam?3:2}. 오늘 함께 연습할 기준</span>반 처음 글에서 가장 약한 기준은 <b>${esc(weak)}</b>(평균 ${CLASSROOM.before[weak].toFixed(1)}점)입니다. 가장 많은 생각과 소수의견이 각각 어디서 통하지 않는지 함께 찾아봅니다.</li>
+    </ol>`:`<p class="note">아직 이 시제에 제출한 학생이 없습니다.</p>`}
+    <div class="actions" style="margin-top:22px"><button class="btn ghost" id="boardClose">교수용 화면으로</button></div>
+  </section>`;
+}
+
+/* (v4.4) 센터 담당자: 학기 비판적 사고 리포트. 개인의 글과 점수는 안 보이고 집계만. 시연용 예시 숫자 */
+const TERM_REPORT={
+  org:'연세대학교 (예시), 교수학습개발센터', term:'2026-2학기, 11주차까지',
+  kpi:[['418명','참여 학생'],['9.4편','1인당 제출'],['61%','이수 기준 도달 예상'],['14개','참여 학과']],
+  use:[['비교과 「매일 책문」','300명'],['수업 연동 (토론 수업 4개 반)','118명']],
+  first:{'쟁점 설명':[5.1,6.0],'근거 활용':[4.4,5.5],'맥락과 전제':[3.6,4.9],'자기 입장':[5.3,6.1],'결론과 함의':[4.8,5.6]},
+  dept:[['상경계열',72],['사회과학계열',64],['인문계열',58],['공학계열',51],['자연과학계열',39]]
+};
+function vCenter(){
+  if(!isCenter()&&!isProf()) return `<p class="note">센터 담당자 계정으로 들어와야 볼 수 있는 화면입니다.</p>`;
+  const R=TERM_REPORT, ks=Object.keys(R.first), md=Math.max(...R.dept.map(d=>d[1]));
+  return `
+  <section class="block">
+    <h2 class="ptitle">학기 리포트: 비판적 사고</h2>
+    <p class="note">${esc(R.org)}, ${esc(R.term)}. <span class="badge ex">예시</span>시연용 예시 데이터입니다. 개인의 글과 점수는 보이지 않고, 학과와 프로그램 단위 집계만 보입니다.</p>
+  </section>
+  <section class="block"><div class="kpis ctr-kpi">${R.kpi.map(([b,s])=>`<div class="kpi"><b>${b}</b><span>${s}</span></div>`).join('')}</div></section>
+  <section class="block"><h3 class="h">처음 글의 변화: 학기 초 3편 → 최근 3편 (기준마다 10점)</h3>
+    <table class="axes"><thead><tr><th>기준</th><th class="n">학기 초</th><th class="n">최근</th><th class="n">변화</th><th class="bars"><span class="sr">막대</span></th></tr></thead><tbody>
+    ${ks.map(k=>{const[b,a]=R.first[k];return `<tr><th>${k}</th><td class="n">${b.toFixed(1)}</td><td class="n up">${a.toFixed(1)}</td><td class="d">+${(a-b).toFixed(1)}</td><td class="bars"><span class="bar" style="--w:${b*10}%"></span><span class="bar" style="--w:${a*10}%"></span></td></tr>`}).join('')}
+    </tbody></table>
+    <p class="note">반론을 받고 고친 글이 아니라, 학생이 AI 없이 혼자 쓴 <b>처음 글</b>끼리 비교합니다. 고친 글의 점수가 오르는 것은 당연하고, 실력이 늘었는지는 다음 글의 처음 글이 보여 줍니다. 채점 기준은 기관 단위 평가를 위해 만들어진 AAC&amp;U Critical Thinking VALUE 루브릭을 고쳐 쓴 것입니다.</p></section>
+  <section class="block"><h3 class="h">쓰임별 참여</h3>
+    ${R.use.map(([k,v])=>`<div class="hb wide"><span>${k}</span><span class="bar" style="--w:${parseInt(v)/418*100}%;background:var(--dc-green)"></span><span class="num">${v}</span></div>`).join('')}</section>
+  <section class="block"><h3 class="h">학과별 참여 (상위 5개)</h3>
+    ${R.dept.map(([k,v])=>`<div class="hb wide"><span>${k}</span><span class="bar" style="--w:${v/md*100}%;background:var(--ink)"></span><span class="num">${v}명</span></div>`).join('')}</section>
+  <div class="actions"><button class="btn" id="dlList">비교과 이수 명단 내려받기</button>${isProf()?'<button class="btn ghost" id="centerBack">교수용 화면으로</button>':''}</div>`;
 }
 function studentDetail(s){
   if(s.real){const e=s.e,p=e.process||{};
@@ -2018,6 +2072,7 @@ function guard(el){
 async function afterLogin(u){
   S.user=u;S.auth.err='';
   if(u.role==='professor'){S.teacher.sel=null;view('teacher');return}
+  if(u.role==='center'){view('center');return}
   const prof=await AI.writingProfile(u);
   S.todayTask=await AI.todayTask({profile:prof,classFocus:u.role==='student'?classFocusOf(CLASSES[u.classId]):null});
   const after=S.auth.after;S.auth.after=null;
@@ -2166,7 +2221,13 @@ function bind(){
     await DB.saveRubric(myClass().id,r);toast('우리 반 채점 기준을 저장했습니다. 다음 채점부터 반영됩니다.');render()};
   const rr=$('#rubReset');if(rr)rr.onclick=async()=>{await DB.saveRubric(myClass().id,null);toast('원래 기준으로 되돌렸습니다.');render()};
   const fcb=$('#focusBtn');if(fcb)fcb.onclick=async()=>{await DB.saveFocus(myClass().id,$('#focusSel').value);toast('초점 기준을 저장했습니다. 학생이 다시 들어오면 오늘의 과제가 바뀝니다.');render()};
-  const asb=$('#assignBtn');if(asb)asb.onclick=async()=>{await DB.assign(myClass().id,$('#asArt').value,$('#asLv').value);toast('이번 주 시제를 배정했습니다. 학생 첫 화면에 보입니다.');render()};
+  const asb=$('#assignBtn');if(asb)asb.onclick=async()=>{await DB.assign(myClass().id,$('#asArt').value,$('#asLv').value);toast('다음 수업 시제를 배정했습니다. 학생 첫 화면에 보입니다.');render()};
+  /* (v4.4) 수업 화면, 센터 리포트 */
+  const bb=$('#boardBtn');if(bb)bb.onclick=()=>view('board');
+  const bc=$('#boardClose');if(bc)bc.onclick=()=>view('teacher');
+  const cb=$('#centerBtn');if(cb)cb.onclick=()=>view('center');
+  const cbk=$('#centerBack');if(cbk)cbk.onclick=()=>view('teacher');
+  const dl=$('#dlList');if(dl)dl.onclick=()=>toast('시연판에서는 내려받기를 지원하지 않습니다. 실제 서비스에서는 이수 학생 명단을 CSV로 받습니다.');
 }
 
 /* ---------- 시작 ---------- */

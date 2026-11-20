@@ -1,6 +1,6 @@
 -- 오늘의 책문 저장소 (Supabase SQL Editor에서 한 번 실행)
 -- 서버 함수(/api/db)가 서버 전용 키로만 읽고 씁니다. RLS 를 켜고 정책을 두지 않아 브라우저(anon 키)로는 접근할 수 없습니다.
--- 시연 계정(demo, student, professor)과 예시 답안은 화면 코드 안에 있고, 여기에는 실제 가입자의 데이터만 쌓입니다.
+-- 시연 계정(demo, student, professor, center)과 예시 답안은 화면 코드 안에 있고, 여기에는 실제 가입자의 데이터만 쌓입니다.
 
 create table if not exists public.app_users (
   id         text primary key,
@@ -8,7 +8,7 @@ create table if not exists public.app_users (
   username   text not null,
   pw_hash    text not null,                                -- scrypt(소금:해시)
   nickname   text not null,
-  role       text not null check (role in ('personal', 'student', 'professor')),
+  role       text not null check (role in ('personal', 'student', 'professor', 'center')),
   class_id   text,
   org_id     text,
   created_at timestamptz not null default now(),
@@ -85,3 +85,7 @@ from public.llm_usage group by model;
 grant select, insert on public.llm_usage to service_role;
 grant select on public.llm_usage_by_model to service_role;
 grant usage on all sequences in schema public to service_role;
+
+-- (11/20 오후) 센터 담당자 역할 추가: 이미 만든 테이블에는 아래 두 줄을 한 번 실행
+alter table public.app_users drop constraint if exists app_users_role_check;
+alter table public.app_users add constraint app_users_role_check check (role in ('personal', 'student', 'professor', 'center'));
