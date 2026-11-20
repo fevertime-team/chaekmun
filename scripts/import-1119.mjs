@@ -12,6 +12,20 @@ const rd = (p) => JSON.parse(readFileSync(new URL(p, root), 'utf8'));
 const A = Object.values(rd('yumin/1119/articles_1119.json'));
 const M = Object.values(rd('yumin/1119/perspective_map_1119.json'));
 const SD = Object.values(rd('yumin/1119/seeds_1119.json'));
+// 기사 원문 (시연용 기사 5편 원문.docx 를 분야별로 나눈 것): { 정치: {url, title, body:[문단...]}, ... }
+const BODIES = rd('yumin/1119/articles_body_1119.json');
+// 기사 사진 (형준이 받은 순서: 정치, 경제, 사회, 교육, 과학기술). 출처는 기사 언론사로 표기, 정확한 사진 출처는 유민 확인
+const PHOTOS = {
+  filibuster: { src: 'img/articles/filibuster.webp', credit: '사진: 뉴시스' },
+  chinafta: { src: 'img/articles/chinafta.png', credit: '자료: 한국거래소 (파이낸셜뉴스 기사 표)' },
+  subway: { src: 'img/articles/subway.png', credit: '사진: 경향신문 기사' },
+  examwatch: { src: 'img/articles/examwatch.png', credit: '사진: 한겨레 기사' },
+  aicsat: { src: 'img/articles/aicsat.webp', credit: '사진: 중앙일보 기사' },
+};
+// 유민 guard_note 를 바꾸는 곳. subway: "25일 총파업은 19일 기사 본문에서 확인되기 전 인용 금지"였는데, 원문 docx 의 19일 경향신문 본문에 들어 있음
+const GUARD_OVERRIDE = {
+  subway: '25일 무기한 총파업 예고는 19일 기사 본문에 있는 내용이므로 인용할 수 있다. 다만 파업 찬반이 아니라 안전 인력 비용을 누가 낼지라는 질문에 맞춰 다룬다.',
+};
 // 오늘의 과제 "이 기사에서는" 힌트 (유민 FEVERTIME_TASK_HINT_1119.md 안의 JSON). 바깥 키 "<교육 기사 id>" → 분야 이름으로 기사를 찾음
 const HINTS = (() => {
   const md = readFileSync(new URL('yumin/1119/FEVERTIME_TASK_HINT_1119.md', root), 'utf8');
@@ -235,15 +249,18 @@ const articles = A.map((y) => {
 
   const notes = [y.date_check, ...y.summary3.filter((s) => /대조|확인 필요/.test(s)).map((s) => '요약 메모: ' + s.match(/\(([^)]*)\)/)?.[1])].filter(Boolean);
   const placeholder = (v) => !v || /^\(.*\)$/.test(String(v).trim());
+  const B = BODIES[y.category]; // 원문 docx (형준 11/20): 원문 주소, 언론사 제목, 문단
+  const P = PHOTOS[id];
   return {
     article: {
       id, field: y.category, title: x.title,
-      pressTitle: placeholder(y.title) ? null : y.title,
-      url: placeholder(y.url) ? '' : y.url, source: y.press, pressGroup: y.press_group, date: y.published.slice(0, 10).replace(/-/g, '.'), published: y.published,
+      pressTitle: B?.title || (placeholder(y.title) ? null : y.title),
+      url: B?.url || (placeholder(y.url) ? '' : y.url), source: y.press, pressGroup: y.press_group, date: y.published.slice(0, 10).replace(/-/g, '.'), published: y.published,
       ...(id === DEMO_ARTICLE ? { demo: true } : {}),
-      oneLine: y.one_line, issue: y.issue, guard: y.guard_note,
+      image: P ? P.src : '', imageCredit: P ? P.credit : '', /* 기사 사진(img/articles/)과 출처. 리디자인(v4.4) 화면이 씀 */
+      oneLine: y.one_line, issue: y.issue, guard: GUARD_OVERRIDE[id] ?? y.guard_note,
       otherView: y.other_view || null, dateCheck: notes.join(' / ') || null,
-      body: null, /* 원문 전문: 팀이 준비한 기사 본문을 문단별 문자열 배열로 넣기 */
+      body: B?.body?.length ? B.body : null, /* 원문 전문 (문단 배열). 있으면 시관 반론의 사실 근거가 요약 대신 원문 문장이 됨 */
       summary: y.summary3.map(cleanSummary),
       personas,
       q: { choshi: y.chosi, boksi: y.boksi, jeonsi: x.jeonsi },

@@ -67,6 +67,11 @@ http.createServer(async (req, res) => {
     res.setHeader('cache-control', 'no-store');
     return res.end(readFileSync(path.join(root, 'index.html')));
   }
+  const img = url.pathname.match(/^\/img\/articles\/([a-z0-9]+\.(webp|png|jpg))$/);
+  if (img) {
+    const p = path.join(root, 'img', 'articles', img[1]);
+    if (existsSync(p)) { res.setHeader('content-type', img[2] === 'jpg' ? 'image/jpeg' : `image/${img[2]}`); return res.end(readFileSync(p)); }
+  }
   if (url.pathname === '/usage.html') {
     res.setHeader('content-type', 'text/html; charset=utf-8');
     return res.end(readFileSync(path.join(root, 'usage.html')));
