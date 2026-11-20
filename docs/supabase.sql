@@ -50,3 +50,7 @@ alter table public.app_users      enable row level security;
 alter table public.essays         enable row level security;
 alter table public.votes          enable row level security;
 alter table public.class_settings enable row level security;
+
+-- 새 Supabase 프로젝트는 SQL로 만든 테이블에 API 권한을 자동으로 주지 않음 → 서버 키(service_role)에만 부여
+grant usage on schema public to service_role;
+grant select, insert, update, delete on public.app_users, public.essays, public.votes, public.class_settings to service_role;
