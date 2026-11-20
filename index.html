@@ -222,6 +222,8 @@ nav[hidden]+main{padding-top:28px}
 .art-title{font-size:clamp(1.42rem,5.4vw,1.72rem);font-weight:800;letter-spacing:-.03em;line-height:1.32;margin:4px 0 16px;text-wrap:balance}
 .body{background:var(--sheet);border:1px solid var(--rule);border-radius:var(--r-card);padding:20px 22px;font-size:1.04rem;line-height:1.9}
 .body p+p{margin-top:12px}
+/* (11/20) 긴 문장은 양쪽 정렬: 기사 원문, 요약, 답안, 반론, 과제 설명, 예시 */
+.body p,.sum li,p.tx,.ln .tx,p.rb,p.rep,p.th,p.why,p.ds,p.ext,.as-note,.bd-talk p{text-align:justify}
 .body.empty{border-style:dashed;border-color:var(--rule-2);background:transparent;color:var(--ink2);font-size:.92rem;line-height:1.7}
 .sum{margin:0;padding:18px 22px 18px 40px;background:var(--sheet);border:1px solid var(--rule);border-radius:var(--r-card);font-size:1.02rem;line-height:1.8}
 .sum li+li{margin-top:8px}
