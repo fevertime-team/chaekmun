@@ -207,6 +207,20 @@ main.in{animation:in .28s ease both}
 .rebut .ask{margin-top:10px}
 .src{margin-top:14px;padding-top:10px;border-top:1px dashed var(--rule);font-size:.86rem;color:var(--ink2)}
 .rebut .link{margin-top:14px;font-size:.92rem}
+.rebut .link[disabled]{opacity:.45;cursor:default}
+.rbload{display:flex;align-items:center;justify-content:center;gap:12px;min-height:140px;color:var(--ink2);font-size:.95rem;text-align:center}
+.dots{display:inline-flex;gap:5px;flex:none}
+.dots i{width:7px;height:7px;border-radius:50%;background:var(--jjok);opacity:.25;animation:rbdot 1s infinite ease-in-out}
+.dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}
+@keyframes rbdot{0%,100%{opacity:.25}50%{opacity:1}}
+@media (prefers-reduced-motion:reduce){.dots i{animation:none;opacity:.6}}
+.past{margin-top:16px;padding-top:12px;border-top:1px dashed var(--rule)}
+.past summary{cursor:pointer;font-size:.92rem;color:var(--jjok)}
+.past .pr{margin-top:14px;padding-left:12px;border-left:3px solid var(--rule)}
+.past .pr .nm{display:flex;align-items:center;gap:8px;font-weight:700;font-size:.9rem;margin-bottom:6px}
+.past .pr .pmark{width:28px;height:28px;font-size:.95rem}
+.past .pr .ask{margin-top:6px}
+.past .pr .src{margin-top:8px;padding-top:6px}
 .chat{display:flex;flex-direction:column;gap:8px;margin:0 0 12px}
 .bub{max-width:86%;padding:9px 14px;border-radius:4px;font-size:.95rem}
 .bub.me{align-self:flex-end;background:var(--jjok);color:var(--on-jjok)}
@@ -1020,11 +1034,11 @@ const AI = {
 const S={view:'start',step:0,articleId:'examwatch',picked:false,levelChosen:false,srcTab:'body',level:'boksi',todayTask:null,
   user:null,auth:{scope:'p',tab:'login',org:null,cls:null,role:null,err:'',after:null},teacher:{sel:null},
   draft:'',log:{start:null,paste:0,revisions:0,refused:0},prewrite:null,
-  running:false,pipe:[],verify:null,attempts:0,feedback:null,personaIndex:0,chat:[],
+  running:false,pipe:[],verify:null,attempts:0,feedback:null,personaIndex:0,pastRebuttals:[],otherLoading:false,chat:[],
   revised:'',blocked:null,compare:null,next:null,taskResult:null,
   submitted:false,myEssay:null,plaza:null};
-function resetWriting(){Object.assign(S,{draft:'',log:{start:null,paste:0,revisions:0,refused:0},prewrite:null,running:false,pipe:[],verify:null,attempts:0,feedback:null,personaIndex:0,chat:[],revised:'',blocked:null,compare:null,next:null,taskResult:null,submitted:false,myEssay:null,plaza:null})}
-function clearAfterDraft(){Object.assign(S,{feedback:null,verify:null,pipe:[],chat:[],revised:'',blocked:null,compare:null,next:null,taskResult:null,submitted:false,myEssay:null,plaza:null})}
+function resetWriting(){Object.assign(S,{draft:'',log:{start:null,paste:0,revisions:0,refused:0},prewrite:null,running:false,pipe:[],verify:null,attempts:0,feedback:null,personaIndex:0,pastRebuttals:[],otherLoading:false,chat:[],revised:'',blocked:null,compare:null,next:null,taskResult:null,submitted:false,myEssay:null,plaza:null})}
+function clearAfterDraft(){Object.assign(S,{feedback:null,pastRebuttals:[],otherLoading:false,verify:null,pipe:[],chat:[],revised:'',blocked:null,compare:null,next:null,taskResult:null,submitted:false,myEssay:null,plaza:null})}
 const isStudent=()=>S.user?.role==='student', isProf=()=>S.user?.role==='professor', isOrg=()=>S.user&&S.user.scope==='o';
 const myClass=()=>S.user?.classId?CLASSES[S.user.classId]:null;
 const rubricFor=()=>{const r=myClass()?.rubric;return r||null};
@@ -1278,13 +1292,15 @@ function vRebut(){
     <h2 class="h">짚어 볼 곳</h2>
     ${f.weaknesses.map(w=>`<div class="weak"><p class="wt">${esc(w.type)}</p><p>${esc(w.detail)}</p><p class="ask">${esc(w.question)}</p></div>`).join('')}
   </section>
-  <section class="block rebut">
+  <section class="block rebut" id="rebutBox" aria-busy="${S.otherLoading?'true':'false'}">
+    ${S.otherLoading?`<div class="rbload" role="status"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span>다른 관점의 반론을 쓰고 있습니다. 10~20초쯤 걸립니다.</span></div>`:`
     <div class="who"><span class="pmark" aria-hidden="true">${P.mark}</span><div><p class="nm">${esc(P.name)}의 반론</p><p class="ds">${esc(P.desc)}</p></div></div>
     <p class="rb">${esc(f.rebuttal.text)}</p>
     <p class="ask">${esc(f.rebuttal.question)}</p>
     ${f.rebuttal.source?`<p class="src">근거로 삼은 기사 내용: ${esc(f.rebuttal.source.text)}</p>`:`<p class="src">이 반론은 사실이 아니라 글의 논리를 겨냥합니다.</p>`}
-    <p class="src" style="border-top:0;margin-top:4px;padding-top:0">반론은 하나의 관점일 뿐 정답이 아닙니다. AI의 반론이 늘 맞는 것은 아닙니다.</p>
-    <button class="link" id="otherPersona">다른 관점의 반론 받기</button>
+    <p class="src" style="border-top:0;margin-top:4px;padding-top:0">반론은 하나의 관점일 뿐 정답이 아닙니다. AI의 반론이 늘 맞는 것은 아닙니다.</p>`}
+    <button class="link" id="otherPersona"${S.otherLoading?' disabled':''}>다른 관점의 반론 받기</button>
+    ${pastRebuttalsHTML()}
   </section>
   <section class="block">
     <h2 class="h">시관에게 묻기</h2>
@@ -1311,6 +1327,28 @@ function annotate(f){
   const rn=st.premiseFrom?ord[st.premiseFrom]:null;
   const from=rn?`<span class="from">근거 [${rn}] → 주장 사이에 숨은 생각</span>`:'';
   return rows+`<div class="ln p"><span class="tag">숨은 전제</span><span class="tx">${esc(st.premise)}${from}</span></div>`;
+}
+/* 앞서 받은 반론: 평소에는 접혀 있고, 펼치면 최근 것부터 */
+function pastRebuttalsHTML(){
+  const L=S.pastRebuttals;if(!L.length)return '';
+  return `<details class="past"><summary>앞서 받은 반론 ${L.length}개 다시 보기</summary>${L.slice().reverse().map((r,i)=>{const p=PERSONAS[r.persona]||{name:'다른 사람',mark:'問'};
+    return `<div class="pr"><p class="nm"><span class="pmark" aria-hidden="true">${p.mark}</span>${esc(p.name)}의 반론${i===L.length-1?' (처음 받은 반론)':''}</p><p class="rb">${esc(r.text)}</p>${r.question?`<p class="ask">${esc(r.question)}</p>`:''}${r.source?`<p class="src">근거로 삼은 기사 내용: ${esc(r.source.text)}</p>`:''}</div>`}).join('')}</details>`;
+}
+function redrawKeep(){const y=window.scrollY;render();window.scrollTo(0,y)}
+/* 다른 관점의 반론: 화면 전체를 다시 읽지 않고, 반론 상자에서만 기다렸다가 반론만 바꿈 (글의 구조, 짚어 볼 곳, 대화는 그대로) */
+async function runOtherPersona(){
+  if(S.otherLoading||!S.feedback)return;
+  S.pastRebuttals.push(S.feedback.rebuttal);
+  S.otherLoading=true;S.personaIndex++;
+  redrawKeep();
+  let fb=null;
+  try{fb=await AI.analyzeAndRebut({article:art(),level:S.level,text:S.draft,personaIndex:S.personaIndex})}catch(e){console.warn(e)}
+  S.otherLoading=false;
+  if(fb&&fb.rebuttal&&S.feedback){
+    S.feedback={...S.feedback,rebuttal:fb.rebuttal};
+    S.pipe=[...S.pipe,{state:'ok',text:'다른 관점의 반론을 새로 받았습니다'},...(fb._meta?.log||[]).map(x=>({state:x.state==='info'?'ok':x.state,text:x.text}))];
+  } else {S.pastRebuttals.pop();toast('반론을 받지 못했습니다. 잠시 뒤 다시 눌러 주세요.')}
+  if(S.view==='flow'&&S.step===STEP.REBUT)redrawKeep();
 }
 const pipeItems=()=>S.pipe.map(p=>`<li><i class="${p.state}"></i><span>${esc(p.text)}</span></li>`).join('');
 function drawPipe(){const el=$('#pipe');if(el)el.innerHTML=pipeItems()}
@@ -1660,7 +1698,7 @@ function bind(){
   if(S.view==='flow'&&S.step===STEP.REBUT){
     drawPipe();
     if(S.draft&&!S.feedback&&!S.running)runFeedback();
-    const op=$('#otherPersona');if(op)op.onclick=()=>{S.personaIndex++;runFeedback()};
+    const op=$('#otherPersona');if(op)op.onclick=runOtherPersona;
     const ask=async q=>{
       S.chat.push({me:1,t:q});render();
       const r=await AI.ask({question:q,feedback:S.feedback});

@@ -15,9 +15,10 @@ export function detectStance(a: Article, text: string) {
   return best;
 }
 
-export function ruleAnalyze(a: Article, level: Level, text: string, personaIndex: number) {
+export function ruleAnalyze(a: Article, level: Level, text: string, personaIndex: number, stanceId?: string | null) {
   const sents = sentences(text);
-  const stance = level === 'choshi' ? null : detectStance(a, text);
+  // stanceId: AI가 이미 판별한 입장이 있으면 그 입장의 예비 반론을 씀 (키워드 판별보다 정확)
+  const stance = level === 'choshi' ? null : (stanceId && a.stances.find((s) => s.id === stanceId)) || detectStance(a, text);
   const claim = (stance && sents.find((s) => has(s, stance.kw))) || sents[0] || '';
   const reasons = sents.filter((s) => s !== claim && (has(s, EVID) || /\d/.test(s))).slice(0, 2);
   const rest = sents.filter((s) => s !== claim && !reasons.includes(s));
