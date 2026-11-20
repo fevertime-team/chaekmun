@@ -20,13 +20,9 @@
   --rule:#E2D8C5; --rule-2:#CDBFA5;
   --seal:#C2402A; --seal-deep:#A8301E; --seal-t:#F7E4DB;
   --hong:#D9797B; --hong-deep:#8F1D1F;
-  --amb:#855700; --amb-t:#F5E8C8;
-  --cel:#2E6A50; --cel-t:#E0ECE3;
-  /* 예전 화면 코드의 인라인 스타일이 쓰는 이름: 쪽빛은 먹색으로 */
-  --jjok:var(--ink); --jjok-t:var(--paper-2); --on-jjok:#FCFAF4; --gold:var(--ink3);
+  --cel-t:#E0ECE3;
   --brush:"Song Myung","AppleMyungjo","Noto Serif KR","Batang",serif;
   --sans:"Pretendard Variable","Pretendard",-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
-  --serif:var(--sans);
   --r-card:16px; --r-ctl:12px;
   --shadow:0 1px 2px rgba(58,40,22,.06),0 8px 22px -12px rgba(58,40,22,.22);
   --ease:cubic-bezier(.16,1,.3,1);
@@ -517,6 +513,7 @@ body.has-tabs .toast{bottom:calc(var(--tabbar-h) + 14px + env(safe-area-inset-bo
 .task .tt{font-weight:800;font-size:1.04rem;line-height:1.45;letter-spacing:-.01em;color:var(--ink);margin:8px 0 2px;text-wrap:pretty}
 .task .th{font-size:.93rem;line-height:1.7;color:var(--ink2);margin-top:6px}
 .task .sub{font-weight:800;color:var(--seal);margin-right:6px}
+.task.assigned .link{display:inline-flex;align-items:center;min-height:44px;margin-top:4px}
 .task.tnone{background:transparent;box-shadow:none;border-style:dashed;border-color:var(--rule-2)}.task.tnone b{color:var(--ink2)}
 .tex{margin-top:10px;font-size:.9rem;border-top:1px solid var(--rule)}
 .tex summary{display:flex;align-items:center;gap:8px;min-height:44px;cursor:pointer;list-style:none;font-weight:700;color:var(--seal)}
@@ -1656,8 +1653,9 @@ function taskNextHTML(){
 function vPick(){
   const cls=isStudent()?myClass():null, as=cls?.assigned, aa=as&&ARTICLES.find(x=>x.id===as.articleId);
   return `
-  ${aa?`<div class="task" style="background:var(--jjok-t);border-left-color:var(--jjok)"><b style="color:var(--jjok)">이번 주 과제</b>${esc(cls.name)}: ${esc(aa.title)} (${LEVELS[as.level].name}), 마감 ${esc(as.due)}
-     <small><button class="link" id="doAssigned">이 과제 하러 가기</button></small></div>`:''}
+  ${aa?`<div class="task assigned"><b>이번 주 과제</b><span class="tchip">${LEVELS[as.level].name}</span><p class="tt">${esc(aa.title)}</p>
+     <small>${esc(cls.name)}, 마감 ${esc(as.due)}</small>
+     <button class="link" id="doAssigned">이 과제 하러 가기</button></div>`:''}
   ${taskPickHTML()}
   <section class="block">
     <h2 class="pick-h">시관이 고른 오늘의 시제(試題) 다섯</h2>
@@ -1694,7 +1692,7 @@ function vLevel(){
       <span class="han">${l.han}</span><b>${l.name}</b><span>제시문 논술형, 시험 대비</span>
       <span>${org?'기관 구독에 포함되어 있습니다. 문제를 준비하고 있습니다.':'월 구독으로 열립니다.'}</span></button>`;
     return `<button class="lvc corner" data-lv="${k}"><span class="han">${l.han}</span><b>${l.name}</b><span>${esc(l.desc)}</span>
-      <span style="color:var(--ink);font-family:var(--serif);margin-top:6px">${esc(a.q[k])}</span></button>`;
+      <span style="color:var(--ink);margin-top:6px">${esc(a.q[k])}</span></button>`;
   };
   return `
   <section class="block">
@@ -1987,7 +1985,7 @@ function vProfile(){
   <section class="block"><h3 class="h">자주 반복된 약점</h3>
     ${P.weak.map(f=>`<div class="hb"><span>${f.k}</span><span class="bar" style="--w:${f.v/mw*100}%;background:var(--ink3)"></span><span class="num">${f.v}회</span></div>`).join('')}</section>
   <section class="block"><h3 class="h">글을 전개하는 습관</h3>
-    ${P.flow.map(f=>`<div class="hb"><span>${f.k}</span><span class="bar" style="--w:${f.v/mf*100}%;background:var(--jjok)"></span><span class="num">${f.v}편</span></div>`).join('')}
+    ${P.flow.map(f=>`<div class="hb"><span>${f.k}</span><span class="bar" style="--w:${f.v/mf*100}%;background:var(--ink)"></span><span class="num">${f.v}편</span></div>`).join('')}
     <p class="note">결론을 먼저 쓰는 편입니다. 근거가 결론보다 짧아지지 않는지 살펴보세요.</p></section>
   <section class="block"><h3 class="h">자주 쓰는 말</h3>
     <div class="words">${P.words.map(([w,n])=>`<span>${w}<em>${n}</em></span>`).join('')}</div>
@@ -2066,8 +2064,8 @@ function studentDetail(s){
     return `<div class="stud corner"><p class="h" style="font-size:1.02rem">${esc(e.nickname)}의 글</p>
       <p class="proc">작성 시간 <b>${mmss(p.seconds||0)}</b> 붙여넣기 차단 <b>${p.paste||0}번</b> 고쳐 쓰기 <b>${p.revisions||0}번</b> 대필 요청 거절 <b>${p.refused||0}번</b></p>
       ${e.task?`<p class="proc">오늘의 과제: <b>${esc(e.task.title)}</b> (${e.task.done?'해냄':'아직'})</p>`:''}
-      <p style="font-weight:700;font-size:.84rem;color:var(--jjok)">처음 글</p><p class="tx">${esc(e.draft)}</p>
-      <p style="font-weight:700;font-size:.84rem;color:var(--jjok);margin-top:10px">고친 글</p><p class="tx">${esc(e.revised)}</p></div>`}
+      <p style="font-weight:700;font-size:.84rem;color:var(--ink2)">처음 글</p><p class="tx">${esc(e.draft)}</p>
+      <p style="font-weight:700;font-size:.84rem;color:var(--ink2);margin-top:10px">고친 글</p><p class="tx">${esc(e.revised)}</p></div>`}
   const ex=DB.essays.find(e=>e.id===`ex-${s.art}-boksi-${s.seed}`);
   return `<div class="stud corner"><p class="h" style="font-size:1.02rem"><span class="badge ex">예시</span>${esc(s.n)}의 글</p>
     <p class="proc">작성 시간 <b>${mmss(s.sec)}</b> 붙여넣기 차단 <b>${s.paste}번</b> 고쳐 쓰기 <b>${s.rev}번</b> 대필 요청 거절 <b>${s.flag}번</b></p>
