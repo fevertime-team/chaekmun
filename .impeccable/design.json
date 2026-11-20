@@ -1,0 +1,477 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-19T15:34:16+00:00",
+  "title": "Design System: 오늘의 책문",
+  "extensions": {
+    "colorMeta": {
+      "paper": {
+        "role": "neutral",
+        "displayName": "한지 미색",
+        "canonical": "#F3EDE0",
+        "tonalRamp": [
+          "#312A1C",
+          "#54472B",
+          "#7E6839",
+          "#AB8B45",
+          "#BFA469",
+          "#CDBC98",
+          "#DED6C4",
+          "#F3F1EC"
+        ]
+      },
+      "paper-2": {
+        "role": "neutral",
+        "displayName": "짙은 한지",
+        "canonical": "#E9E1CF",
+        "tonalRamp": [
+          "#2F2A1E",
+          "#51462F",
+          "#79673F",
+          "#A3884D",
+          "#B8A270",
+          "#C9BB9C",
+          "#DCD5C6",
+          "#F3F1ED"
+        ]
+      },
+      "sheet": {
+        "role": "neutral",
+        "displayName": "밝은 종이",
+        "canonical": "#FCFAF4",
+        "tonalRamp": [
+          "#342D19",
+          "#5A4D25",
+          "#88722F",
+          "#BA9936",
+          "#CCB05C",
+          "#D5C490",
+          "#E2DAC0",
+          "#F4F2EB"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "먹",
+        "canonical": "#1E1A16",
+        "tonalRamp": [
+          "#2A2623",
+          "#474039",
+          "#685C50",
+          "#8A7866",
+          "#A39485",
+          "#BCB2A9",
+          "#D6D1CD",
+          "#F1F0EE"
+        ]
+      },
+      "ink2": {
+        "role": "neutral",
+        "displayName": "옅은 먹",
+        "canonical": "#4F473D",
+        "tonalRamp": [
+          "#292723",
+          "#46403A",
+          "#665D52",
+          "#877A69",
+          "#A09587",
+          "#BAB3AB",
+          "#D5D2CD",
+          "#F1F0EF"
+        ]
+      },
+      "ink3": {
+        "role": "neutral",
+        "displayName": "흐린 먹",
+        "canonical": "#6F6658",
+        "tonalRamp": [
+          "#292724",
+          "#45413A",
+          "#655E53",
+          "#857B6A",
+          "#9F9689",
+          "#B9B4AC",
+          "#D5D2CE",
+          "#F1F0EF"
+        ]
+      },
+      "rule": {
+        "role": "neutral",
+        "displayName": "괘선",
+        "canonical": "#E2D8C5",
+        "tonalRamp": [
+          "#2E291E",
+          "#4F4530",
+          "#766442",
+          "#9E8451",
+          "#B49E73",
+          "#C6B99F",
+          "#DBD4C7",
+          "#F2F1ED"
+        ]
+      },
+      "rule-2": {
+        "role": "neutral",
+        "displayName": "짙은 괘선",
+        "canonical": "#CDBFA5",
+        "tonalRamp": [
+          "#2D2820",
+          "#4D4433",
+          "#726246",
+          "#998257",
+          "#B09C78",
+          "#C4B8A1",
+          "#DAD4C9",
+          "#F2F0ED"
+        ]
+      },
+      "seal": {
+        "role": "primary",
+        "displayName": "낙관 주홍",
+        "canonical": "#C2402A",
+        "tonalRamp": [
+          "#351B17",
+          "#5E2B22",
+          "#8E382A",
+          "#C2432D",
+          "#D36755",
+          "#D9978C",
+          "#E4C3BE",
+          "#F5ECEB"
+        ]
+      },
+      "seal-deep": {
+        "role": "primary",
+        "displayName": "짙은 주홍",
+        "canonical": "#A8301E",
+        "tonalRamp": [
+          "#371A16",
+          "#602820",
+          "#923426",
+          "#C93C27",
+          "#D86250",
+          "#DC9489",
+          "#E6C2BC",
+          "#F5ECEA"
+        ]
+      },
+      "seal-t": {
+        "role": "primary",
+        "displayName": "주홍 엷은 바탕",
+        "canonical": "#F7E4DB",
+        "tonalRamp": [
+          "#352117",
+          "#5D3522",
+          "#8D4A2A",
+          "#C25E2E",
+          "#D27E56",
+          "#D8A58D",
+          "#E4CABE",
+          "#F5EEEB"
+        ]
+      },
+      "hong": {
+        "role": "secondary",
+        "displayName": "홍패 분홍 (장원 전용)",
+        "canonical": "#D9797B",
+        "tonalRamp": [
+          "#33191A",
+          "#5A2627",
+          "#873032",
+          "#B9373A",
+          "#CA5D60",
+          "#D49193",
+          "#E2C0C1",
+          "#F4EBEB"
+        ]
+      },
+      "hong-deep": {
+        "role": "secondary",
+        "displayName": "홍패 붉은색 (장원 전용)",
+        "canonical": "#8F1D1F",
+        "tonalRamp": [
+          "#361717",
+          "#5E2122",
+          "#8F282A",
+          "#C52B2E",
+          "#D55355",
+          "#DA8B8C",
+          "#E5BDBE",
+          "#F5EAEB"
+        ]
+      },
+      "cel-t": {
+        "role": "neutral",
+        "displayName": "더한 글자 바탕 (고쳐 쓰기 비교 전용)",
+        "canonical": "#E0ECE3",
+        "tonalRamp": [
+          "#212C23",
+          "#354B3A",
+          "#496E52",
+          "#5C946A",
+          "#7CAB88",
+          "#A4C1AB",
+          "#CAD8CE",
+          "#EEF2EF"
+        ]
+      },
+      "cover-ground": {
+        "role": "neutral",
+        "displayName": "표지 바탕",
+        "canonical": "#EFE6D2",
+        "tonalRamp": [
+          "#312A1B",
+          "#56482A",
+          "#816A37",
+          "#AF8D41",
+          "#C2A665",
+          "#CFBD96",
+          "#DFD6C3",
+          "#F3F1EC"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "첫 화면 큰 제목 (Song Myung)."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "화면 제목 (Song Myung)."
+      },
+      "question": {
+        "displayName": "Question",
+        "purpose": "시제 카드의 질문 (Song Myung)."
+      },
+      "news-headline": {
+        "displayName": "News headline",
+        "purpose": "기사 카드 헤드라인과 기사 제목 (Pretendard 800)."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "구획 제목."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "기본 글, keep-all 줄바꿈."
+      },
+      "reading": {
+        "displayName": "Reading",
+        "purpose": "기사 원문, 반론, 답안지."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "메타, 출처, 배지, 탭 글자."
+      }
+    },
+    "shadows": [
+      {
+        "name": "paper",
+        "value": "0 1px 2px rgba(58,40,22,.06),0 8px 22px -12px rgba(58,40,22,.22)",
+        "purpose": "카드, 시제 카드, 답안지, 장원 패널."
+      },
+      {
+        "name": "segment-thumb",
+        "value": "0 1px 3px rgba(58,40,22,.14),0 0 0 .5px rgba(58,40,22,.08)",
+        "purpose": "선택된 세그먼트 칸."
+      },
+      {
+        "name": "toast",
+        "value": "0 10px 30px -10px rgba(30,20,10,.5)",
+        "purpose": "먹색 토스트."
+      },
+      {
+        "name": "glass-bar",
+        "value": "backdrop-filter: saturate(1.3) blur(16px~18px)",
+        "purpose": "고정 머리와 하단 탭 바."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease",
+        "value": "cubic-bezier(.16,1,.3,1)",
+        "purpose": "모든 전환의 기본 곡선."
+      },
+      {
+        "name": "view-in",
+        "value": "opacity + translateY(8px), .42s",
+        "purpose": "화면 전환."
+      },
+      {
+        "name": "stamp",
+        "value": "scale(1.5) rotate(-12deg) -> scale(1) rotate(-5deg), .55s, delay .12s",
+        "purpose": "問, 壯元, 策問 인장이 찍히는 순간."
+      },
+      {
+        "name": "track",
+        "value": "width .5s",
+        "purpose": "진행선이 늘어남."
+      },
+      {
+        "name": "press",
+        "value": "scale(.97) / .985, .18~.2s",
+        "purpose": "버튼과 카드 누름."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "compact",
+        "value": "max-width: 600px"
+      },
+      {
+        "name": "two-column-picks",
+        "value": "min-width: 660px"
+      },
+      {
+        "name": "column",
+        "value": "720px max content width"
+      }
+    ],
+    "textures": [
+      {
+        "name": "fiber",
+        "purpose": "한지 섬유: feTurbulence 두 겹 SVG 데이터 URI, 페이지 바탕과 표지, 장원 패널."
+      },
+      {
+        "name": "stamp",
+        "purpose": "인장 마스크: fractalNoise 알파 SVG, 140px 타일, 인장 면에 잔 구멍."
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "먹색 캡슐. 화면마다 주요 행동 하나.",
+      "html": "<button class=\"ds-btn\">이 질문에 답하기</button>",
+      "css": ".ds-btn{display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:0 26px;border-radius:999px;border:1px solid var(--ink,#1E1A16);background:var(--ink,#1E1A16);color:var(--sheet,#FCFAF4);font-family:var(--sans,'Pretendard Variable',sans-serif);font-weight:700;font-size:1rem;letter-spacing:-.01em;cursor:pointer;transition:transform .18s cubic-bezier(.16,1,.3,1),background-color .2s}.ds-btn:hover{background:#2E2822}.ds-btn:active{transform:scale(.97)}.ds-btn:focus-visible{outline:2px solid #C2402A;outline-offset:3px}"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "투명 캡슐, 짙은 괘선 테두리.",
+      "html": "<button class=\"ds-btn-ghost\">다시 쓰기</button>",
+      "css": ".ds-btn-ghost{display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:0 26px;border-radius:999px;border:1px solid #CDBFA5;background:transparent;color:#1E1A16;font-family:'Pretendard Variable',sans-serif;font-weight:700;font-size:1rem;cursor:pointer;transition:background-color .2s,border-color .2s}.ds-btn-ghost:hover{background:#FCFAF4;border-color:#6F6658}.ds-btn-ghost:focus-visible{outline:2px solid #C2402A;outline-offset:3px}"
+    },
+    {
+      "name": "Text Link",
+      "kind": "button",
+      "refersTo": "link",
+      "description": "보조 행동. 주홍 글자와 1px 밑줄.",
+      "html": "<button class=\"ds-link\">다른 기사 고르기</button>",
+      "css": ".ds-link{background:none;border:0;padding:10px 0;color:#C2402A;font-family:'Pretendard Variable',sans-serif;font-weight:600;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:5px;cursor:pointer}.ds-link:hover{color:#A8301E}.ds-link:focus-visible{outline:2px solid #C2402A;outline-offset:3px;border-radius:6px}"
+    },
+    {
+      "name": "Segmented Control",
+      "kind": "chip",
+      "refersTo": "segmented",
+      "description": "iOS 세그먼트.",
+      "html": "<div class=\"ds-seg\" role=\"tablist\"><button role=\"tab\" aria-selected=\"true\">로그인</button><button role=\"tab\" aria-selected=\"false\">가입</button></div>",
+      "css": ".ds-seg{display:inline-flex;gap:2px;background:#E9E1CF;border-radius:11px;padding:3px}.ds-seg button{background:transparent;border:0;border-radius:9px;padding:7px 18px;min-height:36px;color:#4F473D;font-family:'Pretendard Variable',sans-serif;font-size:.9rem;font-weight:500;cursor:pointer;transition:background-color .2s,color .2s}.ds-seg button[aria-selected=\"true\"]{background:#FCFAF4;color:#1E1A16;font-weight:700;box-shadow:0 1px 3px rgba(58,40,22,.14),0 0 0 .5px rgba(58,40,22,.08)}.ds-seg button:focus-visible{outline:2px solid #C2402A;outline-offset:2px}"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "흰 면, 짙은 괘선 테두리, 포커스에 주홍 고리.",
+      "html": "<label class=\"ds-field\"><span>아이디</span><input placeholder=\"아이디\"></label>",
+      "css": ".ds-field{display:block;font-family:'Pretendard Variable',sans-serif}.ds-field span{display:block;font-size:.86rem;font-weight:600;color:#4F473D;margin:0 0 6px}.ds-field input{width:100%;box-sizing:border-box;font:inherit;min-height:48px;padding:10px 14px;border:1px solid #CDBFA5;border-radius:12px;background:#fff;color:#1E1A16;caret-color:#C2402A}.ds-field input::placeholder{color:#8F8576}.ds-field input:focus{outline:none;border-color:#1E1A16;box-shadow:0 0 0 3px rgba(194,64,42,.18)}"
+    },
+    {
+      "name": "Bottom Tab Bar",
+      "kind": "nav",
+      "refersTo": "tabbar",
+      "description": "고정 하단 탭 바, 현재 탭은 주홍.",
+      "html": "<nav class=\"ds-tabbar\"><button aria-current=\"page\"><svg viewBox=\"0 0 24 24\"><rect x=\"4\" y=\"3\" width=\"16\" height=\"18\" rx=\"2\"/><path d=\"M9 7v10M12 7v10M15 7v6\"/></svg><span>책문</span></button><button><svg viewBox=\"0 0 24 24\"><circle cx=\"8\" cy=\"9\" r=\"4\"/><circle cx=\"16\" cy=\"9\" r=\"3\"/><circle cx=\"15\" cy=\"16\" r=\"3\"/></svg><span>광장</span></button><button><svg viewBox=\"0 0 24 24\"><path d=\"M4 18l6-6 4 3 6-7M4 21h16\"/></svg><span>나의 기록</span></button></nav>",
+      "css": ".ds-tabbar{display:grid;grid-template-columns:repeat(3,1fr);background:rgba(243,237,224,.92);backdrop-filter:saturate(1.3) blur(18px);border-top:.5px solid rgba(120,96,60,.28);max-width:520px}.ds-tabbar button{min-height:58px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:none;border:0;cursor:pointer;color:#6F6658;font-family:'Pretendard Variable',sans-serif;font-size:.7rem;font-weight:600;transition:color .2s}.ds-tabbar svg{width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}.ds-tabbar button[aria-current=\"page\"]{color:#C2402A}.ds-tabbar button[aria-current=\"page\"] svg{stroke-width:1.9}.ds-tabbar button:hover{color:#1E1A16}.ds-tabbar button:focus-visible{outline:2px solid #C2402A;outline-offset:-4px}"
+    },
+    {
+      "name": "Lead Article Card",
+      "kind": "card",
+      "refersTo": "lead-card",
+      "description": "뉴스 첫 면 큰 카드: CSS 한자 표지, 굵은 헤드라인, 요약, 아래 메타.",
+      "html": "<button class=\"ds-lead\"><div class=\"ds-cover\"><span class=\"ds-han\">社</span><span class=\"ds-cvseal\">사회</span></div><div class=\"ds-lead-tx\"><h3>주 4.5일제, 줄어든 시간의 비용은 누가 낼까</h3><p class=\"ds-dek\">정부가 주 4.5일제를 법으로 강제하는 대신 지원 방식으로 추진합니다.</p><p class=\"ds-meta\"><b>사회</b><span>출처, 2026.11</span></p></div></button>",
+      "css": ".ds-lead{display:block;width:100%;max-width:420px;text-align:left;background:#FCFAF4;border:1px solid #E2D8C5;border-radius:20px;padding:0;overflow:hidden;cursor:pointer;font-family:'Pretendard Variable',sans-serif;color:#1E1A16;box-shadow:0 1px 2px rgba(58,40,22,.06),0 8px 22px -12px rgba(58,40,22,.22);transition:transform .2s cubic-bezier(.16,1,.3,1)}.ds-lead:active{transform:scale(.99)}.ds-lead:hover h3{text-decoration:underline;text-decoration-thickness:1.5px;text-underline-offset:5px}.ds-lead:focus-visible{outline:2px solid #C2402A;outline-offset:3px}.ds-cover{position:relative;aspect-ratio:16/10;background-color:#EFE6D2;background-image:radial-gradient(ellipse 55% 70% at 72% 40%,rgba(30,26,22,.10),transparent 70%),repeating-linear-gradient(90deg,transparent 0 35px,rgba(140,104,58,.2) 35px 36px);box-shadow:inset 0 0 0 9px #EFE6D2,inset 0 0 0 10px rgba(140,104,58,.38)}.ds-han{position:absolute;top:50%;right:11%;transform:translateY(-52%);font-family:'Song Myung',serif;font-size:7rem;line-height:1;opacity:.92}.ds-cvseal{position:absolute;left:22px;bottom:20px;writing-mode:vertical-rl;padding:6px 5px;background:#C2402A;color:#FCFAF4;border-radius:3px;font-family:'Song Myung',serif;font-size:1rem;line-height:1.15;transform:rotate(-3deg)}.ds-lead-tx{padding:18px 20px 20px}.ds-lead h3{margin:0 0 8px;font-size:1.45rem;font-weight:800;letter-spacing:-.03em;line-height:1.32}.ds-dek{margin:0;color:#4F473D;font-size:.97rem;line-height:1.65}.ds-meta{display:flex;gap:10px;margin:8px 0 0;font-size:.8rem;color:#6F6658;font-weight:500}.ds-meta b{color:#C2402A;font-weight:700}"
+    },
+    {
+      "name": "Question Card (시제)",
+      "kind": "custom",
+      "refersTo": "question-card",
+      "description": "시험지 종이, 안쪽 테, 옅은 세로 괘선, 問 인장과 Song Myung 질문.",
+      "html": "<div class=\"ds-qw\"><span class=\"ds-qmark\">問</span><p>줄어든 시간의 비용은 누가 내야 한다고 생각합니까?</p></div>",
+      "css": ".ds-qw{position:relative;display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:start;max-width:520px;padding:28px 26px 30px;background-color:#FCFAF4;border:1px solid #CDBFA5;border-radius:6px;box-shadow:0 1px 2px rgba(58,40,22,.06),0 8px 22px -12px rgba(58,40,22,.22);background-image:repeating-linear-gradient(90deg,transparent 0 41px,rgba(140,104,58,.075) 41px 42px)}.ds-qw::before{content:'';position:absolute;inset:7px;border:1px solid rgba(140,104,58,.28);border-radius:3px;pointer-events:none}.ds-qmark{width:52px;height:52px;display:grid;place-items:center;background:#C2402A;color:#FCFAF4;border-radius:4px;font-family:'Song Myung',serif;font-size:1.7rem;line-height:1;transform:rotate(-5deg);animation:ds-stamp .55s cubic-bezier(.16,1,.3,1) .12s both}.ds-qw p{margin:0;font-family:'Song Myung',serif;font-size:1.5rem;line-height:1.6;color:#1E1A16}@keyframes ds-stamp{0%{opacity:.001;transform:scale(1.5) rotate(-12deg)}55%{opacity:1;transform:scale(.94) rotate(-4deg)}100%{transform:scale(1) rotate(-5deg)}}@media (prefers-reduced-motion:reduce){.ds-qmark{animation:none}}"
+    },
+    {
+      "name": "장원 Panel",
+      "kind": "card",
+      "refersTo": "jangwon-seal",
+      "description": "홍패: 위쪽 홍패 띠, 이중 테, 壯元 인장. 광장 전용.",
+      "html": "<div class=\"ds-jang\"><div class=\"ds-seal\">壯元<small>장원</small></div><div><p class=\"ds-k\">오늘의 장원: 생각은 달라도 논리가 좋다는 표를 가장 많이 받은 글</p><p class=\"ds-tx\">가장 먼저 바꿔야 할 것은 사람의 눈에 기대는 감독 방식이다.</p></div></div>",
+      "css": ".ds-jang{position:relative;display:grid;grid-template-columns:auto 1fr;gap:20px;max-width:560px;padding:30px 24px 24px;border-radius:6px;color:#1E1A16;background:#FCFAF4;border-top:6px solid #D9797B;box-shadow:0 1px 2px rgba(58,40,22,.06),0 8px 22px -12px rgba(58,40,22,.22);font-family:'Pretendard Variable',sans-serif}.ds-jang::before{content:'';position:absolute;inset:7px;border:3px double #8F1D1F;border-radius:3px;opacity:.55;pointer-events:none}.ds-seal{width:76px;height:76px;display:grid;place-items:center;align-content:center;text-align:center;background:#8F1D1F;color:#FBE9E2;border-radius:4px;font-family:'Song Myung',serif;font-size:1.55rem;line-height:1.05;transform:rotate(-5deg);box-shadow:inset 0 0 0 3px #8F1D1F,inset 0 0 0 4.5px #FBE9E2}.ds-seal small{display:block;font-family:'Pretendard Variable',sans-serif;font-size:.62rem;font-weight:700;letter-spacing:.1em;margin-top:3px}.ds-k{margin:0;font-size:1.02rem;font-weight:800;letter-spacing:-.02em;line-height:1.5}.ds-tx{margin:8px 0 0;line-height:1.8}"
+    }
+  ],
+  "narrative": {
+    "northStar": "오늘 아침 배달된 시험지",
+    "overview": "화면의 뼈대는 요즘 뉴스 앱이다. 큰 이미지 카드 하나와 썸네일 목록, 굵은 헤드라인, 위에 붙는 반투명 머리, 아래에 고정된 탭 바, iOS 세그먼트와 입력 묶음. 과거 시험장은 이 뼈대 위에 재료로만 들어온다. 한지 미색 바탕과 옅은 섬유 질감, 먹색 글씨, 주홍 낙관 하나. 문양을 화면 가득 까는 사극 세트가 아니라, 읽기 편한 앱에 종이와 인주가 묻어 있는 정도다.\n\n밀도는 모바일 한 단 기준으로 여유 있게 잡는다. 긴 한국어 글을 읽고 쓰는 화면이므로 본문 줄 간격은 1.75에서 1.95까지 넉넉하고, 붓글씨 명조는 큰 제목과 시제(오늘의 질문)에만 쓴다. 나머지 모든 글은 Pretendard다. 장식은 모두 CSS로 만든 한지 섬유, 잡음 마스크로 인주가 덜 묻은 듯한 인장, 아주 옅은 세로 괘선 세 가지뿐이다.\n\n라이트 모드만 있다. 시연 화면이 기기 설정에 따라 바뀌지 않게 `color-scheme: light`로 고정한다.",
+    "keyCharacteristics": [
+      "뉴스 앱 골격 + 과거 시험 재료(한지, 먹, 낙관)",
+      "포인트 색은 낙관 주홍 하나, 홍패 붉은색은 장원 패널에만",
+      "Song Myung은 큰 제목과 시제에만, 나머지는 Pretendard",
+      "세로 괘선은 표지, 시제 카드, 답안지 여백, 첫 화면 머리에만",
+      "인장은 잡음 마스크로 찍히고, 화면에 들어올 때 찍히듯 나타난다"
+    ],
+    "rules": [
+      {
+        "name": "The One Seal Rule",
+        "body": "포인트 색은 낙관 주홍 하나다. 호박색, 초록색 같은 두 번째 강조색을 들이지 않는다. 유일한 예외는 고쳐 쓰기 비교에서 더한 글자(`cel-t` 바탕, `#173D2C` 글자)와 지운 글자(`seal-t`)다.",
+        "section": "colors"
+      },
+      {
+        "name": "The 홍패 Rule",
+        "body": "홍패 붉은색(`hong`, `hong-deep`)은 광장의 장원 패널에만 있다. 다른 화면에서 \"특별함\"을 표시하려고 빌려 쓰지 않는다.",
+        "section": "colors"
+      },
+      {
+        "name": "The Two Voices Rule",
+        "body": "Song Myung은 큰 제목, 시제 질문, 인장과 표지의 한자에만 쓴다. 헤드라인, 버튼, 본문, 숫자는 모두 Pretendard다.",
+        "section": "typography"
+      },
+      {
+        "name": "The Byline Below Rule",
+        "body": "헤드라인 위에 작은 라벨(분야, 출처, 단계 이름)을 얹지 않는다. 분야와 출처, 날짜는 헤드라인 아래 메타 줄로 내린다.",
+        "section": "typography"
+      },
+      {
+        "name": "The Paper Stack Rule",
+        "body": "그림자는 부드럽고 아래로만 떨어진다. 딱딱한 오프셋 그림자나 색 그림자는 쓰지 않는다.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Ruled Lines Rule",
+        "body": "세로 괘선은 네 곳에만 있다. CSS 표지(36px 간격, 썸네일 18px), 시제 카드(42px 간격, 7.5% 불투명), 답안지 왼쪽 여백(12px 간격 + 이중선), 첫 화면 머리(38px 간격, 가운데로 흐려지는 마스크). 카드나 페이지 바탕 전체에 깔지 않는다.",
+        "section": "shapes"
+      }
+    ],
+    "dos": [
+      "**Do** 페이지 바탕은 항상 `paper` + `--fiber` 섬유 질감으로 깐다.",
+      "**Do** 포인트가 필요하면 낙관 주홍(`seal`) 하나로 해결한다: 현재 탭, 현재 단계, 링크, 인장, 분야 이름, 내 글.",
+      "**Do** 주요 행동은 먹색 캡슐 버튼 하나, 보조 행동은 주홍 밑줄 링크로 둔다.",
+      "**Do** 분야, 출처, 날짜, 글쓴이는 헤드라인 아래 메타 줄에 둔다.",
+      "**Do** 기사 사진은 세피아 필터와 섬유 질감을 입히고 아래에 출처를 단다. 사진이 없으면 CSS 한자 표지를 쓴다.",
+      "**Do** 인장은 CSS 면 + `--stamp` 마스크 + 살짝 기울임으로 만들고, 들어올 때만 찍히는 움직임을 준다.",
+      "**Do** 터치 영역은 44px 이상(버튼 50px, 입력 48px, 탭 58px)으로 둔다."
+    ],
+    "donts": [
+      "**Don't** 헤드라인 위에 작은 라벨(분야명, \"오늘의 시제\", 단계 이름 같은 머리말)을 얹지 않는다.",
+      "**Don't** 호박색, 초록색 같은 두 번째 강조색을 쓰지 않는다. 고쳐 쓰기 비교의 더한 글자와 지운 글자만 예외다.",
+      "**Don't** 홍패 붉은색을 장원 패널 밖에서 쓰지 않는다.",
+      "**Don't** Song Myung을 헤드라인, 버튼, 본문, 숫자에 쓰지 않는다.",
+      "**Don't** 세로 괘선을 표지, 시제 카드, 답안지 여백, 첫 화면 머리 밖에 깔지 않는다.",
+      "**Don't** 단청, 민화, 전통 문양을 화면 가득 깔지 않는다. 사극 세트처럼 무겁게 만들지 않는다.",
+      "**Don't** 분위기 사진(mood)을 앱 안에 넣지 않는다. 장식은 모두 CSS로 만든다.",
+      "**Don't** 다크 모드를 만들지 않는다."
+    ]
+  }
+}
