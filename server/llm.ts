@@ -29,7 +29,17 @@ async function rawCall(o: { system: string; user: string; fast?: boolean; temper
         method: 'POST',
         signal: ctrl.signal,
         headers: { 'content-type': 'application/json', 'x-api-key': KEY(), 'anthropic-version': '2023-06-01' },
-        body: JSON.stringify({ model, max_tokens: o.maxTokens, temperature: o.temperature, system: o.system, messages: [{ role: 'user', content: o.user }] }),
+        // Claude 5.5 계열은 temperature 를 받지 않음 ("`temperature` is deprecated for this model", 400 오류) → 보내지 않음.
+        // 옛 모델로 바꿔 쓰면서 temperature 가 필요하면 LLM_SEND_TEMPERATURE=1
+        // 5.5 계열은 기본으로 생각(thinking)을 켜고, 그 토큰이 max_tokens 를 먼저 다 써 버려 JSON 이 비어 나옴.
+        // 우리 호출은 짧은 JSON 하나라 생각을 끔: Sonnet 5.5 는 between_tools(도구가 없으면 생각 없음), Haiku 5.5 는 disabled.
+        // 다른 모델로 바꿔 400 이 나면 LLM_THINKING=omit 으로 이 칸을 빼고 보냄
+        body: JSON.stringify({
+          model, max_tokens: o.maxTokens,
+          ...(env('LLM_SEND_TEMPERATURE') === '1' ? { temperature: o.temperature } : {}),
+          ...(env('LLM_THINKING') === 'omit' ? {} : { thinking: { type: /haiku/.test(model) ? 'disabled' : 'between_tools' } }),
+          system: o.system, messages: [{ role: 'user', content: o.user }],
+        }),
       });
       const j: any = await r.json().catch(() => ({}));
       if (!r.ok) throw new Error(`LLM ${r.status}: ${JSON.stringify(j).slice(0, 300)}`);
