@@ -671,6 +671,60 @@ nav[aria-label="진행 단계"]{margin-top:16px}
   .dd{width:100%;max-width:36px;height:auto;aspect-ratio:1}
   .path3 .c{width:42px}
 }
+
+/* =========================================================
+   (v4.3.1) 주홍은 인장에만: 진행 단계 현재 칸, 달력의 쓴 날, 급제 길의 채운 칸, 오늘의 과제 라벨
+   + 도장 자체인 것(策 로고, 問, 첫 화면 策問, 광장의 내 글). 글자 강조는 먹으로
+   ========================================================= */
+.toplink{color:var(--ink)}
+.link{color:var(--ink);text-decoration-color:var(--rule-2)}.link:hover{color:var(--ink2);text-decoration-color:var(--ink3)}
+.task b{color:var(--ink)}
+.task.today>b,.task.tnone>b{color:var(--seal)}
+.task .sub,.tex summary,.tchk .up{color:var(--ink)}
+.tchk blockquote{border-left-color:var(--ink3)}
+.meta .field{color:var(--ink);font-weight:700}
+.sum li::marker,.pw li::marker{color:var(--ink3)}
+.srcline a{color:var(--ink2)}
+.lvc .han{color:var(--ink)}
+.ln.c .tag{background:var(--ink);color:var(--sheet)}
+.total b:last-child{color:var(--ink)}
+.down{color:var(--ink2)}
+.flag{color:var(--ink)}
+.grp>summary .hd::after{color:var(--ink2)}
+.tabbar button[aria-current="page"]{color:var(--ink)}
+.path3 .c.goal{border-color:var(--ink);color:var(--ink)}
+.nextcard .nk{color:var(--paper)}
+.nextcard .path3 .c.goal{border-color:var(--paper);color:var(--paper)}
+/* 기사 카드 분야 낙관: 먹색 테두리 인장 */
+.ac-han{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 2px var(--ink);opacity:.85}
+
+/* 연속 응시: 오늘의 과제 카드 맨 위 한 줄 */
+.skline{display:flex;align-items:center;gap:6px 12px;flex-wrap:wrap;margin:-4px 0 12px;padding:0 0 10px;border-bottom:1px solid var(--rule)}
+.skline .sk-n{font-size:.86rem;font-weight:700;letter-spacing:-.01em;color:var(--ink2);line-height:1.3}
+.skline .sk-n b{color:var(--ink);font-size:1rem;font-weight:800;margin:0 1px;font-variant-numeric:tabular-nums}
+.mini7{list-style:none;margin:0;padding:0;display:flex;gap:4px}
+.mini7 .sq{display:block;width:15px;height:15px;border-radius:3px;border:1.2px dashed var(--rule-2)}
+.mini7 .sq.on{border:0;background:var(--seal);transform:rotate(-5deg);-webkit-mask:var(--stamp) 0 0/140px 140px;mask:var(--stamp) 0 0/140px 140px}
+.mini7 .sq.today{border-color:var(--ink3)}
+.sk-today{font-size:.74rem;color:var(--ink3);margin-left:auto}
+.task.tnone .skline{margin-top:0}
+
+/* 기사 고르기: 첫 기사가 첫 화면에 보이게 */
+.pick-h{font-size:clamp(1.42rem,5.4vw,1.85rem);line-height:1.3}
+.arts5{margin-top:14px}
+.task.today{margin-bottom:22px}
+.block.nohero .art-title{margin-top:0}
+/* 이번 주 과제(기관 학생): 마감과 링크를 한 줄로 */
+.task.assigned{display:flex;flex-wrap:wrap;align-items:center;column-gap:10px}
+.task.assigned .tt{flex:1 1 100%;font-size:1rem;margin:6px 0 0}
+.task.assigned small{flex:1 1 auto;margin-top:2px}
+.task.assigned .link{margin-top:0;padding:6px 0}
+@media (max-width:600px){
+  nav[aria-label="진행 단계"]{margin:12px 0 20px}
+  .lattice{height:14px;background-size:14px 14px;margin-top:8px}
+  .task{padding:16px 18px 16px}
+  .pmini{margin-top:12px;padding-top:10px}
+}
 </style>
 </head>
 <body>
@@ -1384,7 +1438,7 @@ const DB={
     if(!u||u.password!==password)throw new Error('아이디나 비밀번호가 맞지 않습니다.');
     return this.pub(u);
   },
-  pub:u=>({id:u.id,scope:u.scope,username:u.username,nickname:u.nickname,role:u.role,classId:u.classId,org:u.org,profile:u.profile}),
+  pub:u=>({id:u.id,scope:u.scope,username:u.username,nickname:u.nickname,role:u.role,classId:u.classId,org:u.org,profile:u.profile,...(u.history?{history:u.history}:{})}),
   async classByCode(orgId,code){
     code=(code||'').trim().toUpperCase();
     for(const c of Object.values(CLASSES)){
@@ -1417,6 +1471,8 @@ const DB={
   const mk=(scope,username,nickname,role,classId,profile)=>{DB.users[DB.key(scope,username)]={id:'u'+(DB.seq++),scope,username,password:DEMO_PW,nickname,role,classId,org:classId?'yonsei':null,profile}};
   mk('p','demo','데모 응시자','personal',null,'demo');
   mk('o','student','김연세','student','yonsei-writing',null);
+  /* (v4.3) 기관 학생 데모의 예시 기록: 어제부터 사흘 연속 + 띄엄띄엄 이틀, 급제 길 세 칸 */
+  DB.users[DB.key('o','student')].history={days:[1,2,3,6,9],cleared:['iss1','evi1','pos1']};
   mk('o','professor','박교수','professor','yonsei-writing',null);
   /* 광장 예시 답안: "예시 답안" 시스템 계정으로 묶고 예시 배지 */
   ARTICLES.forEach(a=>{
@@ -1736,7 +1792,7 @@ function vAuth(){
     <h2 class="ptitle">${org?esc(A.cls?.name||'')+' '+(A.role==='professor'?'교수':'학생'):'개인'} ${login?'로그인':'가입'}</h2>
     ${org?`<p class="note">${esc(ORGS.find(o=>o.id===A.org)?.name||'')}, ${A.role==='professor'?'교수 코드':'학생 코드'}로 들어왔습니다.</p>`:''}
   </section>
-  <form class="form corner" id="authForm" autocomplete="off">
+  <form class="form" id="authForm" autocomplete="off">
     <div class="tabs" role="tablist" style="margin:0 0 6px">
       <button type="button" role="tab" data-atab="login" aria-selected="${login}">로그인</button>
       <button type="button" role="tab" data-atab="signup" aria-selected="${!login}">가입</button>
@@ -1757,7 +1813,7 @@ function vOrg(){
   const A=S.auth;
   return `
   <section class="block ctr"><h2 class="ptitle">학교·기관으로 시작</h2><p class="note">기관을 고르고, 수업에서 받은 코드를 넣어 주세요.</p></section>
-  <form class="form corner" id="orgForm" autocomplete="off">
+  <form class="form" id="orgForm" autocomplete="off">
     <label for="og">기관</label><select id="og">${ORGS.map(o=>`<option value="${o.id}">${esc(o.name)}</option>`).join('')}</select>
     <label for="oc">코드</label><input id="oc" placeholder="예: YONSEI-STU" required>
     ${A.err?`<p class="err" role="alert">${esc(A.err)}</p>`:''}
@@ -1771,8 +1827,8 @@ function vOrg(){
 const tierChip=t=>`<span class="tchip">${esc(t.axis)}, ${TIER_NAME[t.tier]}</span>`;
 function taskPickHTML(){
   const t=S.todayTask;
-  if(t) return `<div class="task today corner"><b>오늘의 과제</b>${tierChip(t)}<p class="tt">${esc(t.title)}</p><small>${esc(t.why)}</small>${pathMini(t)}</div>`;
-  if(S.user&&!isProf()) return `<div class="task tnone"><b>오늘의 과제</b><small>첫 책문입니다. 오늘 글의 채점이 끝나면 다음 과제가 정해집니다.</small></div>`;
+  if(t) return `<div class="task today corner">${streakHTML()}<b>오늘의 과제</b>${tierChip(t)}<p class="tt">${esc(t.title)}</p><small>${esc(t.why)}</small>${pathMini(t)}</div>`;
+  if(S.user&&!isProf()) return `<div class="task tnone">${streakHTML()}<b>오늘의 과제</b><small>첫 책문입니다. 오늘 글의 채점이 끝나면 다음 과제가 정해집니다.</small></div>`;
   return '';
 }
 function taskWriteHTML(a){
@@ -1803,17 +1859,19 @@ function taskNextHTML(){
 const WD=['일','월','화','수','목','금','토'];
 const dayKey=d=>d.getFullYear()*10000+(d.getMonth()+1)*100+d.getDate();
 const daysAgo=o=>{const d=new Date();d.setHours(12,0,0,0);d.setDate(d.getDate()-o);return d};
+/* 예시 기록: 데모 계정은 PROFILE, 기관 학생 데모는 사용자 history */
+function demoHistory(){return S.user?(S.user.history||(S.user.profile==='demo'?PROFILE:null)):null}
 function myEssays(){return S.user?DB.essays.filter(e=>e.userId===S.user.id&&!e.isExample):[]}
 function writtenDays(){
   const W=new Set();if(!S.user)return W;
-  if(S.user.profile==='demo')(PROFILE.days||[]).forEach(o=>W.add(dayKey(daysAgo(o))));
+  (demoHistory()?.days||[]).forEach(o=>W.add(dayKey(daysAgo(o))));
   myEssays().forEach(e=>{if(e.createdAt)W.add(dayKey(new Date(e.createdAt)))});
   return W;
 }
 function streakOf(W){const todayDone=W.has(dayKey(daysAgo(0)));let n=0,o=todayDone?0:1;while(W.has(dayKey(daysAgo(o)))){n++;o++}return{n,todayDone}}
 function clearedSet(){
   const C=new Set();if(!S.user)return C;
-  if(S.user.profile==='demo')(PROFILE.cleared||[]).forEach(x=>C.add(x));
+  (demoHistory()?.cleared||[]).forEach(x=>C.add(x));
   myEssays().forEach(e=>{if(e.task&&e.task.done)C.add(e.task.id)});
   if(S.todayTask&&S.taskResult?.revised?.done)C.add(S.todayTask.id);
   return C;
@@ -1833,10 +1891,10 @@ function streakHTML(){
   if(!S.user||isProf())return '';
   const W=writtenDays(),{n,todayDone}=streakOf(W);
   const cells=[6,5,4,3,2,1,0].map(o=>{const d=daysAgo(o),on=W.has(dayKey(d));
-    return `<li class="${o===0?'td':''}"><span class="wd">${o===0?'오늘':WD[d.getDay()]}</span><span class="dd${on?' on':''}${o===0&&!on?' today':''}">${d.getDate()}</span></li>`}).join('');
-  return `<section class="streak" aria-label="최근 7일 응시 기록">
-    <div class="sk-hd">${n?`<p class="sk-n">연속 <b>${n}</b>일째 응시</p>`:`<p class="sk-n">연속 응시 기록이 아직 없습니다</p>`}${todayDone?'':'<p class="sk-note">오늘 칸이 비어 있습니다</p>'}</div>
-    <ol class="week">${cells}</ol></section>`;
+    return `<li><span class="sq${on?' on':''}${o===0&&!on?' today':''}" title="${o===0?'오늘':(d.getMonth()+1)+'월 '+d.getDate()+'일'}${on?', 응시':''}"></span></li>`}).join('');
+  return `<div class="skline" role="group" aria-label="최근 7일 응시 기록">
+    <p class="sk-n">${n?`연속 <b>${n}</b>일째 응시`:'연속 응시 기록 없음'}${todayDone?'':'<span class="sr">, 오늘 칸이 비어 있습니다</span>'}</p>
+    <ol class="mini7" aria-hidden="true">${cells}</ol>${todayDone?'':'<span class="sk-today">오늘 빈칸</span>'}</div>`;
 }
 function monthHTML(){
   const W=writtenDays(),now=new Date(),y=now.getFullYear(),m=now.getMonth(),first=new Date(y,m,1).getDay(),last=new Date(y,m+1,0).getDate();
@@ -1860,7 +1918,6 @@ function roadHTML(){
 function vPick(){
   const cls=isStudent()?myClass():null, as=cls?.assigned, aa=as&&ARTICLES.find(x=>x.id===as.articleId);
   return `
-  ${streakHTML()}
   ${aa?`<div class="task assigned corner"><b>이번 주 과제</b><span class="tchip">${LEVELS[as.level].name}</span><p class="tt">${esc(aa.title)}</p>
      <small>${esc(cls.name)}, 마감 ${esc(as.due)}</small>
      <button class="link" id="doAssigned">이 과제 하러 가기</button></div>`:''}
@@ -1896,12 +1953,12 @@ function vLevel(){
       <span class="tag ${org?'soon':'lock'}">${org?'준비 중':'프리미엄'}</span>
       <span class="han">${l.han}</span><b>${l.name}</b><span>제시문 논술형, 시험 대비</span>
       <span>${org?'기관 구독에 포함되어 있습니다. 문제를 준비하고 있습니다.':'월 구독으로 열립니다.'}</span></button>`;
-    return `<button class="lvc corner" data-lv="${k}"><span class="han">${l.han}</span><b>${l.name}</b><span>${esc(l.desc)}</span>
+    return `<button class="lvc" data-lv="${k}"><span class="han">${l.han}</span><b>${l.name}</b><span>${esc(l.desc)}</span>
       <span style="color:var(--ink);margin-top:6px">${esc(a.q[k])}</span></button>`;
   };
   return `
-  <section class="block">
-    <div class="art-hero">${cover(a,'wide')}</div>
+  <section class="block${a.image?'':' nohero'}">
+    ${a.image?`<div class="art-hero">${cover(a,'card')}</div>`:''}
     <h3 class="art-title">${esc(a.title)}</h3>
     <p class="meta byline"><span class="field">${esc(a.field)}</span></p>
     ${articleView(a)}
@@ -2271,13 +2328,13 @@ function vTeacher(){
 }
 function studentDetail(s){
   if(s.real){const e=s.e,p=e.process||{};
-    return `<div class="stud corner"><p class="h" style="font-size:1.02rem">${esc(e.nickname)}의 글</p>
+    return `<div class="stud"><p class="h" style="font-size:1.02rem">${esc(e.nickname)}의 글</p>
       <p class="proc">작성 시간 <b>${mmss(p.seconds||0)}</b> 붙여넣기 차단 <b>${p.paste||0}번</b> 고쳐 쓰기 <b>${p.revisions||0}번</b> 대필 요청 거절 <b>${p.refused||0}번</b></p>
       ${e.task?`<p class="proc">오늘의 과제: <b>${esc(e.task.title)}</b> (${e.task.done?'해냄':'아직'})</p>`:''}
       <p style="font-weight:700;font-size:.84rem;color:var(--ink2)">처음 글</p><p class="tx">${esc(e.draft)}</p>
       <p style="font-weight:700;font-size:.84rem;color:var(--ink2);margin-top:10px">고친 글</p><p class="tx">${esc(e.revised)}</p></div>`}
   const ex=DB.essays.find(e=>e.id===`ex-${s.art}-boksi-${s.seed}`);
-  return `<div class="stud corner"><p class="h" style="font-size:1.02rem"><span class="badge ex">예시</span>${esc(s.n)}의 글</p>
+  return `<div class="stud"><p class="h" style="font-size:1.02rem"><span class="badge ex">예시</span>${esc(s.n)}의 글</p>
     <p class="proc">작성 시간 <b>${mmss(s.sec)}</b> 붙여넣기 차단 <b>${s.paste}번</b> 고쳐 쓰기 <b>${s.rev}번</b> 대필 요청 거절 <b>${s.flag}번</b></p>
     <p class="tx">${esc(ex?.revised||'')}</p></div>`;
 }
