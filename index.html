@@ -1148,7 +1148,14 @@ const DB={
       const c=a.clusters[s.g];const rep=repN.has(s.n)&&c&&c.s.text===s.t;
       DB.essays.push({id:`exc-${a.id}-boksi-${s.n}`,userId:'example',nickname:`예시 반 학생 ${s.n}`,articleId:a.id,level:'boksi',revised:s.t,draft:s.t,group:s.g,published:true,isExample:true,classId:'yonsei-writing',base:rep?{ag:Math.ceil(c.s.agree/2),pn:Math.ceil(c.s.pen/2)}:{ag:0,pn:0},rep});
     });
-    (SEEDS[a.id]?.choshi||[]).forEach(s=>DB.essays.push({id:`ex-${a.id}-choshi-${s.n}`,userId:'example',nickname:`예시 응시자 ${s.n}`,articleId:a.id,level:'choshi',revised:s.t,draft:s.t,group:s.g,published:true,isExample:true,classId:null,base:{ag:0,pn:0}}));
+    /* (11/20) 초시: 그룹마다 첫 글을 대표로 두고 예시 표를 줌 → 초시 광장에도 장원이 생김.
+       장원은 가장 큰 그룹의 대표, 소수의견(少) 그룹 대표는 어람작으로 따로 보이게 표를 낮게 둠 */
+    const ch=SEEDS[a.id]?.choshi||[], chN=g=>ch.filter(x=>x.g===g).length, chRep=new Set();
+    ch.forEach(s=>{
+      const rep=!chRep.has(s.g);if(rep)chRep.add(s.g);
+      const tam=!!a.clusters[s.g]?.tam, base=rep?(tam?{ag:3,pn:2}:{ag:chN(s.g)*2,pn:chN(s.g)*2}):{ag:0,pn:0};
+      DB.essays.push({id:`ex-${a.id}-choshi-${s.n}`,userId:'example',nickname:`예시 응시자 ${s.n}`,articleId:a.id,level:'choshi',revised:s.t,draft:s.t,group:s.g,published:true,isExample:true,classId:null,base,rep});
+    });
   });
 })();
 
