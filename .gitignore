@@ -3,3 +3,5 @@ node_modules
 .env.local
 .vercel
 eval/results/*.json
+.DS_Store
+design-refs/
