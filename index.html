@@ -13,7 +13,7 @@
    구조: 요즘 뉴스 앱 (큰 카드, 굵은 헤드라인, 하단 탭 바, iOS 컨트롤)
    분위기: 과거 시험. 한지 미색 바탕, 먹색 글, 포인트는 낙관 주홍 한 가지. 홍패 붉은색은 장원에만.
    글꼴: 큰 제목과 시제만 Song Myung, 나머지는 Pretendard.
-   장식: 한지 질감, 인장, 세로 괘선만. 모두 CSS. 다크 모드는 끔. */
+   장식: 한지 질감, 인장, 세로 괘선 + (v4.3) 단청 띠, 창살 띠, 꺾쇠, 테두리 策問 인장을 정한 자리에만. 모두 CSS. 다크 모드는 끔. */
 :root{
   --paper:#F3EDE0; --paper-2:#E9E1CF; --sheet:#FCFAF4;
   --ink:#1E1A16; --ink2:#4F473D; --ink3:#6F6658;
@@ -403,6 +403,7 @@ main.in .qmark,main.in .jang .seal,main.in .hero .stamp{animation:stamp .55s var
 .cls blockquote{margin:6px 0 4px;color:var(--ink2);line-height:1.75}
 .cls .by{font-size:.82rem;color:var(--ink3)}
 .cls .rep{margin:6px 0 4px;color:var(--ink2);line-height:1.7;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.grp{scroll-margin-top:88px}
 .grp>summary{list-style:none;cursor:pointer;padding:16px 0}
 .grp>summary::-webkit-details-marker{display:none}
 .grp>summary .hd::after{content:"펼치기";font-size:.8rem;font-weight:700;color:var(--seal);margin-left:10px;white-space:nowrap}
@@ -529,6 +530,147 @@ body.has-tabs .toast{bottom:calc(var(--tabbar-h) + 14px + env(safe-area-inset-bo
 .tchk .not{color:var(--ink3)}
 .tchk blockquote{margin:8px 0 0 5em;padding-left:12px;border-left:2px solid var(--seal);line-height:1.75;color:var(--ink)}
 @media (max-width:600px){.tchk blockquote{margin-left:0}}
+
+/* =========================================================
+   (v4.3) 전통 장식 다섯 가지: 쓰임새를 정해 두고 그 자리에만
+   단청 띠(맨 위 한 줄), 策 낙관 로고, 창살 띠(머리 아래, 큰 구획 사이), 꺾쇠(중요한 카드), 테두리 策問 인장(첫 화면)
+   ========================================================= */
+:root{--dc-blue:#2F5D8A;--dc-yellow:#D6A23A;--dc-green:#3E7A5C;--wood:#4A3727;--wood-2:#7A5E43}
+/* 단청 띠: 화면 맨 위 한 줄. 단청 색은 여기에서만 */
+body::before{content:"";position:fixed;left:0;right:0;top:0;height:5px;z-index:30;pointer-events:none;
+  background:repeating-linear-gradient(90deg,var(--dc-blue) 0 28px,var(--sheet) 28px 31px,var(--seal) 31px 52px,var(--sheet) 52px 55px,var(--dc-yellow) 55px 70px,var(--sheet) 70px 73px,var(--dc-green) 73px 101px,var(--sheet) 101px 104px);
+  box-shadow:0 1px 0 rgba(60,40,20,.22)}
+.top{padding-top:calc(15px + env(safe-area-inset-top,0px))}
+/* 창살 띠 */
+.lattice{height:18px;margin:10px 0 0;opacity:.34;pointer-events:none;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' fill='none' stroke='%236F6658' stroke-width='1.2'%3E%3Crect x='.6' y='.6' width='16.8' height='16.8'/%3E%3Crect x='5.6' y='5.6' width='6.8' height='6.8'/%3E%3Cpath d='M9 .6V5.6M9 12.4v5M.6 9H5.6M12.4 9h5'/%3E%3C/svg%3E") repeat-x left center/18px 18px}
+.lattice.sec{margin:6px 0 34px}
+nav[aria-label="진행 단계"]{margin-top:16px}
+/* 꺾쇠: 왼쪽 위, 오른쪽 아래 (가상 요소 대신 배경으로 그려 다른 장식과 겹치지 않게) */
+.corner{--cc:rgba(111,102,88,.6);
+  background-image:linear-gradient(var(--cc),var(--cc)),linear-gradient(var(--cc),var(--cc)),linear-gradient(var(--cc),var(--cc)),linear-gradient(var(--cc),var(--cc));
+  background-size:16px 1.5px,1.5px 16px,16px 1.5px,1.5px 16px;
+  background-position:left 8px top 8px,left 8px top 8px,right 8px bottom 8px,right 8px bottom 8px;background-repeat:no-repeat}
+/* 첫 화면 대표 인장: 테두리만 있는 策問 */
+.hero .stamp{background:rgba(194,64,42,.05);color:var(--seal);box-shadow:inset 0 0 0 3px var(--seal),inset 0 0 0 6px rgba(194,64,42,.0)}
+
+/* ---------- 오늘의 과제 카드: 더 눈에 띄게 ---------- */
+.task{padding:18px 20px 18px}
+.task .t-lab,.task>b{font-size:1.12rem;letter-spacing:-.02em}
+.task.today{border-color:var(--rule-2)}
+.pmini{display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px;margin-top:14px;padding-top:12px;border-top:1px solid var(--rule)}
+.pmini .nx{font-size:.84rem;font-weight:600;color:var(--ink2)}
+.pmini .nx b{color:var(--ink);font-weight:800;font-size:inherit;margin:0}
+/* 급제 길 칸 */
+.path3{list-style:none;margin:0;padding:0;display:flex;align-items:center;gap:0}
+.path3 li{display:flex;align-items:center}
+.path3 li+li::before{content:"";width:12px;height:1.5px;background:var(--rule-2)}
+.path3 .c{display:grid;place-items:center;width:46px;height:30px;border-radius:5px;border:1.5px dashed var(--rule-2);font-size:.72rem;font-weight:700;color:var(--ink3);white-space:nowrap}
+.path3 .c.on{border:0;background:var(--seal);color:var(--sheet);transform:rotate(-3deg)}
+.path3 .c.goal{border-color:var(--seal);color:var(--seal)}
+.path3 li.done+li::before{background:var(--seal)}
+
+/* ---------- 다음 책문의 과제: 먹색 큰 카드 ---------- */
+.nextcard{position:relative;margin:36px 0 0;padding:26px 24px 24px;border-radius:var(--r-card);background-color:var(--ink);color:var(--paper);box-shadow:0 2px 4px rgba(30,20,10,.12),0 18px 34px -16px rgba(30,20,10,.55)}
+.nextcard.corner{--cc:rgba(243,237,224,.55)}
+.nextcard .nk{font-size:1.12rem;font-weight:800;letter-spacing:-.02em;color:#F2B8A6;margin-right:8px}
+.nextcard .tchip{background:rgba(243,237,224,.14);color:var(--paper)}
+.nextcard .tt{font-size:clamp(1.3rem,4.8vw,1.55rem);font-weight:800;letter-spacing:-.03em;line-height:1.35;margin:12px 0 6px;color:var(--sheet);text-wrap:balance}
+.nextcard .why{font-size:.9rem;color:rgba(243,237,224,.78);line-height:1.65}
+.nextcard .pmini{border-top-color:rgba(243,237,224,.16)}
+.nextcard .pmini .nx{color:rgba(243,237,224,.8)}.nextcard .pmini .nx b{color:var(--sheet)}
+.nextcard .path3 .c{border-color:rgba(243,237,224,.35);color:rgba(243,237,224,.7)}
+.nextcard .path3 .c.on{background:var(--seal);color:var(--sheet)}
+.nextcard .path3 .c.goal{border-color:#F2B8A6;color:#F2B8A6}
+.nextcard .path3 li+li::before{background:rgba(243,237,224,.3)}
+.nextcard .path3 li.done+li::before{background:var(--seal)}
+.nextcard .tmr{margin-top:16px;font-family:var(--brush);font-size:1.28rem;line-height:1.4;color:var(--sheet)}
+.nextcard+.actions{margin-top:18px}
+
+/* ---------- 연속 응시: 최근 7일 ---------- */
+.streak{display:flex;align-items:center;justify-content:space-between;gap:14px 18px;flex-wrap:wrap;margin:0 0 18px;padding:14px 18px;background:var(--sheet);border:1px solid var(--rule);border-radius:var(--r-card)}
+.sk-hd{min-width:0}
+.sk-n{font-size:1.02rem;font-weight:800;letter-spacing:-.02em;line-height:1.35}
+.sk-n b{color:var(--seal);font-size:1.4rem;font-variant-numeric:tabular-nums;margin:0 1px}
+.sk-note{font-size:.82rem;color:var(--ink3);margin-top:2px}
+.week{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(7,34px);gap:6px}
+.week li,.month li{display:flex;flex-direction:column;align-items:center;gap:3px}
+.wd{font-size:.68rem;font-weight:600;color:var(--ink3);line-height:1}
+.dd{display:grid;place-items:center;width:32px;height:32px;border-radius:5px;border:1.5px dashed var(--rule-2);font-size:.78rem;font-weight:700;color:var(--ink3);font-variant-numeric:tabular-nums}
+.dd.on{border:0;background:var(--seal);color:var(--sheet);transform:rotate(-4deg)}
+.dd.today{border-color:var(--ink3);color:var(--ink)}
+.week .td .wd{color:var(--seal)}
+/* 한 달 */
+.month-hd{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:10px}
+.month-hd b{font-size:1rem;font-weight:800}
+.month-hd span{font-size:.84rem;color:var(--ink3);font-variant-numeric:tabular-nums}
+.monthbox{background:var(--sheet);border:1px solid var(--rule);border-radius:var(--r-card);padding:16px 14px 14px}
+.month{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px 4px}
+.month .wd{padding-bottom:4px}
+.month .dd{width:100%;max-width:38px;height:auto;aspect-ratio:1}
+.month .fut .dd{opacity:.45}
+.month .blank{visibility:hidden}
+
+/* ---------- 급제 길 15칸 (나의 기록) ---------- */
+.road{background:var(--sheet);border:1px solid var(--rule);border-radius:var(--r-card);padding:6px 16px}
+.road li.rw{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--rule)}
+.road li.rw:last-child{border-bottom:0}
+.road ol.rows{list-style:none;margin:0;padding:0}
+.road .ax{font-weight:700;font-size:.95rem}
+.road .ax small{display:block;font-size:.76rem;font-weight:500;color:var(--ink3)}
+
+/* ---------- 기사 다섯: 같은 크기 카드 ---------- */
+.arts5{list-style:none;margin:20px 0 0;padding:0;display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
+.ac{position:relative;display:flex;flex-direction:column;width:100%;height:100%;text-align:left;background:var(--sheet);border:1px solid var(--rule);border-radius:var(--r-card);padding:0;overflow:hidden;cursor:pointer;box-shadow:var(--shadow);transition:transform .2s var(--ease),border-color .2s}
+.ac:hover{border-color:var(--rule-2)}
+.ac:active{transform:scale(.99)}
+.ac .cv-card .cover{aspect-ratio:16/9;border-radius:0}
+.ac .cv-card .credit{padding:6px 16px 0}
+.ac-tx{position:relative;display:flex;flex-direction:column;flex:1;padding:18px 20px 18px}
+.ac:not(.has-img) .ac-tx{padding-right:72px}
+.ac-han{position:absolute;right:18px;top:18px;width:38px;height:38px;display:grid;place-items:center;background:var(--seal);color:var(--sheet);border-radius:4px;font-family:var(--brush);font-size:1.25rem;line-height:1;transform:rotate(-4deg)}
+.ac .hl{font-size:1.14rem;margin:0 0 6px}
+.ac .one{font-size:.9rem;color:var(--ink2);line-height:1.62;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ac .meta{margin-top:auto;padding-top:10px}
+.ac .go{margin-top:8px}
+.ac:hover .hl{text-decoration:underline;text-decoration-thickness:1.5px;text-underline-offset:5px}
+@media (min-width:660px){.arts5{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}}
+
+/* ---------- 채점 표: 제목과 숫자를 같은 폭 칸에, rem으로 (글자 크기가 달라도 칸이 같게) ---------- */
+.rub summary,.rub .head{grid-template-columns:minmax(0,1fr) repeat(3,3.7rem) 1.1rem;gap:0 4px}
+.rub .head span,.rub .n{text-align:center;justify-self:stretch;font-variant-numeric:tabular-nums}
+.rub .head span:first-child{text-align:left}
+@media (max-width:600px){.rub summary,.rub .head{grid-template-columns:minmax(0,1fr) repeat(3,3.05rem) 1rem;gap:0 2px}}
+
+/* ---------- 광장: 방(榜) 붙이기 ---------- */
+.bang{position:relative;margin:22px 8px 18px;padding:22px 10px 20px;background-color:var(--sheet);background-image:var(--fiber);
+  box-shadow:inset 0 0 0 1px var(--rule-2),inset 0 0 44px rgba(140,104,58,.11)}
+.bang::before,.bang::after{content:"";position:absolute;left:-12px;right:-12px;height:14px;border-radius:7px;
+  background:linear-gradient(to bottom,var(--wood),var(--wood-2) 45%,var(--wood));box-shadow:0 2px 3px rgba(60,40,20,.25)}
+.bang::before{top:-8px}.bang::after{bottom:-8px}
+.bang-title{text-align:center;font-family:var(--brush);font-size:1.5rem;line-height:1;color:var(--ink);letter-spacing:.3em;margin:4px 0 14px;padding-left:.3em}
+.bang-in{display:flex;flex-direction:row-reverse;align-items:stretch;min-height:300px}
+.col{position:relative;flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;gap:10px;padding:26px 4px 10px;background:none;border:0;cursor:pointer;color:var(--ink);transition:background-color .2s}
+.col+.col{border-right:1px solid var(--rule-2)}
+.col:hover{background:rgba(233,225,207,.55)}
+.col .so{position:absolute;top:2px;left:50%;transform:translateX(-50%) rotate(-4deg);width:22px;height:22px;display:grid;place-items:center;border:1.5px solid var(--ink2);border-radius:3px;font-family:var(--brush);font-size:.86rem;line-height:1;color:var(--ink2)}
+.cl-name{writing-mode:vertical-rl;font-family:var(--brush);font-size:clamp(1.02rem,3.8vw,1.3rem);line-height:1.15;letter-spacing:.04em;min-height:7.2em;max-height:9.5em}
+.dots{display:grid;grid-template-columns:repeat(3,11px);gap:4px;justify-content:center;margin-top:auto}
+.dots i{width:11px;height:11px;border-radius:2px;background:var(--ink);opacity:.88}
+.dots i.me{background:var(--seal);opacity:1;transform:rotate(-6deg) scale(1.25)}
+.col .cnt{font-size:.78rem;font-weight:700;color:var(--ink2);font-variant-numeric:tabular-nums;line-height:1.2}
+.col .melab{font-size:.7rem;font-weight:800;color:var(--seal);line-height:1}
+.col.mine .cl-name{color:var(--ink)}
+.bang .dots i,.ac-han,.path3 .c.on,.dd.on{-webkit-mask:var(--stamp) 0 0/140px 140px;mask:var(--stamp) 0 0/140px 140px}
+@media (max-width:600px){
+  .bang{margin:20px 6px 16px;padding:20px 4px 18px}
+  .bang-in{min-height:260px}
+  .dots{grid-template-columns:repeat(2,10px);gap:3px}
+  .dots i{width:10px;height:10px}
+  .week{grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;width:100%}
+  .dd{width:100%;max-width:36px;height:auto;aspect-ratio:1}
+  .path3 .c{width:42px}
+}
 </style>
 </head>
 <body>
@@ -537,6 +679,7 @@ body.has-tabs .toast{bottom:calc(var(--tabbar-h) + 14px + env(safe-area-inset-bo
     <div class="brand"><span class="brand-seal" aria-hidden="true">策</span><b>오늘의 책문</b><span id="today"></span></div>
     <div class="toplinks" id="toplinks"></div>
   </header>
+  <div class="lattice" aria-hidden="true"></div>
   <nav aria-label="진행 단계"><ol class="track" id="track"></ol></nav>
   <main id="main"></main>
 </div>
@@ -968,7 +1111,11 @@ const PROFILE = {
   flow:[{k:'결론 먼저형',v:7},{k:'근거 나열 후 결론',v:4},{k:'질문으로 시작',v:1}],
   weak:[{k:'근거 부족',v:5},{k:'반례 미처리',v:4},{k:'숨은 전제',v:2}],
   words:[['기업',14],['필요하다',11],['결국',9],['문제',9],['생각한다',8],['정당하다',6],['사람들',6],['현실',5]],
-  hedge:[31,30,27,25,22,20,19,17,15,14,13,12]
+  hedge:[31,30,27,25,22,20,19,17,15,14,13,12],
+  /* (v4.3) 쓴 날: 오늘에서 며칠 전인지. 1~5는 어제부터 닷새 연속, 오늘 칸은 비어 있음. 12편과 맞춤 */
+  days:[1,2,3,4,5,7,9,10,13,16,20,24],
+  /* (v4.3) 해낸 과제 id (급제 길에 인장으로 채워지는 칸) */
+  cleared:['iss1','iss2','evi1','ctx1','pos1','pos2','con1']
 };
 
 /* ---------- 유틸 ---------- */
@@ -1624,14 +1771,14 @@ function vOrg(){
 const tierChip=t=>`<span class="tchip">${esc(t.axis)}, ${TIER_NAME[t.tier]}</span>`;
 function taskPickHTML(){
   const t=S.todayTask;
-  if(t) return `<div class="task"><b>오늘의 과제</b>${tierChip(t)}<p class="tt">${esc(t.title)}</p><small>${esc(t.why)}</small></div>`;
+  if(t) return `<div class="task today corner"><b>오늘의 과제</b>${tierChip(t)}<p class="tt">${esc(t.title)}</p><small>${esc(t.why)}</small>${pathMini(t)}</div>`;
   if(S.user&&!isProf()) return `<div class="task tnone"><b>오늘의 과제</b><small>첫 책문입니다. 오늘 글의 채점이 끝나면 다음 과제가 정해집니다.</small></div>`;
   return '';
 }
 function taskWriteHTML(a){
   const t=S.todayTask;if(!t)return '';
   const hint=TASK_HINT[a.id]?.[t.axis];
-  return `<div class="task"><b>오늘의 과제</b>${tierChip(t)}<p class="tt">${esc(t.title)}</p>
+  return `<div class="task today corner"><b>오늘의 과제</b>${tierChip(t)}<p class="tt">${esc(t.title)}</p>
     <p class="th">${esc(S.level==='choshi'?t.choshi:t.how)}</p>
     ${hint?`<p class="th"><span class="sub">이 기사에서는</span>${esc(hint)}</p>`:''}
     <details class="tex"><summary>이 동작은 이런 모양입니다</summary><p class="exn">${esc(EX_TOPIC)}</p><p class="ext">${esc(t.ex)}</p></details></div>`;
@@ -1646,14 +1793,75 @@ function taskCheckHTML(){
 }
 function taskNextHTML(){
   const n=S.next;if(!n)return '';
-  return `<div class="task"><b>다음 책문의 과제</b>${tierChip(n)}<p class="tt">${esc(n.title)}</p><small>${esc(n.why)}</small></div>`;
+  return `<section class="nextcard corner" aria-label="다음 책문의 과제"><b class="nk">다음 책문의 과제</b>${tierChip(n)}<p class="tt">${esc(n.title)}</p><p class="why">${esc(n.why)}</p>${pathMini(n)}<p class="tmr">내일 이 과제로 다시 오세요</p></section>`;
+}
+
+/* ---------- (v4.3) 연속 응시와 급제 길: 기록에서 계산 ----------
+   쓴 날 = 데모 계정의 PROFILE.days + 이 브라우저에서 제출한 글(DB.essays의 createdAt)
+   해낸 과제 = 데모 계정의 PROFILE.cleared + 제출한 글의 task.done + 지금 채점에서 해낸 오늘의 과제
+   서버 기록으로 바꿀 때도 같은 두 가지(제출 날짜, 과제 id와 해냄 여부)만 있으면 됨 */
+const WD=['일','월','화','수','목','금','토'];
+const dayKey=d=>d.getFullYear()*10000+(d.getMonth()+1)*100+d.getDate();
+const daysAgo=o=>{const d=new Date();d.setHours(12,0,0,0);d.setDate(d.getDate()-o);return d};
+function myEssays(){return S.user?DB.essays.filter(e=>e.userId===S.user.id&&!e.isExample):[]}
+function writtenDays(){
+  const W=new Set();if(!S.user)return W;
+  if(S.user.profile==='demo')(PROFILE.days||[]).forEach(o=>W.add(dayKey(daysAgo(o))));
+  myEssays().forEach(e=>{if(e.createdAt)W.add(dayKey(new Date(e.createdAt)))});
+  return W;
+}
+function streakOf(W){const todayDone=W.has(dayKey(daysAgo(0)));let n=0,o=todayDone?0:1;while(W.has(dayKey(daysAgo(o)))){n++;o++}return{n,todayDone}}
+function clearedSet(){
+  const C=new Set();if(!S.user)return C;
+  if(S.user.profile==='demo')(PROFILE.cleared||[]).forEach(x=>C.add(x));
+  myEssays().forEach(e=>{if(e.task&&e.task.done)C.add(e.task.id)});
+  if(S.todayTask&&S.taskResult?.revised?.done)C.add(S.todayTask.id);
+  return C;
+}
+/* 한 기준의 세 칸: 해낸 칸은 인장, 이번 과제 칸은 주홍 점선 */
+function path3(axis,goalTier,C){
+  return `<ol class="path3">${[1,2,3].map(t=>{const id=TASKS[axis][t].id,on=C.has(id),goal=!on&&t===goalTier;
+    return `<li class="${on?'done':''}"><span class="c${on?' on':''}${goal?' goal':''}">${TIER_NAME[t]}</span></li>`}).join('')}</ol>`;
+}
+function pathMini(t){
+  if(!t||!TASKS[t.axis])return '';const C=clearedSet();
+  const open=[1,2,3].find(x=>!C.has(TASKS[t.axis][x].id));
+  const label=C.has(t.id)?(open?`${t.axis} ${TIER_NAME[open]}`:`${t.axis} 세 칸 모두 채움`):`${t.axis} ${TIER_NAME[t.tier]}`;
+  return `<div class="pmini" aria-label="급제 길 ${esc(t.axis)}: ${[1,2,3].filter(x=>C.has(TASKS[t.axis][x].id)).length}칸 채움">${path3(t.axis,C.has(t.id)?open:t.tier,C)}<span class="nx">다음 칸: <b>${esc(label)}</b></span></div>`;
+}
+function streakHTML(){
+  if(!S.user||isProf())return '';
+  const W=writtenDays(),{n,todayDone}=streakOf(W);
+  const cells=[6,5,4,3,2,1,0].map(o=>{const d=daysAgo(o),on=W.has(dayKey(d));
+    return `<li class="${o===0?'td':''}"><span class="wd">${o===0?'오늘':WD[d.getDay()]}</span><span class="dd${on?' on':''}${o===0&&!on?' today':''}">${d.getDate()}</span></li>`}).join('');
+  return `<section class="streak" aria-label="최근 7일 응시 기록">
+    <div class="sk-hd">${n?`<p class="sk-n">연속 <b>${n}</b>일째 응시</p>`:`<p class="sk-n">연속 응시 기록이 아직 없습니다</p>`}${todayDone?'':'<p class="sk-note">오늘 칸이 비어 있습니다</p>'}</div>
+    <ol class="week">${cells}</ol></section>`;
+}
+function monthHTML(){
+  const W=writtenDays(),now=new Date(),y=now.getFullYear(),m=now.getMonth(),first=new Date(y,m,1).getDay(),last=new Date(y,m+1,0).getDate();
+  let cnt=0;const cells=[];
+  for(let i=0;i<first;i++)cells.push('<li class="blank" aria-hidden="true"><span class="dd"></span></li>');
+  for(let d=1;d<=last;d++){const k=y*10000+(m+1)*100+d,on=W.has(k),td=d===now.getDate(),fut=d>now.getDate();if(on)cnt++;
+    cells.push(`<li class="${fut?'fut':''}"><span class="dd${on?' on':''}${td&&!on?' today':''}" ${td?'aria-current="date"':''}>${d}</span></li>`)}
+  const {n}=streakOf(W);
+  return `<section class="block"><h3 class="h">응시 달력</h3><div class="monthbox">
+    <div class="month-hd"><b>${m+1}월</b><span>이번 달 ${cnt}일 응시, 연속 ${n}일째</span></div>
+    <ol class="month" aria-label="${m+1}월 응시 기록">${WD.map(w=>`<li aria-hidden="true"><span class="wd">${w}</span></li>`).join('')}${cells.join('')}</ol></div></section>`;
+}
+function roadHTML(){
+  const C=clearedSet(),axes=Object.keys(TASKS),total=axes.reduce((s,k)=>s+[1,2,3].filter(t=>C.has(TASKS[k][t].id)).length,0);
+  const goal=S.todayTask;
+  return `<section class="block"><h3 class="h">급제 길: 15칸 중 ${total}칸</h3><div class="road"><ol class="rows">${axes.map(k=>`<li class="rw"><span class="ax">${k}<small>${RUBRIC[k]?.en||''}</small></span>${path3(k,goal&&goal.axis===k?goal.tier:0,C)}</li>`).join('')}</ol></div>
+    <p class="note">오늘의 과제를 해낼 때마다 그 칸에 인장이 찍힙니다. 기초, 중급, 심화 순으로 올라갑니다.</p></section>`;
 }
 
 /* 1. 기사 고르기: (기관 학생) 이번 주 과제 + 오늘의 과제 + 분야별 기사 5개 */
 function vPick(){
   const cls=isStudent()?myClass():null, as=cls?.assigned, aa=as&&ARTICLES.find(x=>x.id===as.articleId);
   return `
-  ${aa?`<div class="task assigned"><b>이번 주 과제</b><span class="tchip">${LEVELS[as.level].name}</span><p class="tt">${esc(aa.title)}</p>
+  ${streakHTML()}
+  ${aa?`<div class="task assigned corner"><b>이번 주 과제</b><span class="tchip">${LEVELS[as.level].name}</span><p class="tt">${esc(aa.title)}</p>
      <small>${esc(cls.name)}, 마감 ${esc(as.due)}</small>
      <button class="link" id="doAssigned">이 과제 하러 가기</button></div>`:''}
   ${taskPickHTML()}
@@ -1661,11 +1869,8 @@ function vPick(){
     <h2 class="pick-h">시관이 고른 오늘의 시제(試題) 다섯</h2>
     <p class="note" style="margin-top:0">분야마다 하나씩, 오늘 생각해 볼 만한 소식을 골랐습니다. 하나를 골라 답해 보세요.</p>
   </section>
-  ${(([l,...rest])=>`
-  <button class="lead${l.demo?' demo':''}" data-art="${l.id}">${cover(l,'lead')}
-    <div class="lead-tx"><h3 class="hl">${esc(l.title)}</h3><p class="dek">${esc(l.oneLine)}</p>${metaOf(l)}<span class="go">읽기 ${ICON.chev}</span></div></button>
-  <ul class="picks">${rest.map(x=>`<li><button class="pk${x.demo?' demo':''}" data-art="${x.id}">
-    <div class="pk-tx"><p class="hl">${esc(x.title)}</p><p class="one">${esc(x.oneLine)}</p>${metaOf(x)}${x.image&&x.imageCredit?`<p class="credit">${esc(x.imageCredit)}</p>`:''}<span class="go">읽기 ${ICON.chev}</span></div>${cover(x,'thumb')}</button></li>`).join('')}</ul>`)(ARTICLES)}`;
+  <ul class="arts5">${ARTICLES.map(x=>`<li><button class="ac${x.demo?' demo':''}${x.image?' has-img':''}" data-art="${x.id}">${x.image?cover(x,'card'):''}
+    <div class="ac-tx">${x.image?'':`<span class="ac-han" aria-hidden="true">${FIELD_HAN[x.field]||'問'}</span>`}<h3 class="hl">${esc(x.title)}</h3><p class="one">${esc(x.oneLine)}</p>${metaOf(x)}<span class="go">읽기 ${ICON.chev}</span></div></button></li>`).join('')}</ul>`;
 }
 
 /* 2-1. (v4, 11/19 밤 수정) 기사 읽기 + 난이도: 원문 전문이 먼저, 세 줄 요약은 골라서 보기. 그 아래에서 초시, 복시, 전시를 고름
@@ -1924,13 +2129,17 @@ function plazaHTML({preview}){
   <section class="block">
     <h2 class="h">${scope}: ${empty?`같은 질문(${lvName})의 답안`:`같은 질문(${lvName})에 답한 ${total}명의 생각`}</h2>
     ${empty?`<p class="note">아직 이 질문의 ${lvName} 답안이 없습니다.${S.level==='choshi'?' 초시 예시 답안은 준비 중입니다.':''}</p>`:`
-    <div class="map" role="img" aria-label="논거 유형별 답안 분포.${mine!=null?` 내 글은 ${esc(cl[mine].label)} 그룹에 속합니다.`:''}">
-      ${cl.map((c,i)=>{const n=nOf(i);if(!n)return '';const d=Math.round(48+Math.sqrt(n)*18);return `<div class="blob${c.tam?' tam':''}" style="left:${c.x*100}%;top:${c.y*100}%;width:${d}px;height:${d}px">${esc(c.label)}<br>${n}명</div>`}).join('')}
-      ${mine!=null?`<div class="medot" style="left:${cl[mine].x*100+7}%;top:${cl[mine].y*100+12}%"><i></i>내 글</div>`:''}
+    <div class="bang" role="group" aria-label="논거 유형별 답안 분포.${mine!=null?` 내 글은 ${esc(cl[mine].label)} 그룹에 속합니다.`:''} 기둥을 누르면 그 그룹의 답안으로 갑니다.">
+      <p class="bang-title" aria-hidden="true">榜</p>
+      <div class="bang-in">${cl.map((c,i)=>({c,i,n:nOf(i)})).filter(x=>x.n).sort((a,b)=>b.n-a.n).map(({c,i,n})=>{const me=i===mine;
+        return `<button class="col${c.tam?' tam':''}${me?' mine':''}" data-col="${i}" aria-label="${esc(c.label)}, ${n}명${c.tam?', 소수의견':''}${me?', 내 글이 속한 그룹':''}">
+          ${c.tam?'<span class="so" aria-hidden="true">少</span>':''}<span class="cl-name" aria-hidden="true">${esc(c.label)}</span>
+          <span class="dots" aria-hidden="true">${Array.from({length:n},(_,k)=>`<i${me&&k===0?' class="me"':''}></i>`).join('')}</span>
+          ${me?'<span class="melab" aria-hidden="true">내 글</span>':''}<span class="cnt" aria-hidden="true">${n}명</span></button>`}).join('')}</div>
     </div>
-    <p class="note">찬반이 아니라 어떤 논거를 들었는지로 묶었습니다. 점선 원은 사람은 적지만 논리 점수가 높은 소수의견입니다. 예시 배지가 붙은 글은 AI 페르소나가 쓴 시연용 예시 답안입니다.</p>`}
+    <p class="note">찬반이 아니라 어떤 논거를 들었는지로 묶었습니다. 기둥 하나가 논거 그룹 하나이고, 사람이 많은 그룹부터 오른쪽에 붙였습니다. 少 표시는 사람은 적지만 논리 점수가 높은 소수의견입니다. 예시 배지가 붙은 글은 AI 페르소나가 쓴 시연용 예시 답안입니다.</p>`}
   </section>
-  ${jang&&cnt(jang,'pn')>0?`<section class="jang">
+  ${jang&&cnt(jang,'pn')>0?`<div class="lattice sec" aria-hidden="true"></div><section class="jang">
     <div class="seal" aria-hidden="true">壯元<small>장원</small>${GARLAND}</div>
     <div><p class="k">오늘의 장원: 생각은 달라도 논리가 좋다는 표를 가장 많이 받은 글</p>
       <p class="tx">${esc(jang.revised)}</p><p class="k">${who(jang)}, ${esc(cl[jang.group]?.label||'')} 그룹</p></div>
@@ -1943,7 +2152,7 @@ function plazaHTML({preview}){
     <h2 class="h">그룹별 답안</h2>
     <p class="note" style="margin:0 0 8px">${preview?'답안을 제출하면 그룹을 펼쳐 글 전체를 읽고 투표할 수 있습니다.':'그룹을 누르면 그 그룹의 글 전체가 펼쳐집니다. 모든 글에 투표할 수 있고, 다시 누르면 취소됩니다.'}</p>
     <div class="cls">${cl.map((c,i)=>{const n=nOf(i);if(!n)return '';const rep=byG[i].find(e=>e.rep)||byG[i][0];
-      return `<details class="grp${preview?' locked':''}" ${!preview&&i===mine?'open':''}>
+      return `<details class="grp${preview?' locked':''}" id="grp${i}" ${!preview&&i===mine?'open':''}>
         <summary${preview?' data-locked="1"':''}><div class="hd"><b>${esc(c.label)}</b><span>${c.tam?'<span class="tam">소수의견 </span>':''}${n}명, 논리 점수 ${Math.round(c.logic*10)}점</span></div>
           ${rep?`<p class="rep">${esc(rep.revised)}</p><p class="by">${who(rep)}${preview?'':', 대표 답안'}</p>`:''}</summary>
         ${preview?'':`<ul class="posts">${byG[i].map(post).join('')}</ul>${noSeedFile&&byG[i].length<n?'<p class="note">이 그룹의 나머지 예시 답안은 준비되지 않았습니다.</p>':''}`}
@@ -1973,13 +2182,14 @@ function vProfile(){
   const list=mine.length?`<section class="block"><h3 class="h">이번에 쓴 답안</h3><ul class="cls">${mine.map(e=>{const a=ARTICLES.find(x=>x.id===e.articleId);return `<li><div class="hd"><b>${esc(a.title)}</b><span>${LEVELS[e.level].name}${e.scores?`, ${totalOf(e.scores,'before')} → ${totalOf(e.scores,'after')}점`:''}</span></div><blockquote>${esc(e.revised)}</blockquote></li>`}).join('')}</ul></section>`:'';
   if(!P) return `
   <section class="block"><h2 class="ptitle">나의 기록</h2>
-    <p class="note">아직 기록이 없습니다. 답안을 쓰고 채점을 받을 때마다 다섯 기준의 변화와 글 습관이 여기에 쌓입니다.</p></section>${list}`;
+    <p class="note">아직 기록이 없습니다. 답안을 쓰고 채점을 받을 때마다 다섯 기준의 변화와 글 습관이 여기에 쌓입니다.</p></section>${monthHTML()}${roadHTML()}${list}`;
   const mw=Math.max(...P.weak.map(f=>f.v)),mf=Math.max(...P.flow.map(f=>f.v));
   return `
   <section class="block">
     <h2 class="ptitle">나의 기록</h2>
     <p class="note">지금까지 쓴 답안 ${P.count}편을 바탕으로 했습니다. <span class="badge ex">예시</span>시연용 데모 계정의 기록입니다. 어떤 문체가 정답인지 알려주지 않고, 습관을 있는 그대로 보여줍니다.</p>
   </section>
+  ${monthHTML()}${roadHTML()}<div class="lattice sec" aria-hidden="true"></div>
   <section class="block"><h3 class="h">다섯 기준의 변화 (기준마다 10점)</h3>
     <div class="sparks">${Object.entries(P.axes).map(([k,v])=>`<div class="sp"><div class="hd"><b>${k}</b><span>${v[0]}점에서 ${v.at(-1)}점</span></div>${spark(v)}</div>`).join('')}</div></section>
   <section class="block"><h3 class="h">자주 반복된 약점</h3>
@@ -2115,6 +2325,10 @@ function bind(){
     }catch(x){S.auth.err=x.message;render()}};
   $$('[data-demo]').forEach(b=>b.onclick=async()=>{const d=b.dataset.demo;afterLogin(await DB.signIn({scope:d==='demo'?'p':'o',username:d,password:DEMO_PW}))});
 
+  /* (v4.3) 방의 기둥을 누르면 그 그룹 답안으로 (제출 전에는 펼치지 않고 대표 답안까지만) */
+  $$('[data-col]').forEach(b=>b.onclick=()=>{const g=document.getElementById('grp'+b.dataset.col);if(!g)return;
+    if(!g.classList.contains('locked'))g.open=true;
+    g.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'})});
   /* 기사, 난이도, 질문 */
   $$('[data-art]').forEach(b=>b.onclick=()=>{if(S.articleId!==b.dataset.art){S.articleId=b.dataset.art;resetWriting();S.levelChosen=false}S.picked=true;S.srcTab='body';go(STEP.QUESTION)});
   const da=$('#doAssigned');if(da)da.onclick=()=>{const as=myClass().assigned;if(S.articleId!==as.articleId||S.level!==as.level)resetWriting();S.articleId=as.articleId;S.level=as.level;S.picked=true;S.levelChosen=true;S.srcTab='body';go(STEP.QUESTION)};
