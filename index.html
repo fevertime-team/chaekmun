@@ -485,7 +485,7 @@ main.in .qmark,main.in .jang .seal,main.in .hero .stamp{animation:stamp .55s var
 .prog-hd span{font-size:.86rem;color:var(--ink2)}
 .prog-hd em{font-style:normal;font-weight:800;font-size:1.05rem;color:var(--ink);font-variant-numeric:tabular-nums}
 .prog-bar{height:8px;border-radius:999px;background:var(--paper-2);margin:10px 0 8px;overflow:hidden}
-.prog-bar span{display:block;height:100%;width:var(--w);background:var(--dc-green);border-radius:999px}
+.prog-bar span{display:block;height:100%;width:var(--w);background:var(--seal);border-radius:999px}
 .prog small{font-size:.8rem;color:var(--ink3)}
 .task.assigned .as-note{flex:1 1 100%;margin:8px 0 0;padding-top:8px;border-top:1px dashed var(--rule-2);font-size:.82rem;color:var(--ink2);line-height:1.55}
 .board-cta{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:var(--sheet);border:1px solid var(--rule-2);border-radius:var(--r-card);padding:16px 20px;box-shadow:var(--shadow)}
@@ -509,7 +509,7 @@ main.in .qmark,main.in .jang .seal,main.in .hero .stamp{animation:stamp .55s var
 .bd-talk p{margin:4px 0 0;line-height:1.7;font-size:1.02rem}
 .hb.wide{grid-template-columns:minmax(9em,15em) minmax(0,1fr) 4em}
 .ctr-kpi{grid-template-columns:repeat(4,minmax(0,1fr))}
-.axes td.d{color:var(--dc-green);font-weight:700;text-align:center;width:3.6em}
+.axes td.d{color:var(--seal);font-weight:700;text-align:center;width:3.6em}
 @media (max-width:600px){.bd-row{grid-template-columns:1fr 3em}.bd-row .bb{grid-column:1/-1;order:3}.hb.wide{grid-template-columns:minmax(9em,15em) minmax(0,1fr) 4em}
 .ctr-kpi{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
@@ -1494,7 +1494,7 @@ function taskWriteHTML(a){
   return `<div class="task today corner"><b>오늘의 과제</b>${axisChip(t)}<p class="tt">${esc(t.title)}</p>
     <p class="th">${esc(S.level==='choshi'?t.choshi:t.how)}</p>
     ${hint?`<p class="th"><span class="sub">이 기사에서는</span>${esc(hint)}</p>`:''}
-    <details class="tex"><summary>이 동작은 이런 모양입니다</summary><p class="exn">${esc(EX_TOPIC)}</p><p class="ext">${esc(t.ex)}</p></details></div>`;
+    <details class="tex"><summary>예시 문장 보기 (다른 주제)</summary><p class="exn">${esc(EX_TOPIC)}</p><p class="ext">${esc(t.ex)}</p></details></div>`;
 }
 function taskCheckHTML(){
   const t=S.todayTask,r=S.taskResult;if(!t||!r)return '';
@@ -2046,7 +2046,7 @@ function vCenter(){
     </tbody></table>
     <p class="note">반론을 받고 고친 글이 아니라, 학생이 AI 없이 혼자 쓴 <b>처음 글</b>끼리 비교합니다. 고친 글의 점수가 오르는 것은 당연하고, 실력이 늘었는지는 다음 글의 처음 글이 보여 줍니다. 채점 기준은 기관 단위 평가를 위해 만들어진 AAC&amp;U Critical Thinking VALUE 루브릭을 고쳐 쓴 것입니다.</p></section>
   <section class="block"><h3 class="h">쓰임별 참여</h3>
-    ${R.use.map(([k,v])=>`<div class="hb wide"><span>${k}</span><span class="bar" style="--w:${parseInt(v)/418*100}%;background:var(--dc-green)"></span><span class="num">${v}</span></div>`).join('')}</section>
+    ${R.use.map(([k,v])=>`<div class="hb wide"><span>${k}</span><span class="bar" style="--w:${parseInt(v)/418*100}%;background:var(--seal)"></span><span class="num">${v}</span></div>`).join('')}</section>
   <section class="block"><h3 class="h">학과별 참여 (상위 5개)</h3>
     ${R.dept.map(([k,v])=>`<div class="hb wide"><span>${k}</span><span class="bar" style="--w:${v/md*100}%;background:var(--ink)"></span><span class="num">${v}명</span></div>`).join('')}</section>
   <div class="actions"><button class="btn" id="dlList">비교과 이수 명단 내려받기</button>${isProf()?'<button class="btn ghost" id="centerBack">교수용 화면으로</button>':''}</div>`;
