@@ -243,7 +243,7 @@ const articles = A.map((y) => {
     return {
       label: g.name, stance: g.id, n: g.size, x: POS[i][0], y: POS[i][1], logic: LOGIC[i], ...(g.is_minority ? { tam: true } : {}),
       desc: g.description, share: g.share,
-      s: { who: `응시자 ${nOf.get(rep.id)}`, text: rep.text, agree: g.is_minority ? 3 : g.size * 2, pen: g.is_minority ? 9 : g.size },
+      s: { who: `응시자 ${nOf.get(rep.id)}`, text: rep.text, agree: g.is_minority ? 3 : g.size * 2, pen: g.is_minority ? 2 : g.size } // (11/20) 소수의견 대표는 어람작으로 따로: 장원(논리 표 최다)은 다수 그룹에서,
     };
   });
 
