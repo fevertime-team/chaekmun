@@ -54,3 +54,34 @@ alter table public.class_settings enable row level security;
 -- 새 Supabase 프로젝트는 SQL로 만든 테이블에 API 권한을 자동으로 주지 않음 → 서버 키(service_role)에만 부여
 grant usage on schema public to service_role;
 grant select, insert, update, delete on public.app_users, public.essays, public.votes, public.class_settings to service_role;
+
+-- AI 호출 사용량 기록 (서버 함수가 호출마다 한 줄씩 넣음, 화면: /usage.html, API: /api/usage)
+create table if not exists public.llm_usage (
+  id bigint generated always as identity primary key,
+  at timestamptz not null default now(),
+  model text not null,
+  route text,
+  env text,
+  in_tok integer not null default 0,
+  out_tok integer not null default 0,
+  cache_read_tok integer not null default 0,
+  cost_usd numeric(12,6) not null default 0
+);
+create index if not exists llm_usage_at on public.llm_usage (at);
+alter table public.llm_usage enable row level security;
+
+-- 모델별 합계 (오늘 = 한국 시간 0시부터)
+create or replace view public.llm_usage_by_model with (security_invoker = true) as
+select model,
+  count(*)::int as calls,
+  coalesce(sum(in_tok),0)::bigint as in_tok,
+  coalesce(sum(out_tok),0)::bigint as out_tok,
+  coalesce(sum(cost_usd),0)::float8 as usd,
+  count(*) filter (where at >= (date_trunc('day', now() at time zone 'Asia/Seoul') at time zone 'Asia/Seoul'))::int as today_calls,
+  coalesce(sum(cost_usd) filter (where at >= (date_trunc('day', now() at time zone 'Asia/Seoul') at time zone 'Asia/Seoul')),0)::float8 as today_usd,
+  max(at) as last_at
+from public.llm_usage group by model;
+
+grant select, insert on public.llm_usage to service_role;
+grant select on public.llm_usage_by_model to service_role;
+grant usage on all sequences in schema public to service_role;

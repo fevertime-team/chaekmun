@@ -8,7 +8,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 
 const PORT = Number(process.env.PORT || 3200);
-const ROUTES = ['analyze', 'ask', 'check', 'db', 'place', 'prewrite', 'score', 'status'];
+const ROUTES = ['analyze', 'ask', 'check', 'db', 'place', 'prewrite', 'score', 'status', 'usage'];
 const root = path.join(__dirname, '..');
 const envFile = path.join(root, '.env.local');
 const ENV_KEYS = ['ANTHROPIC_API_KEY', 'LLM_API_KEY', 'LLM_PROVIDER', 'LLM_MODEL', 'LLM_MODEL_FAST', 'LLM_BASE_URL', 'LLM_TIMEOUT_MS', 'LLM_JSON_MODE',
@@ -66,6 +66,10 @@ http.createServer(async (req, res) => {
     res.setHeader('content-type', 'text/html; charset=utf-8');
     res.setHeader('cache-control', 'no-store');
     return res.end(readFileSync(path.join(root, 'index.html')));
+  }
+  if (url.pathname === '/usage.html') {
+    res.setHeader('content-type', 'text/html; charset=utf-8');
+    return res.end(readFileSync(path.join(root, 'usage.html')));
   }
   res.statusCode = 404; res.end('not found');
 }).listen(PORT, () => {

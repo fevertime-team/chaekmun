@@ -60,6 +60,46 @@ async function getUser(uid: string): Promise<UserRow> {
   return rows[0];
 }
 
+/* ---------- AI 사용량 (llm_usage 테이블, llm_usage_by_model 뷰) ---------- */
+// 1M 토큰당 달러 (Claude 공식 요금, 2026-11). 모르는 모델은 Sonnet 요금으로 넉넉히 셈
+const PRICE: [RegExp, number, number, number][] = [
+  // [모델, 입력, 출력, 캐시 읽기]
+  [/haiku-5-5/, 0.1, 0.5, 0.01],
+  [/sonnet-5-5/, 2, 10, 0.1],
+  [/opus-5-5/, 4, 20, 0.2],
+];
+const priceOf = (model: string) => PRICE.find(([re]) => re.test(model)) ?? [/./, 2, 10, 0.2];
+const KRW = () => Number(env('USD_KRW') || 1450);
+
+export async function recordUsage(u: { model: string; route: string | null; inTok: number; outTok: number; cacheRead: number }) {
+  if (!hasStore()) return;
+  const [, pin, pout, pcache] = priceOf(u.model);
+  const cost = (u.inTok * pin + u.outTok * pout + u.cacheRead * pcache) / 1e6;
+  await rest('llm_usage', {
+    method: 'POST', prefer: 'return=minimal',
+    body: { model: u.model, route: u.route, env: process.env.VERCEL ? 'vercel' : 'local', in_tok: u.inTok, out_tok: u.outTok, cache_read_tok: u.cacheRead, cost_usd: Math.round(cost * 1e6) / 1e6 },
+  });
+}
+
+/** 사용량 요약: 원화로, 예산(BUDGET_KRW, 기본 12만 원)과 기록 시작 전 사용분(USAGE_BASELINE_KRW, 기본 800원)을 함께 */
+export async function usageSummary() {
+  const budget = Number(env('BUDGET_KRW') || 120000), baseline = Number(env('USAGE_BASELINE_KRW') || 800), rate = KRW();
+  if (!hasStore()) return { on: false, budgetKrw: budget };
+  const rows: any[] = (await rest('llm_usage_by_model?select=*')) || [];
+  const won = (usd: number) => Math.round(usd * rate);
+  const byModel = rows.map((r) => ({ model: r.model, calls: r.calls, inTok: Number(r.in_tok), outTok: Number(r.out_tok), krw: won(r.usd), todayCalls: r.today_calls, todayKrw: won(r.today_usd), lastAt: r.last_at }));
+  const sum = (k: 'calls' | 'krw' | 'todayCalls' | 'todayKrw') => byModel.reduce((s, m) => s + (m[k] || 0), 0);
+  const recordedKrw = sum('krw');
+  const usedKrw = recordedKrw + baseline;
+  return {
+    on: true, budgetKrw: budget, usdToKrw: rate, baselineKrw: baseline,
+    usedKrw, recordedKrw, todayKrw: sum('todayKrw'), calls: sum('calls'), todayCalls: sum('todayCalls'),
+    remainingKrw: Math.max(0, budget - usedKrw), usedPct: Math.round((usedKrw / budget) * 1000) / 10,
+    byModel, lastAt: byModel.map((m) => m.lastAt).sort().at(-1) || null,
+    note: '이 서비스(배포 사이트와 로컬 서버)가 대회 키로 부른 호출만 셉니다. 같은 키를 다른 곳에서 쓰면 그만큼은 빠져 있습니다.',
+  };
+}
+
 export async function db(b: any) {
   const op = String(b?.op || '');
   if (!hasStore()) return { on: false };

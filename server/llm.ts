@@ -18,6 +18,18 @@ export const MODEL_FAST = () => env('LLM_MODEL_FAST', 'claude-haiku-5-5');
 export type Usage = { calls: number; inTok: number; outTok: number };
 export const usage: Usage = { calls: 0, inTok: 0, outTok: 0 };
 
+/** 호출 한 번의 토큰을 Supabase llm_usage 에 기록 (설정이 없으면 건너뜀). 기록 실패가 AI 응답을 막지 않게 1.5초만 기다림 */
+async function logUsage(model: string, u: any) {
+  try {
+    const { recordUsage } = await import('./store');
+    const { currentRoute } = await import('./ctx');
+    await Promise.race([
+      recordUsage({ model, route: currentRoute(), inTok: u?.input_tokens || 0, outTok: u?.output_tokens || 0, cacheRead: u?.cache_read_input_tokens || 0 }),
+      new Promise((r) => setTimeout(r, 1500)),
+    ]);
+  } catch (e) { console.warn('[usage]', String(e).slice(0, 120)); }
+}
+
 async function rawCall(o: { system: string; user: string; fast?: boolean; temperature: number; maxTokens: number }): Promise<string> {
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), Number(env('LLM_TIMEOUT_MS', '40000')));
@@ -44,6 +56,7 @@ async function rawCall(o: { system: string; user: string; fast?: boolean; temper
       const j: any = await r.json().catch(() => ({}));
       if (!r.ok) throw new Error(`LLM ${r.status}: ${JSON.stringify(j).slice(0, 300)}`);
       usage.calls++; usage.inTok += j.usage?.input_tokens || 0; usage.outTok += j.usage?.output_tokens || 0;
+      await logUsage(model, j.usage);
       return (j.content || []).map((b: any) => (b.type === 'text' ? b.text : '')).join('');
     }
     const base = env('LLM_BASE_URL', 'https://api.openai.com/v1').replace(/\/$/, '');
