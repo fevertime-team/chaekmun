@@ -4,7 +4,7 @@ import { callJSON, hasLLM } from './llm';
 import { guarded, llmVerify, rewriteCheck, ruleCheck, type GuardStep, type Violation } from './guardrail';
 import {
   ASK_SYSTEM, askUser, BANDS, BYPASS_SYSTEM, PLACE_SYSTEM, placeUser, PREWRITE_SYSTEM, prewriteUser,
-  RUBRIC_LEVELS, scoreSystem, scoreUser, SIGWAN_SYSTEM, sigwanUser,
+  RUBRIC_LEVELS, scoreSystem, scoreUser, SIGWAN_SYSTEM, sigwanUser, type TaskIn,
 } from './prompts';
 import { evidenceLines, getArticle, LEVELS, PERSONAS, RUBRIC, type Level } from './content';
 import { includesLoose, ngramSim, quoteRefs, sentences, textKey } from './text';
@@ -23,7 +23,9 @@ function fromCache(key: string) { const c = CACHE[key]; return c ? JSON.parse(JS
    ====================================================================== */
 const REF_BASE = 0;
 const WEAK = ['근거 부족', '숨은 전제', '논리 비약', '반례를 다루지 않음', '성급한 일반화', '추측으로 끝난 근거'] as const;
+const FLAGS = ['too_short', 'off_topic', 'request_inside'] as const;
 const SigwanSchema = z.object({
+  flag: z.enum(FLAGS).nullable().catch(null),
   stance: z.string().nullable().catch(null),
   structure: z.object({
     claim: z.coerce.number().int(),
@@ -60,6 +62,7 @@ export async function analyze(args: { articleId: string; level: string; text: st
     // 지금 지시문은 0부터 번호를 매김. 유민 지시문(1부터)으로 바꾸면 REF_BASE 를 1로
     const q = (t: string) => quoteRefs(t, sents, REF_BASE);
     return {
+      flag: r.flag ?? null,
       stance,
       structure: { claim: sents[claimIdx], reasons, premise: q(r.structure.premise), claimIndex: claimIdx + 1, premiseFrom: reasons.length ? sents.indexOf(reasons[0]) + 1 : null },
       weaknesses: r.weaknesses.slice(0, lv.weak).map((w) => ({ type: (WEAK as readonly string[]).includes(w.type) ? w.type : '논리 비약', detail: q(w.detail), question: q(w.question) })),
@@ -123,14 +126,23 @@ function safeFeedback<T extends { structure: any; weaknesses: any[]; rebuttal: a
 const CRIT = Object.keys(RUBRIC_LEVELS);
 const OneCrit = z.object({ level: z.coerce.number().int().min(1).max(4), score: z.coerce.number(), why: z.array(z.string()).min(1).max(3), quote: z.string().default('') });
 const ScoreSchema = z.object(Object.fromEntries(CRIT.map((k) => [k, OneCrit])) as Record<string, typeof OneCrit>);
+// (v4.2) 오늘의 과제 판정: 형식이 틀리면 undefined → 화면이 규칙(checkTask)으로 대신 판정
+const TaskSchema = z.object({ done: z.boolean(), quote: z.string().nullable().catch(null) }).optional().catch(undefined);
+type TaskOut = { done: boolean; quote: string | null } | undefined;
 type Graded = Record<string, { score: number; why: string[] }>;
 
-async function gradeOne(question: string, text: string, defs: Record<string, string>): Promise<{ g: Graded; log: GuardStep[]; fallback: boolean }> {
+async function gradeOne(question: string, text: string, defs: Record<string, string>, task?: TaskIn): Promise<{ g: Graded; task: TaskOut; log: GuardStep[]; fallback: boolean }> {
+  let taskOut: TaskOut;
   const res = await guarded<Graded>({
     label: '다섯 기준으로 채점합니다',
     maxAttempts: 2,
     generate: async (retryNote) => {
-      const r = await callJSON({ system: scoreSystem(defs), user: scoreUser({ question, text }) + (retryNote ? `\n<이전 출력 거절 사유>\n${retryNote}\n</이전 출력 거절 사유>` : ''), schema: ScoreSchema, temperature: 0, maxTokens: 1400 });
+      const r = await callJSON({ system: scoreSystem(defs, task), user: scoreUser({ question, text }) + (retryNote ? `\n<이전 출력 거절 사유>\n${retryNote}\n</이전 출력 거절 사유>` : ''), schema: task ? ScoreSchema.extend({ task: TaskSchema }) : ScoreSchema, temperature: 0, maxTokens: 1600 });
+      if (task) {
+        const t = (r as any).task as TaskOut;
+        // 인용이 실제 글에 없으면 해냄으로 보지 않음 (지어낸 인용 막기)
+        taskOut = t ? (t.done && t.quote && includesLoose(text, t.quote) ? { done: true, quote: t.quote.trim() } : { done: false, quote: null }) : undefined;
+      }
       const g: Graded = {};
       for (const k of CRIT) {
         const c = r[k];
@@ -153,21 +165,23 @@ async function gradeOne(question: string, text: string, defs: Record<string, str
       return Object.fromEntries(CRIT.map((k) => [k, { score: last[k].score, why: ['이 기준의 근거 설명은 검사를 통과하지 못해 숨겼습니다.'] }]));
     },
   });
-  return { g: res.output, log: res.log, fallback: res.fallback };
+  return { g: res.output, task: taskOut, log: res.log, fallback: res.fallback };
 }
 
-export async function score(args: { articleId: string; level: string; draft: string; revised: string; rubric?: Record<string, { def?: string; weight?: number }> }) {
+export async function score(args: { articleId: string; level: string; draft: string; revised: string; rubric?: Record<string, { def?: string; weight?: number }>; task?: TaskIn }) {
   const a = getArticle(args.articleId);
   const level = getLevel2(args.level);
   const draft = String(args.draft || '').slice(0, 4000), revised = String(args.revised || '').slice(0, 4000);
   const defs = Object.fromEntries(CRIT.map((k) => [k, args.rubric?.[k]?.def || RUBRIC[k]?.def || '']));
   const weights = Object.fromEntries(CRIT.map((k) => [k, Math.max(0, Number(args.rubric?.[k]?.weight ?? 1)) || 0]));
-  const key = cacheKey('score', a.id, level, draft + '\u0000' + revised, args.rubric ? textKey(JSON.stringify(args.rubric)) : '');
+  const task: TaskIn = args.task && typeof args.task.id === 'string' && typeof args.task.how === 'string'
+    ? { id: args.task.id.slice(0, 20), title: String(args.task.title || '').slice(0, 80), how: args.task.how.slice(0, 300) } : null;
+  const key = cacheKey('score', a.id, level, draft + '\u0000' + revised, (args.rubric ? textKey(JSON.stringify(args.rubric)) : '') + (task ? 'task:' + task.id : ''));
   const t0 = Date.now();
   if (!hasLLM()) { const c = fromCache(key); if (c) { c._meta = { ...c._meta, fallback: 'cache' }; return c; } throw new Error('LLM 키가 없고 저장된 채점도 없습니다'); }
   try {
     const same = draft.trim() === revised.trim();
-    const [b, af] = await Promise.all([gradeOne(a.q[level], draft, defs), same ? null : gradeOne(a.q[level], revised, defs)]);
+    const [b, af] = await Promise.all([gradeOne(a.q[level], draft, defs, task), same ? null : gradeOne(a.q[level], revised, defs, task)]);
     const after = af || b;
     const total = (g: Graded) => {
       const wsum = CRIT.reduce((s, k) => s + weights[k], 0) || 1;
@@ -178,6 +192,7 @@ export async function score(args: { articleId: string; level: string; draft: str
       after: Object.fromEntries(CRIT.map((k) => [k, after.g[k].score])),
       why: Object.fromEntries(CRIT.map((k) => [k, { before: b.g[k].why, after: after.g[k].why }])),
       total: { before: total(b.g), after: total(after.g), max: CRIT.length * 10 },
+      ...(task && b.task && after.task ? { task: { draft: b.task, revised: after.task } } : {}),
       _meta: { log: [...b.log, ...(af?.log || [])], attempts: 1, fallback: b.fallback || af?.fallback ? 'safe' : false, latencyMs: Date.now() - t0 } as Meta,
     };
   } catch (e) {

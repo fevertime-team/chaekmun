@@ -510,6 +510,28 @@ body.has-tabs .toast{bottom:calc(var(--tabbar-h) + 14px + env(safe-area-inset-bo
   main.in,main.in .qmark,main.in .jang .seal,main.in .hero .stamp,.pipe i.run{animation:none}
   .track::after{transition:none}
 }
+
+/* ---------- (v4.2) 오늘의 과제: 시권 위에 붙는 작은 쪽지 ---------- */
+.tchip{display:inline-block;font-size:.76rem;font-weight:700;color:var(--ink2);background:var(--paper-2);border-radius:999px;padding:2px 9px;vertical-align:1px;white-space:nowrap}
+.note .tchip{margin-right:6px}
+.task .tt{font-weight:800;font-size:1.04rem;line-height:1.45;letter-spacing:-.01em;color:var(--ink);margin:8px 0 2px;text-wrap:pretty}
+.task .th{font-size:.93rem;line-height:1.7;color:var(--ink2);margin-top:6px}
+.task .sub{font-weight:800;color:var(--seal);margin-right:6px}
+.task.tnone{background:transparent;box-shadow:none;border-style:dashed;border-color:var(--rule-2)}.task.tnone b{color:var(--ink2)}
+.tex{margin-top:10px;font-size:.9rem;border-top:1px solid var(--rule)}
+.tex summary{display:flex;align-items:center;gap:8px;min-height:44px;cursor:pointer;list-style:none;font-weight:700;color:var(--seal)}
+.tex summary::-webkit-details-marker{display:none}
+.tex summary::after{content:"";width:7px;height:7px;border:solid currentColor;border-width:0 2px 2px 0;transform:translateY(-2px) rotate(45deg);transition:transform .25s var(--ease)}
+.tex[open] summary::after{transform:translateY(2px) rotate(-135deg)}
+.tex .exn{font-size:.8rem;color:var(--ink3);margin-top:2px}
+.tex .ext{margin-top:4px;padding-left:12px;border-left:2px solid var(--rule-2);line-height:1.75;color:var(--ink)}
+.tchk{list-style:none;margin:0;padding:0;border-top:1px solid var(--rule)}
+.tchk li{padding:12px 4px;border-bottom:1px solid var(--rule)}
+.tchk .lab2{display:inline-block;width:5em;font-weight:700;color:var(--ink2)}
+.tchk .up{color:var(--seal)}
+.tchk .not{color:var(--ink3)}
+.tchk blockquote{margin:8px 0 0 5em;padding-left:12px;border-left:2px solid var(--seal);line-height:1.75;color:var(--ink)}
+@media (max-width:600px){.tchk blockquote{margin-left:0}}
 </style>
 </head>
 <body>
@@ -998,6 +1020,187 @@ function detectStance(a,text){
 }
 function shareKey(t,r){const keys=r.replace(/[?.,]/g,'').split(/\s+/).filter(w=>w.length>=3);return keys.filter(k=>t.includes(k.slice(0,3))).length>=2}
 const lowest = scores => Object.entries(scores).reduce((m,x)=>x[1]<m[1]?x:m)[0];
+
+/* ---------- (v4.2) 오늘의 과제: lib/tasks.ts 를 그대로 옮김 ---------- */
+/* =========================================================
+   (v4.2) 오늘의 과제: 과제 은행 (AI 호출 없음, 코드로 고정)
+   원리: 과제는 "기준 이름"이 아니라 오늘 글에서 해 볼 "동작 하나"다.
+   1) 어느 기준이 약한가: 최근 3편 평균이 가장 낮은 기준 (같으면 오르지 않은 쪽, 그다음 AXIS_ORDER 순)
+   2) 어느 단계 과제인가: 그 기준의 평균 점수로 기초(1~4점) / 중급(5~7점) / 심화(8~10점)
+      → 8점 받는 사람에게 "사실 하나 넣기" 같은 기초 과제를 주지 않음 (이전 버전이 엉뚱했던 가장 큰 이유)
+   3) 오늘 기사에 붙이기: 쓰기 화면에서 기사별 힌트(ARTICLES[].taskHint)를 함께 보여 줌. 힌트는 답이 아니라 "어디를 보라"만
+   4) 했는지 확인: 채점할 때 처음 글과 고친 글에서 이 동작이 보이는지 확인하고, 해당 문장을 그대로 인용
+   5) 다음 과제: 해냈고 여전히 그 기준이 가장 약하면 한 단계 올림, 아니면 새로 가장 약한 기준
+   - ex는 오늘 기사와 상관없는 같은 주제(출석 점수)로만 보여 줌: 형태는 알려 주되 오늘 답안은 대신 쓰지 않기 위해
+   - check는 목업 규칙. 서버 모드에서는 채점 API가 task 결과를 함께 돌려줌 ([API 4] 주석 참고)
+   ========================================================= */
+const AXIS_ORDER=['맥락과 전제','근거 활용','자기 입장','결론과 함의','쟁점 설명'];
+const TIER_NAME={1:'기초',2:'중급',3:'심화'};
+const tierOf=v=>v<=4?1:v<=7?2:3;
+/* 받침에 따라 이/가 */
+const iga=w=>{const c=w.charCodeAt(w.length-1)-0xAC00;return w+(c>=0&&c<=11171&&c%28?'이':'가')};
+const EX_TOPIC='다른 주제 예시 (대학 수업의 출석을 성적에 넣어야 하는가)';
+const VALUES=['공정','효율','안전','자유','권리','책임','형평','비용','생계','존엄','건강','환경','신뢰','편의','경쟁력','사생활','기술 발전','성장','부담','물가'];
+const TASKS={
+ '쟁점 설명':{
+  1:{id:'iss1',title:'첫 문장에서 질문에 바로 답하기',
+     how:'배경 설명으로 시작하지 말고, 첫 문장에서 질문이 고르라고 한 것 중 하나를 골라 답하세요. 이유는 둘째 문장부터 씁니다.',
+     choshi:'세 문장 중 첫 문장을 내 답으로 쓰세요. 이유는 둘째, 셋째 문장에.',
+     ex:'출석은 성적에 넣지 말아야 한다. 성적은 출석이 아니라 배운 것을 재야 하기 때문이다.'},
+  2:{id:'iss2',title:'부딪히는 두 가치에 이름 붙이기',
+     how:'이 질문이 무엇과 무엇 사이의 선택인지 한 문장으로 밝히고, 나는 어느 쪽에 더 무게를 두는지 적으세요.',
+     choshi:'첫 문장이나 둘째 문장에서, 내가 무엇을 무엇보다 앞에 두는지 밝히세요.',
+     ex:'이 문제는 성실한 습관을 기르는 것과 배울 방식을 스스로 고를 자유 사이의 선택이다. 나는 자유에 더 무게를 둔다.'},
+  3:{id:'iss3',title:'질문의 핵심 단어를 내 뜻으로 정하고 시작하기',
+     how:'질문 속 단어 하나(예: 공정, 책임, 먼저)를 내가 어떤 뜻으로 쓰는지 먼저 정하세요. 뜻을 다르게 잡으면 답이 어떻게 달라지는지도 짚으면 더 좋습니다.',
+     choshi:'첫 문장에서 질문 속 단어 하나를 내가 어떤 뜻으로 쓰는지 정하세요.',
+     ex:'여기서 공정한 평가란 모두에게 같은 규칙을 쓰는 평가가 아니라, 배운 만큼 점수가 나오는 평가를 말한다.'}},
+ '근거 활용':{
+  1:{id:'evi1',title:'기사 속 사실 하나를 근거로 쓰고, 이유를 잇기',
+     how:'기사에서 사실 하나를 골라 넣고, 바로 다음 문장에 그 사실이 왜 내 주장을 받치는지 한 문장으로 이으세요.',
+     choshi:'둘째 문장에 기사 속 사실 하나를 넣으세요.',
+     ex:'학교 조사에 따르면 출석 점수를 없앤 수업의 시험 평균은 그대로였다. 이는 출석 점수가 배움을 늘리지 않는다는 뜻이다.'},
+  2:{id:'evi2',title:'근거를 늘리지 말고, 있는 근거를 해석하기',
+     how:'근거 문장 바로 뒤에 "그래서 이 근거가 무엇을 보여 주는가"를 한 문장 붙이세요. 근거를 하나 더 찾는 것보다 하나를 제대로 읽는 것이 오늘의 목표입니다.',
+     choshi:'근거를 쓴 문장 다음 문장에서, 그 근거가 무엇을 보여 주는지 말하세요.',
+     ex:'출석 점수를 없앤 수업에서도 시험 평균은 같았다. 이는 학생이 교실에 앉아 있는 시간과 배운 양이 같지 않다는 것을 보여 준다.'},
+  3:{id:'evi3',title:'내 근거가 증명하지 못하는 것 밝히기',
+     how:'내가 쓴 근거가 어디까지 증명하고 어디부터는 증명하지 못하는지 한 문장으로 적으세요. (예: 한 사례일 뿐이다, 효과가 아직 확인되지 않았다)',
+     choshi:'셋째 문장에서 내 근거의 한계를 한 가지 적으세요.',
+     ex:'다만 이 조사는 한 학교의 교양 수업만 본 것이라, 실습 수업에서도 같은지는 알 수 없다.'}},
+ '맥락과 전제':{
+  1:{id:'ctx1',title:'내 주장이 틀리는 경우 하나 적기',
+     how:'반대쪽이 들 만한 상황 하나를 직접 적으세요. 그 상황을 숨기지 않고 글 안에 꺼내 놓는 것이 오늘의 목표입니다.',
+     choshi:'셋째 문장에서 내 생각이 맞지 않는 경우 하나를 적으세요.',
+     ex:'물론 출석 점수가 없으면 수업에 아예 나오지 않는 학생이 늘 수 있다.'},
+  2:{id:'ctx2',title:'반례를 적고, 그 반례에 답하기',
+     how:'내 주장이 틀리는 상황 하나를 적은 뒤, 바로 다음 문장에서 그 상황에서도 주장을 유지하는지, 아니면 어떻게 좁히는지 답하세요. 반례를 적고 끝내면 절반입니다.',
+     choshi:'둘째 문장에 반례를, 셋째 문장에 그 반례에 대한 내 답을 쓰세요.',
+     ex:'물론 출석 점수가 없으면 결석이 늘 수 있다. 그래서 출석은 성적에서 빼되, 세 번 넘게 빠지면 면담하는 규칙을 두자는 것이다.'},
+  3:{id:'ctx3',title:'내 주장이 기대는 전제를 스스로 꺼내고, 범위 정하기',
+     how:'내 주장이 참이려면 무엇이 먼저 참이어야 하는지(전제)를 한 문장으로 직접 쓰고, 그 전제가 통하는 범위에서만 주장하도록 조건을 다세요.',
+     choshi:'셋째 문장에서 내 생각이 기대는 전제를 적고, 그 전제가 맞을 때만이라고 범위를 정하세요.',
+     ex:'이 주장은 학생이 스스로 공부 시간을 관리할 수 있다는 전제 위에 있다. 그래서 신입생 수업처럼 그 전제가 약한 경우에는 출석 점수를 남겨 둘 수 있다.'}},
+ '자기 입장':{
+  1:{id:'pos1',title:'입장 문장을 추측 없이 끝내기',
+     how:'입장을 밝히는 문장은 "~것 같다", "~아닐까"로 끝내지 마세요. 확신이 부족하다면, 왜 확신이 부족한지를 따로 한 문장으로 쓰세요.',
+     choshi:'첫 문장을 추측 표현 없이 끝내세요.',
+     ex:'출석은 성적에 넣지 말아야 한다. (X: 넣지 않는 게 맞는 것 같다.)'},
+  2:{id:'pos2',title:'반대쪽의 가장 강한 말을 적고, 그래도 고르는 기준 밝히기',
+     how:'반대 입장에서 나올 가장 강한 말을 한 문장으로 공정하게 적고, 그럼에도 내가 이쪽을 고르는 기준이 무엇인지 밝히세요.',
+     choshi:'둘째 문장에 반대쪽의 말을, 셋째 문장에 그래도 내가 고르는 기준을 쓰세요.',
+     ex:'출석이 성실함을 가르친다는 말은 맞다. 그래도 나는 성적이 성실함보다 배운 것을 재야 한다는 기준을 앞에 둔다.'},
+  3:{id:'pos3',title:'어디까지 양보하고 어디서 버티는지 나누기',
+     how:'반대쪽 주장 중 받아들이는 부분과 받아들이지 않는 부분을 나눠 쓰세요. 다 받아들이거나 다 거절하지 않는 것이 오늘의 목표입니다.',
+     choshi:'셋째 문장에서 반대쪽 말 중 받아들이는 것 하나와 받아들이지 않는 것 하나를 나누세요.',
+     ex:'출석이 습관을 만든다는 점은 받아들인다. 하지만 그 습관을 성적으로 강제해야 한다는 데는 동의하지 않는다.'}},
+ '결론과 함의':{
+  1:{id:'con1',title:'마지막 문장을 앞의 근거에서 이어 쓰기',
+     how:'마지막 문장은 앞에서 쓴 근거에서 나와야 합니다. 결론에서 새로운 주장을 꺼내지 말고, 앞 문장과 이어지게 쓰세요.',
+     choshi:'셋째 문장을 앞의 이유에서 나온 결론으로 쓰세요.',
+     ex:'따라서 출석은 성적이 아니라 학습 지원의 신호로 써야 한다.'},
+  2:{id:'con2',title:'내 결론이 낳을 결과 한 가지 적기',
+     how:'내 결론대로 하면 실제로 무엇이 달라지는지, 누구에게 어떤 결과가 생기는지 한 문장으로 적으세요.',
+     choshi:'셋째 문장에서 내 선택을 따르면 무엇이 달라지는지 적으세요.',
+     ex:'그러면 학생은 출석 점수를 채우려고 앉아 있는 대신, 필요한 수업에 집중해 나오게 된다.'},
+  3:{id:'con3',title:'내 결론의 대가까지 적고, 감수할 이유 밝히기',
+     how:'내 결론을 따를 때 누가 무엇을 잃는지도 적고, 그 대가를 감수할 만한 이유를 밝히세요. 좋은 결과만 적은 결론은 반쪽입니다.',
+     choshi:'셋째 문장에서 내 선택의 대가 하나와, 그래도 고르는 이유를 쓰세요.',
+     ex:'이렇게 하면 교수는 출석으로 학생을 관리하는 손쉬운 수단을 잃는다. 그래도 점수가 배움을 정확히 보여 주는 쪽이 더 중요하다.'}}
+};
+const taskById=id=>{for(const ax in TASKS)for(const t in TASKS[ax])if(TASKS[ax][t].id===id)return{axis:ax,tier:+t,...TASKS[ax][t]};return null};
+const makeTask=(axis,tier,why)=>{const t=TASKS[axis][tier];return{axis,tier,why,...t}};
+
+/* 과제 수행 확인 (목업 규칙). 출력: {done, quote}  quote는 사용자 글의 문장 그대로 */
+const TASK_CHECK={
+  iss1:(s,c)=>{const f=s[0]||'';return has(f,c.kws)||shareKey(f,c.q)?f:null},
+  iss2:s=>s.slice(0,3).find(x=>VALUES.filter(v=>x.includes(v)).length>=2||/사이의 선택|보다 .*앞에|에 더 무게/.test(x)),
+  iss3:s=>s.slice(0,2).find(x=>/(이?란 |라는 것은|라는 말은|뜻한다|의미한다|말한다|가리킨다)/.test(x)),
+  evi1:s=>{const i=s.findIndex(x=>has(x,['기사','따르면'])||/\d/.test(x));return i>=0&&s.slice(i,i+2).some(x=>/(때문|이는|이것은|보여|뜻|의미|그래서|그러니)/.test(x))?s[i]:null},
+  evi2:s=>{const i=s.findIndex((x,k)=>(has(x,EVID)||/\d/.test(x))&&s[k+1]&&/(이는|이것은|즉 |보여 준다|보여준다|보여 주|뜻한다|의미한다|말해 준다|라는 뜻)/.test(s[k+1]));return i>=0?s[i+1]:null},
+  evi3:s=>s.find(x=>has(x,['한계','일 뿐','만으로는','확인되지','아직 ','단정하기','증명하지','알 수 없'])),
+  ctx1:s=>s.find(x=>has(x,CONCEDE)),
+  ctx2:s=>{const i=s.findIndex(x=>has(x,CONCEDE));return i>=0&&s.slice(i+1).some(x=>/(그래서|그럼에도|그래도|대신|따라서|그러므로|때만|경우|다만|한해)/.test(x))?s[i]:null},
+  ctx3:s=>{const p=s.find(x=>/(전제|가정|라는 생각|기대고|기댄다|라고 믿|당연하게)/.test(x));return p&&s.some(x=>has(x,COND))?p:null},
+  pos1:s=>s.slice(0,2).length&&!s.slice(0,2).some(x=>has(x,HEDGE))?s[0]:null,
+  pos2:s=>{const i=s.findIndex(x=>has(x,CONCEDE)||/(는 말은 맞|라는 지적은|일리가)/.test(x));return i>=0&&s.slice(i).some(x=>/(그럼에도|그래도|기준|더 중요|앞에 둔|무게)/.test(x))?s[i]:null},
+  pos3:s=>s.find(x=>/(받아들|인정한다|동의한다|맞다|일리)/.test(x)&&s.some(y=>/(하지만|그러나|다만|그렇다고)/.test(y))),
+  con1:s=>{const l=s.at(-1)||'';return has(l,CONNECT)?l:null},
+  con2:s=>s.find(x=>has(x,OUTCOME)||/(달라진다|생긴다|줄어든다|늘어난다|막을 수|지킬 수|빨라진다|남는다)/.test(x)),
+  con3:s=>{const c=s.find(x=>/(대가|잃는|잃게|손해|감수|포기|희생)/.test(x));return c&&has(s.join(' '),[...CONNECT,'그래도'])?c:null}
+};
+function checkTask(task,text,article,level){
+  if(!task||!text)return{done:false,quote:null};
+  const s=sentences(text), kws=article.stances.flatMap(x=>x.kw);
+  const q=TASK_CHECK[task.id]?.(s,{kws,q:article.q[level]})||null;
+  return{done:!!q,quote:q};
+}
+
+
+const TASK_HINT={
+ work45:{
+  '쟁점 설명':'시간과 돈, 또는 노동자의 건강과 회사의 경쟁력 중 이 질문에서 무엇이 부딪히는지 먼저 정해 보세요.',
+  '근거 활용':'세 줄 요약 2번째 줄은 노동계와 경영계의 입장(주장)이고, 1번째 줄은 정부가 실제로 정한 방식(사실)입니다. 사실과 주장을 구분해 쓰세요.',
+  '맥락과 전제':'회사 규모나 업종이 달라져도 내 주장이 그대로인지 대입해 보세요. 사무실, 작은 가게, 교대 근무 일터가 서로 다릅니다.',
+  '자기 입장':'노동계와 경영계 중 내 반대편이 가장 힘주어 할 말이 무엇인지 기사에서 찾아보세요.',
+  '결론과 함의':'내 결론대로 하면 1년 뒤 노동자와 회사 중 누구의 하루가 어떻게 달라지는지 그려 보세요.'},
+ fueltax:{
+  '쟁점 설명':'물가 안정, 세금의 공정성, 에너지 절약 중 이 질문에서 무엇과 무엇이 부딪히는지 먼저 정해 보세요.',
+  '근거 활용':'요약 1번째 줄의 인하 폭과 기간, 2번째 줄의 "4년 넘게"는 사실입니다. 3번째 줄은 평가입니다. 둘을 구분해 쓰세요.',
+  '맥락과 전제':'차가 있는 사람과 없는 사람, 도시와 대중교통이 닿지 않는 지역에서도 내 주장이 같은지 대입해 보세요.',
+  '자기 입장':'요약 3번째 줄에는 서로 다른 두 평가가 함께 나옵니다. 내 반대편의 평가는 어느 쪽입니까?',
+  '결론과 함의':'인하를 계속하든 멈추든, 그때 줄거나 늘어나는 세금이 어디로 가는지까지 따라가 보세요.'},
+ aiexam:{
+  '쟁점 설명':'시험의 공정성과 의심받지 않을 수험생의 권리 중 이 질문에서 무엇이 부딪히는지 먼저 정해 보세요.',
+  '근거 활용':'요약 1번째 줄의 실제 사건과 2번째 줄의 정부 대책은 사실이고, 3번째 줄은 지적(평가)입니다. 사실과 평가를 구분해 쓰세요.',
+  '맥락과 전제':'수능처럼 수십만 명이 같은 날 보는 시험과 작은 자격시험에서 내 주장이 똑같이 통하는지 대입해 보세요.',
+  '자기 입장':'안경 쓴 수험생, 감독 교사, 정직하게 준비한 수험생 중 내 주장에 가장 불만이 클 사람의 말을 먼저 떠올려 보세요.',
+  '결론과 함의':'내 결론을 내년 시험에 적용하면, 시험장에 들어가는 순간부터 무엇이 달라지는지 그려 보세요.'},
+ robotaxi:{
+  '쟁점 설명':'빠른 피해자 보상과 기술 발전 중 이 질문에서 무엇이 부딪히는지 먼저 정해 보세요.',
+  '근거 활용':'요약 2번째 줄의 "책임을 나누는 기준을 법으로 정하는 방향"은 아직 논의 중인 내용입니다. 정해진 사실처럼 쓰지 않았는지 보세요.',
+  '맥락과 전제':'사고 원인이 센서인지 도로인지 분명하지 않은 경우에도 내 주장이 그대로인지 대입해 보세요.',
+  '자기 입장':'요약 3번째 줄의 두 주장 중 내 반대편은 어느 쪽인지 정하고, 그 말을 먼저 떠올려 보세요.',
+  '결론과 함의':'내 결론대로라면 사고 다음 날 피해자는 누구에게 먼저 연락하게 되는지 그려 보세요.'},
+ aidc:{
+  '쟁점 설명':'AI 산업 육성과 탄소 감축, 또는 편리함과 환경 중 이 질문에서 무엇이 부딪히는지 먼저 정해 보세요.',
+  '근거 활용':'요약 2번째 줄의 "10배 이상"은 숫자 근거입니다. 숫자를 쓴다면 그 숫자가 내 주장의 어느 부분을 받치는지 이어 주세요.',
+  '맥락과 전제':'늘어나는 전기가 재생에너지에서 오는 경우와 화석연료에서 오는 경우, 내 주장이 같은지 대입해 보세요.',
+  '자기 입장':'기업, 국가, 이용자 중 내가 책임을 덜 지운 쪽이 나에게 무엇이라고 할지 떠올려 보세요.',
+  '결론과 함의':'내 결론대로 하면 데이터센터 옆 주민과 AI를 쓰는 학생에게 각각 무엇이 달라지는지 그려 보세요.'}
+};
+
+
+async function getTodayTask({profile,classFocus}){
+    if(profile){
+      const st=Object.entries(profile.axes).map(([k,v])=>{const r=v.slice(-3);return{k,n:r.length,avg:r.reduce((a,b)=>a+b,0)/r.length,slope:r.at(-1)-r[0]}});
+      st.sort((a,b)=>a.avg-b.avg||a.slope-b.slope||AXIS_ORDER.indexOf(a.k)-AXIS_ORDER.indexOf(b.k));
+      const w=st[0], avg=Math.round(w.avg*10)/10;
+      const why=`최근 ${w.n}편 평균 ${avg}점으로 다섯 기준 중 가장 낮${w.slope<=0?`고, ${w.n}편째 오르지 않았`:`았`}습니다.`;
+      return makeTask(w.k,tierOf(w.avg),why);
+    }
+    if(classFocus){
+      return makeTask(classFocus.axis,tierOf(classFocus.score),`${classFocus.by==='prof'?'교수님이 이번 주 우리 반 초점으로 정한 기준':'우리 반 전체에서 가장 약한 기준'}입니다(반 평균 ${classFocus.score.toFixed(1)}점). 내 글이 쌓이면 내 기록으로 바뀝니다.`);
+    }
+    return null;
+  }
+
+async function getNextTask({scores,today,result}){
+    const e=Object.entries(scores.after).sort((a,b)=>a[1]-b[1]||AXIS_ORDER.indexOf(a[0])-AXIS_ORDER.indexOf(b[0]));
+    const [axis,v]=e[0];
+    let tier=tierOf(v), why=`고친 글에서 ${iga(axis)} ${v}점으로 가장 낮았습니다.`;
+    if(today&&today.axis===axis&&result?.revised?.done){tier=Math.min(3,Math.max(tier,today.tier+1));why=`오늘 과제는 해냈지만 ${iga(axis)} 아직 가장 낮아(${v}점) 한 단계 올렸습니다.`}
+    else if(today&&today.axis===axis){why=`오늘 과제가 고친 글에서도 보이지 않아, 같은 기준을 한 번 더 연습합니다(${v}점).`;tier=today.tier}
+    return makeTask(axis,tier,why);
+  }
+
+/* 기관 학생의 반 초점 기준: 교수가 정했으면 그 기준, 아니면 반 처음 글 평균이 가장 낮은 기준 */
+function classFocusOf(cls){
+  if(!cls)return null;const avg=CLASSROOM.before;
+  if(cls.focus&&avg[cls.focus]!=null)return{axis:cls.focus,score:avg[cls.focus],by:'prof'};
+  const k=Object.entries(avg).sort((a,b)=>a[1]-b[1]||AXIS_ORDER.indexOf(a[0])-AXIS_ORDER.indexOf(b[0]))[0][0];
+  return{axis:k,score:avg[k],by:'avg'};
+}
 /* (v4) 광장 예시 답안: 유민이 만든 AI 페르소나 시드 답안 (seeds_*.json, 기사별 36편, 모두 복시).
    초시 예시 답안은 실제 키 연결 후 seed 지시문으로 만들어 SEEDS[기사].choshi 에 넣습니다.
    유류세, 데이터센터 기사는 시드 파일이 없어 그룹 대표 답안(clusters[].s)만 씁니다. */
@@ -1014,7 +1217,7 @@ const SEEDS = {"work45": {"boksi": [{"n": "01", "g": 0, "t": "솔직히 기업�
 const ORGS=[{id:'yonsei',name:'연세대학교 (예시)'}];
 const CLASSES={
   'yonsei-writing':{id:'yonsei-writing',org:'yonsei',name:'글쓰기와 토론 (예시)',term:'2026-2학기, 11주차',
-    studentCode:'YONSEI-STU',professorCode:'YONSEI-PROF',rubric:null,
+    studentCode:'YONSEI-STU',professorCode:'YONSEI-PROF',rubric:null,focus:null,
     assigned:{articleId:'aiexam',level:'boksi',due:'11월 23일(일)'}}
 };
 const DEMO_PW='demo1234';
@@ -1062,6 +1265,7 @@ const DB={
   voted(userId,essayId,kind){return this.votes.has(`${userId}|${essayId}|${kind}`)},
   count(essay,kind){let n=essay.base?.[kind]||0;this.votes.forEach((_,k)=>{const[,e,t]=k.split('|');if(e===essay.id&&t===kind)n++});return n},
   async saveRubric(classId,rubric){CLASSES[classId].rubric=rubric},
+  async saveFocus(classId,axis){CLASSES[classId].focus=axis||null},
   async assign(classId,articleId,level){CLASSES[classId].assigned={articleId,level,due:'이번 주 일요일'}}
 };
 /* 시연 계정 3개 + 예시 답안 계정 */
@@ -1104,13 +1308,9 @@ const API={on:false,checked:false,
 };
 const withMeta=(o,fallback)=>({...o,_meta:{...(o._meta||{}),fallback}});
 const AI = {
-  /* [API 0] 오늘의 과제: 지난 답안의 5기준 점수 중 가장 낮은 항목 (AI 없이 규칙)
-     입력: {profile}  출력: {axis, task} */
-  async todayTask({profile}){
-    const last=Object.fromEntries(Object.entries(profile.axes).map(([k,v])=>[k,v.at(-1)]));
-    const axis=lowest(last);
-    return {axis,task:AXIS_TASK[axis]};
-  },
+  /* [API 0] (v4.2) 오늘의 과제: AI 없이 규칙. 개인은 최근 3편 평균이 가장 낮은 기준, 기관 학생은 반 초점 기준
+     입력: {profile, classFocus}  출력: {axis, tier, why, id, title, how, choshi, ex} 또는 null */
+  async todayTask({profile,classFocus}){return getTodayTask({profile,classFocus})},
 
   /* [API 1] 쓰기 전 생각할 거리: 답 대신 질문 3개
      입력: {article, level}  출력: {questions:[string,string,string]} */
@@ -1188,8 +1388,8 @@ const AI = {
      입력: {articleId, level, draft, revised, rubric?:{기준:{def,weight}}}
      출력: {before:{기준:점수}, after:{기준:점수}, why:{기준:{before:[string], after:[string]}}, total?:{before,after,max}}
      ※ why는 "사용자 글의 어느 부분 때문에 이 점수인지"를 1~2줄 + 사용자 글 인용. 글을 고쳐 주는 문장은 넣지 않음 */
-  async scoreRevision({draft,revised,rebuttal,level,rubric}){
-    if(API.on)try{return await API.post('score',{articleId:S.articleId,level,draft,revised,rubric})}catch(e){console.warn(e);return withMeta(this._mockScore({draft,revised,rebuttal,level}),'rule')}
+  async scoreRevision({draft,revised,rebuttal,level,rubric,task}){
+    if(API.on)try{return await API.post('score',{articleId:S.articleId,level,draft,revised,rubric,task})}catch(e){console.warn(e);return withMeta(this._mockScore({draft,revised,rebuttal,level}),'rule')}
     await sleep(700);
     return this._mockScore({draft,revised,rebuttal,level});
   },
@@ -1249,12 +1449,9 @@ const AI = {
     return {blocked:BYPASS.test(t)&&(t.length<120||sentences(t).some(s=>BYPASS.test(s)&&/(줘|주세요|please|\?)\s*[.!?]?$/i.test(s)))};
   },
 
-  /* [API 6] 다음 책문의 과제: 고친 글에서 가장 낮은 기준 (AI 없이 규칙)
-     입력: {scores}  출력: {axis, task} */
-  async nextTask({scores}){
-    const axis=lowest(scores.after);
-    return {axis,task:AXIS_TASK[axis]};
-  },
+  /* [API 6] (v4.2) 다음 책문의 과제: 해냈고 여전히 가장 약하면 한 단계 위 (AI 없이 규칙)
+     입력: {scores, today, result}  출력: 과제 객체 */
+  async nextTask({scores,today,result}){return getNextTask({scores,today,result})},
 
   /* [API 7] 관점 지도: 시드 답안을 미리 묶어 저장해 두고, 내 글은 가장 가까운 그룹에 배정
      입력: {article, text, level}  출력: {clusters:[...], mine:index} */
@@ -1278,10 +1475,10 @@ const S={view:'start',step:0,articleId:'aiexam',picked:false,levelChosen:false,s
   user:null,auth:{scope:'p',tab:'login',org:null,cls:null,role:null,err:'',after:null},teacher:{sel:null},
   draft:'',log:{start:null,paste:0,revisions:0,refused:0},prewrite:null,
   running:false,pipe:[],verify:null,attempts:0,feedback:null,personaIndex:0,chat:[],
-  revised:'',blocked:null,compare:null,next:null,
+  revised:'',blocked:null,compare:null,next:null,taskResult:null,
   submitted:false,myEssay:null,plaza:null};
-function resetWriting(){Object.assign(S,{draft:'',log:{start:null,paste:0,revisions:0,refused:0},prewrite:null,running:false,pipe:[],verify:null,attempts:0,feedback:null,personaIndex:0,chat:[],revised:'',blocked:null,compare:null,next:null,submitted:false,myEssay:null,plaza:null})}
-function clearAfterDraft(){Object.assign(S,{feedback:null,verify:null,pipe:[],chat:[],revised:'',blocked:null,compare:null,next:null,submitted:false,myEssay:null,plaza:null})}
+function resetWriting(){Object.assign(S,{draft:'',log:{start:null,paste:0,revisions:0,refused:0},prewrite:null,running:false,pipe:[],verify:null,attempts:0,feedback:null,personaIndex:0,chat:[],revised:'',blocked:null,compare:null,next:null,taskResult:null,submitted:false,myEssay:null,plaza:null})}
+function clearAfterDraft(){Object.assign(S,{feedback:null,verify:null,pipe:[],chat:[],revised:'',blocked:null,compare:null,next:null,taskResult:null,submitted:false,myEssay:null,plaza:null})}
 const isStudent=()=>S.user?.role==='student', isProf=()=>S.user?.role==='professor', isOrg=()=>S.user&&S.user.scope==='o';
 const myClass=()=>S.user?.classId?CLASSES[S.user.classId]:null;
 const rubricFor=()=>{const r=myClass()?.rubric;return r||null};
@@ -1425,13 +1622,43 @@ function vOrg(){
   <p class="ctr note"><button class="link" data-back="start">처음으로</button></p>`;
 }
 
+
+/* ---------- (v4.2) 오늘의 과제 카드 ---------- */
+const tierChip=t=>`<span class="tchip">${esc(t.axis)}, ${TIER_NAME[t.tier]}</span>`;
+function taskPickHTML(){
+  const t=S.todayTask;
+  if(t) return `<div class="task"><b>오늘의 과제</b>${tierChip(t)}<p class="tt">${esc(t.title)}</p><small>${esc(t.why)}</small></div>`;
+  if(S.user&&!isProf()) return `<div class="task tnone"><b>오늘의 과제</b><small>첫 책문입니다. 오늘 글의 채점이 끝나면 다음 과제가 정해집니다.</small></div>`;
+  return '';
+}
+function taskWriteHTML(a){
+  const t=S.todayTask;if(!t)return '';
+  const hint=TASK_HINT[a.id]?.[t.axis];
+  return `<div class="task"><b>오늘의 과제</b>${tierChip(t)}<p class="tt">${esc(t.title)}</p>
+    <p class="th">${esc(S.level==='choshi'?t.choshi:t.how)}</p>
+    ${hint?`<p class="th"><span class="sub">이 기사에서는</span>${esc(hint)}</p>`:''}
+    <details class="tex"><summary>이 동작은 이런 모양입니다</summary><p class="exn">${esc(EX_TOPIC)}</p><p class="ext">${esc(t.ex)}</p></details></div>`;
+}
+function taskCheckHTML(){
+  const t=S.todayTask,r=S.taskResult;if(!t||!r)return '';
+  const row=(lab,x)=>`<li><span class="lab2">${lab}</span>${x.done?'<span class="up">해냈습니다</span>':'<span class="not">아직 보이지 않습니다</span>'}${x.done&&x.quote?`<blockquote>${esc(x.quote)}</blockquote>`:''}</li>`;
+  return `<section class="block"><h2 class="h">오늘의 과제 확인</h2>
+    <p class="note" style="margin:0 0 8px">${tierChip(t)} ${esc(t.title)}</p>
+    <ul class="tchk">${row('처음 글',r.draft)}${row('고친 글',r.revised)}</ul>
+    <p class="note">점수와 따로, 이 동작이 글에 실제로 들어 있는지만 봅니다. 해낸 문장은 내 글에서 그대로 옮겼습니다.</p></section>`;
+}
+function taskNextHTML(){
+  const n=S.next;if(!n)return '';
+  return `<div class="task"><b>다음 책문의 과제</b>${tierChip(n)}<p class="tt">${esc(n.title)}</p><small>${esc(n.why)}</small></div>`;
+}
+
 /* 1. 기사 고르기: (기관 학생) 이번 주 과제 + 오늘의 과제 + 분야별 기사 5개 */
 function vPick(){
   const cls=isStudent()?myClass():null, as=cls?.assigned, aa=as&&ARTICLES.find(x=>x.id===as.articleId);
   return `
   ${aa?`<div class="task" style="background:var(--jjok-t);border-left-color:var(--jjok)"><b style="color:var(--jjok)">이번 주 과제</b>${esc(cls.name)}: ${esc(aa.title)} (${LEVELS[as.level].name}), 마감 ${esc(as.due)}
      <small><button class="link" id="doAssigned">이 과제 하러 가기</button></small></div>`:''}
-  ${S.todayTask?`<p class="task"><b>오늘의 과제</b>${esc(S.todayTask.task)}<small>지난 답안에서 ${esc(S.todayTask.axis)} 점수가 가장 낮았습니다.</small></p>`:''}
+  ${taskPickHTML()}
   <section class="block">
     <h2 class="pick-h">시관이 고른 오늘의 시제(試題) 다섯</h2>
     <p class="note" style="margin-top:0">분야마다 하나씩, 오늘 생각해 볼 만한 소식을 골랐습니다. 하나를 골라 답해 보세요.</p>
@@ -1504,6 +1731,7 @@ function vWrite(){
   const a=art(),lv=LEVELS[S.level];
   return `
   ${qBlock(a,true)}
+  ${taskWriteHTML(a)}
   <div class="prewrite">${S.prewrite
     ?`<div class="pw"><p>답은 각자의 몫입니다. 생각을 시작할 질문만 드립니다.</p><ol>${S.prewrite.questions.map(q=>`<li>${esc(q)}</li>`).join('')}</ol></div>`
     :`<button class="link" id="prewriteBtn">무엇부터 써야 할지 막막하다면, 생각할 거리 받기</button>`}</div>
@@ -1647,7 +1875,8 @@ function vRevise(){
     </div>
     <p class="rubsrc">채점 기준: 미국대학협회(AAC&amp;U)의 <a href="${RUBRIC_SRC}" target="_blank" rel="noopener">Critical Thinking VALUE Rubric</a> 5개 기준을 이 서비스에 맞게 고쳐 썼습니다(<a href="${RUBRIC_LICENSE}" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a>). 처음 글과 고친 글은 서로를 보지 않고 따로 채점합니다.</p>
   </section>
-  ${S.next?`<p class="task"><b>다음 책문의 과제</b>${esc(S.next.task)}<small>고친 글에서도 ${esc(S.next.axis)} 점수가 가장 낮았습니다.</small></p>`:''}
+  ${taskCheckHTML()}
+  ${taskNextHTML()}
   <div class="actions"><button class="btn" id="submitBtn">광장에 제출하기</button><span class="note" style="margin:0">처음 글과 고친 글이 함께 공개됩니다${isStudent()?'. 우리 반 광장과 교수님에게만 보입니다':''}.</span></div>`:''}`;
 }
 const RUBRIC_LICENSE='https://creativecommons.org/licenses/by-nc-sa/4.0/';
@@ -1808,6 +2037,10 @@ function vTeacher(){
     ${ks.map(k=>`<tr><th>${k}</th><td class="n">${C.before[k].toFixed(1)}</td><td class="n up">${C.after[k].toFixed(1)}</td><td class="bars"><span class="bar" style="--w:${C.before[k]*10}%"></span><span class="bar" style="--w:${C.after[k]*10}%"></span></td></tr>`).join('')}
     </tbody></table>
     <p class="note">반 전체가 가장 약한 기준은 <b>맥락과 전제</b>입니다. 다음 수업에서 "내 주장이 통하지 않는 상황"을 함께 다뤄 보세요.</p></section>
+  <section class="block"><h3 class="h">이번 주 우리 반 초점 기준</h3>
+    <p class="note" style="margin:0 0 10px">아직 기록이 없는 학생의 오늘의 과제를 이 기준으로 정합니다. 자동이면 반 처음 글 평균이 가장 낮은 기준을 씁니다. 지금: <b>${esc(classFocusOf(cls).axis)}</b>${cls.focus?' (교수 지정)':' (자동)'}</p>
+    <div class="askf"><select id="focusSel" style="flex:1;font:inherit;padding:9px;border:1px solid var(--rule);border-radius:4px;background:var(--sheet)"><option value="">자동 (반 평균이 가장 낮은 기준)</option>${ks.map(k=>`<option value="${k}" ${cls.focus===k?'selected':''}>${k}</option>`).join('')}</select>
+      <button class="btn ghost" id="focusBtn">초점 저장</button></div></section>
   <section class="block"><h3 class="h">학생별 현황</h3>
     <p class="note" style="margin:0 0 8px">학생을 누르면 글 원문과 쓰는 과정의 기록(작성 시간, 붙여넣기 차단, 고쳐 쓰기 횟수)을 볼 수 있습니다. 탐지 대신 과정으로 직접 쓴 글임을 확인합니다.</p>
     <table class="tbl"><thead><tr><th>학생</th><th>기사</th><th class="c">처음 → 고친 뒤 (50점)</th><th class="c">고쳐 쓰기</th><th>가장 약한 기준</th><th class="c">대필 시도</th></tr></thead><tbody>
@@ -1832,6 +2065,7 @@ function studentDetail(s){
   if(s.real){const e=s.e,p=e.process||{};
     return `<div class="stud corner"><p class="h" style="font-size:1.02rem">${esc(e.nickname)}의 글</p>
       <p class="proc">작성 시간 <b>${mmss(p.seconds||0)}</b> 붙여넣기 차단 <b>${p.paste||0}번</b> 고쳐 쓰기 <b>${p.revisions||0}번</b> 대필 요청 거절 <b>${p.refused||0}번</b></p>
+      ${e.task?`<p class="proc">오늘의 과제: <b>${esc(e.task.title)}</b> (${e.task.done?'해냄':'아직'})</p>`:''}
       <p style="font-weight:700;font-size:.84rem;color:var(--jjok)">처음 글</p><p class="tx">${esc(e.draft)}</p>
       <p style="font-weight:700;font-size:.84rem;color:var(--jjok);margin-top:10px">고친 글</p><p class="tx">${esc(e.revised)}</p></div>`}
   const ex=DB.essays.find(e=>e.id===`ex-${s.art}-boksi-${s.seed}`);
@@ -1849,7 +2083,7 @@ async function afterLogin(u){
   S.user=u;S.auth.err='';
   if(u.role==='professor'){S.teacher.sel=null;view('teacher');return}
   const prof=await AI.writingProfile(u);
-  S.todayTask=prof?await AI.todayTask({profile:prof}):null;
+  S.todayTask=await AI.todayTask({profile:prof,classFocus:u.role==='student'?classFocusOf(CLASSES[u.classId]):null});
   const after=S.auth.after;S.auth.after=null;
   if(after?.write&&S.picked&&S.levelChosen){go(STEP.WRITE);return}
   if(after?.view==='flow'){S.view='flow';S.step=Math.min(after.step,reached());render(true);return}
@@ -1950,8 +2184,13 @@ function bind(){
       if(after.trim()===S.draft.trim()){toast('아직 고친 곳이 없습니다.');return}
       b.disabled=true;b.textContent='채점하고 있습니다';
       S.log.revisions++;
-      const score=await AI.scoreRevision({draft:S.draft,revised:after,rebuttal:S.feedback.rebuttal,level:S.level,rubric:rubricFor()});
-      S.next=await AI.nextTask({scores:score});
+      const tk=S.todayTask?{id:S.todayTask.id,title:S.todayTask.title,how:S.level==='choshi'?S.todayTask.choshi:S.todayTask.how}:null;
+      const score=await AI.scoreRevision({draft:S.draft,revised:after,rebuttal:S.feedback.rebuttal,level:S.level,rubric:rubricFor(),task:tk});
+      /* 서버가 task 판정을 주면 그것, 형식이 틀리거나 없으면 규칙으로 대신 판정 */
+      const okT=x=>x&&typeof x.done==='boolean';
+      S.taskResult=S.todayTask?(okT(score.task?.draft)&&okT(score.task?.revised)?score.task
+        :{draft:checkTask(S.todayTask,S.draft,art(),S.level),revised:checkTask(S.todayTask,after,art(),S.level)}):null;
+      S.next=await AI.nextTask({scores:score,today:S.todayTask,result:S.taskResult});
       S.compare={score,diff:diffWords(S.draft,after)};
       render();
     };
@@ -1962,7 +2201,7 @@ function bind(){
       S.submitted=true;S.plaza=null;go(STEP.PLAZA);
       const r=await AI.clusterAnswers({article:art(),text,level:S.level});
       S.myEssay=await DB.saveEssay({userId:S.user.id,nickname:S.user.nickname,articleId:S.articleId,level:S.level,draft:S.draft,revised:text,
-        scores:S.compare?.score||null,weak:S.next?.axis||null,group:r.mine,published:true,isExample:false,classId:isStudent()?S.user.classId:null,
+        scores:S.compare?.score||null,weak:S.next?.axis||null,task:S.todayTask?{id:S.todayTask.id,axis:S.todayTask.axis,title:S.todayTask.title,done:!!S.taskResult?.revised?.done}:null,group:r.mine,published:true,isExample:false,classId:isStudent()?S.user.classId:null,
         process:{seconds:S.log.start?Math.floor((Date.now()-S.log.start)/1000):0,paste:S.log.paste,revisions:S.log.revisions,refused:S.log.refused},base:{ag:0,pn:0}});
       await loadPlaza();
       render();
@@ -1978,7 +2217,7 @@ function bind(){
     render();[...$$('details.grp')].forEach((x,i)=>{x.open=open[i]});window.scrollTo(0,y);
   });
   const ag=$('#again');
-  if(ag)ag.onclick=()=>{resetWriting();S.picked=false;S.levelChosen=false;go(STEP.PICK)};
+  if(ag)ag.onclick=()=>{if(S.next)S.todayTask=S.next;resetWriting();S.picked=false;S.levelChosen=false;go(STEP.PICK)};
 
   /* 교수용 */
   $$('[data-stud]').forEach(r=>r.onclick=()=>{S.teacher.sel=S.teacher.sel===r.dataset.stud?null:r.dataset.stud;render()});
@@ -1986,6 +2225,7 @@ function bind(){
     Object.keys(RUBRIC).forEach(k=>{r[k]={def:String(fd.get('def:'+k)||'').trim()||RUBRIC[k].def,weight:+fd.get('w:'+k)||1}});
     await DB.saveRubric(myClass().id,r);toast('우리 반 채점 기준을 저장했습니다. 다음 채점부터 반영됩니다.');render()};
   const rr=$('#rubReset');if(rr)rr.onclick=async()=>{await DB.saveRubric(myClass().id,null);toast('원래 기준으로 되돌렸습니다.');render()};
+  const fcb=$('#focusBtn');if(fcb)fcb.onclick=async()=>{await DB.saveFocus(myClass().id,$('#focusSel').value);toast('초점 기준을 저장했습니다. 학생이 다시 들어오면 오늘의 과제가 바뀝니다.');render()};
   const asb=$('#assignBtn');if(asb)asb.onclick=async()=>{await DB.assign(myClass().id,$('#asArt').value,$('#asLv').value);toast('이번 주 시제를 배정했습니다. 학생 첫 화면에 보입니다.');render()};
 }
 
